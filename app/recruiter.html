@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TalentAgent™ — HireOrGetHired</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="app-sidebar">
+      <div class="logo">Hire<span>OrGetHired</span></div>
+      <nav>
+        <a href="#pipeline" class="nav-link active" data-panel="pipeline">Pipeline</a>
+        <a href="#requisitions" class="nav-link" data-panel="requisitions">Requisitions</a>
+        <a href="#briefs" class="nav-link" data-panel="briefs">Candidate Intelligence Briefs</a>
+        <a href="#outreach" class="nav-link" data-panel="outreach">Outreach</a>
+        <a href="#scheduler" class="nav-link" data-panel="scheduler">Scheduler</a>
+        <a href="#offers" class="nav-link" data-panel="offers">Offer Management</a>
+        <a href="#negotiation" class="nav-link" data-panel="negotiation">NegotiationCoach™</a>
+        <a href="#analytics" class="nav-link" data-panel="analytics">Analytics</a>
+        <a href="#compliance" class="nav-link" data-panel="compliance">Compliance</a>
+      </nav>
+      <div class="user">Recruiter · <a href="login.html">Switch to Job Seeker</a></div>
+    </aside>
+
+    <main class="app-main">
+      <!-- Pipeline -->
+      <div id="panel-pipeline" class="panel active">
+        <div class="app-header">
+          <h1>Pipeline</h1>
+          <p>TalentAgent™ overview. All stages respect the Human Handoff Protocol.</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">12</div><div class="label">Active requisitions</div></div>
+          <div class="stat-card"><div class="value">47</div><div class="label">Candidates in pipeline</div></div>
+          <div class="stat-card"><div class="value">26</div><div class="label">Avg. days to first interview</div></div>
+          <div class="stat-card"><div class="value">3</div><div class="label">Awaiting your approval</div></div>
+        </div>
+        <div class="card">
+          <h2>Pipeline by stage</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Requisition</th><th>Sourced</th><th>Shortlist</th><th>Outreach sent</th><th>Interview scheduled</th><th>Offer</th><th>Agent status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Senior ML Engineer — London</td>
+                  <td>24</td>
+                  <td>5</td>
+                  <td>3</td>
+                  <td>2</td>
+                  <td>—</td>
+                  <td><span class="agent-status">RadarAgent active</span></td>
+                </tr>
+                <tr>
+                  <td>Product Manager — Remote</td>
+                  <td>18</td>
+                  <td>4</td>
+                  <td>4</td>
+                  <td>1</td>
+                  <td>1</td>
+                  <td><span class="badge badge-amber">Your approval: shortlist</span></td>
+                </tr>
+                <tr>
+                  <td>Frontend Engineer — Berlin</td>
+                  <td>31</td>
+                  <td>6</td>
+                  <td>5</td>
+                  <td>3</td>
+                  <td>—</td>
+                  <td><span class="agent-status">SchedulerAgent active</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Requisitions -->
+      <div id="panel-requisitions" class="panel">
+        <div class="app-header">
+          <h1>Requisitions</h1>
+          <p>Requisition Intelligence: JDs, skill mapping, comp benchmarks. Approval workflow before sourcing.</p>
+        </div>
+        <div class="card">
+          <h2>Open requisitions</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Role</th><th>Location</th><th>Comp band</th><th>Health score</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>Senior ML Engineer</td><td>London</td><td>£100K–£130K</td><td><span class="badge badge-green">Good</span></td><td>Sourcing</td></tr>
+                <tr><td>Product Manager</td><td>Remote</td><td>€80K–€100K</td><td><span class="badge badge-amber">Review comp</span></td><td>Shortlist pending</td></tr>
+                <tr><td>Frontend Engineer</td><td>Berlin</td><td>€65K–€85K</td><td><span class="badge badge-green">Good</span></td><td>Interview stage</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-muted mt-2">Requisition health: TalentAgent™ flags mismatches between seniority and comp; suggests adjustments from market supply.</p>
+        </div>
+      </div>
+
+      <!-- Candidate Intelligence Briefs -->
+      <div id="panel-briefs" class="panel">
+        <div class="app-header">
+          <h1>Candidate Intelligence Brief™</h1>
+          <p>IntelligenceAgent synthesis: career narrative, skills evidence, motivations, conversation angles. Dummy example below.</p>
+        </div>
+        <div class="card">
+          <h2>Sample brief — Priya M.</h2>
+          <p class="text-muted mb-0">Candidate for Product Manager — Remote. Brief generated by IntelligenceAgent (dummy).</p>
+          <div class="brief-block mt-2">
+            <strong>Career narrative</strong><br>
+            <span class="muted">4 years in product; moved from analytics into PM at current company. Public posts emphasise “owning the full lifecycle” and “data-driven prioritisation”. Likely motivated by ownership and impact, not just title.</span>
+          </div>
+          <div class="brief-block">
+            <strong>Skills evidence</strong><br>
+            <span class="muted">Product discovery — mentioned in 3 LinkedIn posts + current JD. Roadmapping — Notion template shared on Twitter. SQL — listed on profile; no public certs; worth verifying in interview.</span>
+          </div>
+          <div class="brief-block">
+            <strong>Conversation recommendations</strong><br>
+            <span class="muted">1) Lead with scope of the product area and decision rights. 2) Ask about a time she had to say no to a stakeholder. 3) Clarify remote cadence and team overlap expectations.</span>
+          </div>
+          <div class="brief-block">
+            <strong>Verification flags</strong><br>
+            <span class="muted">Tenure at current role 18 months — explore whether she’s open to move or only testing the market. No gap between roles; education dates align.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outreach -->
+      <div id="panel-outreach" class="panel">
+        <div class="app-header">
+          <h1>Outreach</h1>
+          <p>OutreachAgent drafts personalised messages; you approve before first send. Human Handoff applies.</p>
+        </div>
+        <div class="card">
+          <h2>Pending your approval</h2>
+          <p class="text-muted">Shortlist for Product Manager — Remote. Review and approve outreach before send.</p>
+          <div class="brief-block mt-2">
+            <strong>To: Alex K.</strong> (Senior PM, 6 yrs, fintech)<br>
+            <span class="muted">Draft: "Hi Alex — I noticed your work on the payments roadmap at [Company] and your post about prioritising merchant experience. We’re hiring a PM to own our core checkout experience and would love to share the scope…"</span>
+            <div class="mt-2"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+          </div>
+          <div class="brief-block">
+            <strong>To: Jordan L.</strong> (Product lead, 5 yrs, B2B SaaS)<br>
+            <span class="muted">Draft: "Hi Jordan — Your experience leading zero-to-one products at [Company] and your focus on PLG metrics stood out. We’re building a new product line and looking for someone who’s done this before…"</span>
+            <div class="mt-2"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scheduler -->
+      <div id="panel-scheduler" class="panel">
+        <div class="app-header">
+          <h1>Scheduler</h1>
+          <p>SchedulerAgent coordinates calendars and sends pre-interview briefs to both parties.</p>
+        </div>
+        <div class="card">
+          <h2>Upcoming interviews</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Candidate</th><th>Role</th><th>Date & time</th><th>Brief sent</th></tr></thead>
+              <tbody>
+                <tr><td>Priya M.</td><td>Product Manager — Remote</td><td>Wed 20 Mar, 14:00 GMT</td><td><span class="badge badge-green">Yes</span></td></tr>
+                <tr><td>Sam T.</td><td>Senior ML Engineer — London</td><td>Thu 21 Mar, 10:00 GMT</td><td><span class="badge badge-green">Yes</span></td></tr>
+                <tr><td>Jordan L.</td><td>Product Manager — Remote</td><td>Fri 22 Mar, 15:30 GMT</td><td><span class="agent-status">Sending</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-muted mt-2">Candidate and you both receive context-rich pre-meeting briefs. Rescheduling is handled by SchedulerAgent.</p>
+        </div>
+      </div>
+
+      <!-- Offer Management -->
+      <div id="panel-offers" class="panel">
+        <div class="app-header">
+          <h1>Offer Management</h1>
+          <p>OfferAgent recommends packages; you review and approve before any offer is extended.</p>
+        </div>
+        <div class="card">
+          <h2>Recommended offer (awaiting your approval)</h2>
+          <p class="text-muted">Priya M. — Product Manager — Remote. Verbal alignment in principle; generate formal offer after your sign-off.</p>
+          <div class="brief-block mt-2">
+            <strong>OfferAgent recommendation</strong><br>
+            Base €88,000 · Bonus 10% · Equity 0.08% (4yr) · Start date flexible. Market benchmark: 50th percentile for role/geo. Candidate floor (inferred): ~€85K.
+          </div>
+          <div class="mt-2"><button class="btn btn-primary">Approve & generate offer</button> <button class="btn">Edit terms</button></div>
+        </div>
+        <div class="card">
+          <h2>Recent offers</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Candidate</th><th>Role</th><th>Status</th><th>Approved by</th></tr></thead>
+              <tbody>
+                <tr><td>Sam T.</td><td>Senior ML Engineer</td><td><span class="badge badge-blue">Sent</span></td><td>You, 14 Mar</td></tr>
+                <tr><td>Alex K.</td><td>Product Manager</td><td><span class="badge badge-green">Accepted</span></td><td>You, 10 Mar</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- NegotiationCoach -->
+      <div id="panel-negotiation" class="panel">
+        <div class="app-header">
+          <h1>NegotiationCoach™</h1>
+          <p>Live advisory during the offer conversation. You and the candidate each see a private view; agents advise, they do not negotiate.</p>
+        </div>
+        <div class="card">
+          <h2>Mock session — Recruiter view (private)</h2>
+          <p class="text-muted">During the call, your dashboard shows real-time guidance. Candidate has a separate private view. Dummy data below.</p>
+          <div class="nego-columns mt-2">
+            <div class="nego-panel">
+              <h4>Your view (Recruiter)</h4>
+              <ul>
+                <li>Offer extended: €88,000 base + 10% bonus + 0.08% equity</li>
+                <li>Market median (role/geo): €90,000</li>
+                <li>Candidate’s inferred floor: ~€85,000</li>
+                <li>Candidate priority (from CareerAgent): equity &gt; base &gt; remote</li>
+                <li>If they counter €92K+: consider bumping equity vesting cliff</li>
+                <li>Remote: within policy — you can confirm full remote</li>
+              </ul>
+            </div>
+            <div class="nego-panel">
+              <h4>Candidate view (simulated — they see only their app)</h4>
+              <ul>
+                <li>Offer: €88,000 · Market median: €90,000</li>
+                <li>Company typically goes 10–15% above first offer</li>
+                <li>Recommended counter: €92,000; lead with excitement, then ask for base</li>
+                <li>Equity is negotiable here; push on cliff if they resist on cash</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics -->
+      <div id="panel-analytics" class="panel">
+        <div class="app-header">
+          <h1>Analytics & Reporting</h1>
+          <p>Pipeline velocity, diversity, recruiter performance. CHRO-ready exports.</p>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">32%</div><div class="label">Time-to-fill reduction (vs baseline)</div></div>
+          <div class="stat-card"><div class="value">86%</div><div class="label">Offer acceptance rate</div></div>
+          <div class="stat-card"><div class="value">4.2 min</div><div class="label">Avg. prep time per interview</div></div>
+        </div>
+        <div class="card">
+          <h2>Pipeline velocity (last 30 days)</h2>
+          <p class="text-muted">Requisitions by stage. TalentAgent™ metrics streamed in real time.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Stage</th><th>Count</th><th>Avg. time in stage</th></tr></thead>
+              <tbody>
+                <tr><td>Sourced</td><td>89</td><td>3.2 days</td></tr>
+                <tr><td>Shortlist approved</td><td>24</td><td>1.1 days</td></tr>
+                <tr><td>Outreach sent</td><td>18</td><td>4.0 days</td></tr>
+                <tr><td>Interview scheduled</td><td>12</td><td>7.0 days</td></tr>
+                <tr><td>Offer</td><td>4</td><td>5.0 days</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compliance -->
+      <div id="panel-compliance" class="panel">
+        <div class="app-header">
+          <h1>Compliance & Audit</h1>
+          <p>Human Handoff Protocol logs, bias audit, GDPR/DSAR. EU AI Act alignment.</p>
+        </div>
+        <div class="card">
+          <h2>Recent human approval events</h2>
+          <p class="text-muted">Every employment decision is logged with your approval. Immutable audit trail.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Timestamp</th><th>Event</th><th>Approver</th><th>Outcome</th></tr></thead>
+              <tbody>
+                <tr><td>2026-03-15 09:42</td><td>Shortlist approval — Product Manager</td><td>You</td><td>Approved (4 candidates)</td></tr>
+                <tr><td>2026-03-14 16:20</td><td>Outreach approval — Alex K.</td><td>You</td><td>Approved (message sent)</td></tr>
+                <tr><td>2026-03-14 11:00</td><td>Offer approval — Sam T.</td><td>You</td><td>Approved (offer generated)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Bias audit</h2>
+          <p class="text-muted">Real-time disparate impact checks at each agent decision. Last run: 2026-03-15 08:00.</p>
+          <p><span class="badge badge-green">Pass</span> No demographic parity threshold breaches in the last 7 days.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    (function() {
+      var panels = document.querySelectorAll('.panel');
+      var links = document.querySelectorAll('.nav-link');
+      function showPanel(id) {
+        var target = id || (window.location.hash && window.location.hash.slice(1));
+        if (!target) target = 'pipeline';
+        panels.forEach(function(p) {
+          p.classList.toggle('active', p.id === 'panel-' + target);
+        });
+        links.forEach(function(a) {
+          a.classList.toggle('active', a.getAttribute('data-panel') === target);
+        });
+      }
+      links.forEach(function(a) {
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          var panel = a.getAttribute('data-panel');
+          window.location.hash = panel;
+          showPanel(panel);
+        });
+      });
+      window.addEventListener('hashchange', function() { showPanel(); });
+      showPanel();
+    })();
+  </script>
+</body>
+</html>
