@@ -5,6 +5,326 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TalentAgent™ — HireOrGetHired</title>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+
+    /* Fallback when css/styles.css fails to load (e.g. file://) */
+    :root {
+      --accent: #6d28d9;
+      --accent-subtle: #ede9fe;
+      --bg: #f8fafc;
+      --bg-card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-muted-2: #94a3b8;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.1);
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .app-shell { display: flex; min-height: 100vh; }
+    .app-main { flex: 1; overflow: auto; padding: 24px; }
+    .app-header { margin-bottom: 24px; }
+    .app-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 6px; }
+    .app-header p { font-size: .9375rem; color: #64748b; margin: 0; }
+    .app-sidebar { width: 240px; background: var(--bg-card); border-right: 1px solid var(--border); min-height: 100vh; padding: 24px 0; flex-shrink: 0; }
+    .app-sidebar .logo { font-size: 1.125rem; font-weight: 700; padding: 0 24px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .app-sidebar .logo span { color: var(--accent); }
+    .app-sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+    .app-sidebar nav a { display: block; padding: 10px 24px; border-radius: 0; color: var(--text-muted); font-size: .9375rem; text-decoration: none; }
+    .app-sidebar nav a:hover { color: var(--text); background: var(--bg); }
+    .app-sidebar nav a.active { color: var(--accent); background: var(--accent-subtle); font-weight: 500; }
+    .app-sidebar .user { margin-top: auto; padding: 16px 24px; border-top: 1px solid var(--border); font-size: .875rem; color: var(--text-muted); }
+    .app-sidebar .user a { color: var(--accent); }
+    .mt-2 { margin-top: 12px; }
+    .muted { color: #64748b; }
+    .text-muted { color: #64748b; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .stats-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; min-width: 120px; }
+    .stat-card .value { font-size: 1.5rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
+    .stat-card .label { font-size: .8125rem; color: var(--text-muted); }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; }
+    .card h2 { font-size: 1.125rem; font-weight: 600; margin: 0 0 16px; }
+    .card p { margin: 0 0 12px; }
+    .brief-block { margin-top: 12px; padding: 12px; background: var(--bg); border-radius: var(--radius); }
+    .brief-block strong { color: var(--text); }
+    .table-wrap { overflow-x: auto; margin-bottom: 12px; }
+    .table-wrap table { width: 100%; border-collapse: collapse; }
+    .table-wrap th, .table-wrap td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    .btn { padding: 8px 16px; border-radius: var(--radius); font-size: .875rem; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .badge { font-size: .75rem; padding: 2px 8px; border-radius: 4px; }
+    .agent-status { font-size: .8125rem; color: var(--accent); }
+    .nego-columns { display: flex; gap: 20px; flex-wrap: wrap; }
+    .nego-panel { flex: 1; min-width: 240px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .nego-panel h4 { margin: 0 0 12px; font-size: .9375rem; }
+    .nego-panel ul { margin: 0; padding-left: 18px; font-size: .8125rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* ══ Recruiter — Organizations (top-level) ══ */
+    .org-cards { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:14px; margin-bottom:24px; }
+    .org-card { border:2px solid var(--border); border-radius:var(--radius-lg); padding:18px 20px; cursor:pointer; transition:.15s; background:var(--bg-card); display:flex; flex-direction:column; gap:10px; }
+    .org-card:hover { border-color:var(--accent); box-shadow:var(--shadow); }
+    .org-card.active { border-color:var(--accent); background:var(--accent-subtle); }
+    .org-card-top { display:flex; align-items:center; gap:12px; }
+    .org-card-logo { width:44px; height:44px; border-radius:10px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:800; color:var(--accent); flex-shrink:0; }
+    .org-card-name { font-size:1rem; font-weight:700; color:var(--text); }
+    .org-card-meta { font-size:.78rem; color:var(--text-muted); }
+    .org-card-stats { display:flex; flex-wrap:wrap; gap:10px; margin-top:4px; }
+    .ocs { font-size:.75rem; }
+    .ocs-num { font-weight:800; color:var(--accent); }
+    .ocs-lbl { color:var(--text-muted); margin-left:2px; }
+    .org-detail { display:none; margin-top:4px; margin-bottom:24px; }
+    .org-detail.open { display:block; }
+    .org-detail-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+    .org-detail-title { font-size:1rem; font-weight:700; color:var(--text); }
+    .org-detail-sub { font-size:.8125rem; color:var(--text-muted); }
+    .org-pipeline-table { margin-top:0; }
+    .org-req-group { margin-bottom:28px; }
+    .org-req-group:last-child { margin-bottom:0; }
+    .org-req-header { display:flex; align-items:center; gap:14px; margin-bottom:14px; padding:14px 18px; background:var(--bg); border-radius:var(--radius-lg); border:1px solid var(--border); }
+    .org-req-logo { width:40px; height:40px; border-radius:8px; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.9rem; color:var(--accent); }
+    .org-req-info { flex:1; }
+    .org-req-org-name { font-size:1rem; font-weight:700; margin-bottom:2px; }
+    .org-req-org-meta { font-size:.78rem; color:var(--text-muted); }
+    .org-req-summary { display:flex; gap:16px; flex-wrap:wrap; font-size:.8125rem; }
+    .org-req-summary span { color:var(--text-muted); }
+    .org-req-summary strong { color:var(--text); }
+    .org-req-cards { display:flex; flex-direction:column; gap:14px; }
+
+    /* ══ Recruiter — Requisitions ══ */
+    .req-action-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+    .req-filter-chips { display:flex; gap:6px; flex-wrap:wrap; }
+    .rfc { padding:5px 12px; border-radius:999px; border:1px solid var(--border); background:var(--bg-card); font-size:.8125rem; cursor:pointer; color:var(--text-muted); transition:.15s; }
+    .rfc:hover { border-color:var(--accent); color:var(--accent); }
+    .rfc.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .req-cards { display:flex; flex-direction:column; gap:14px; }
+    .req-card { border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--bg-card); overflow:hidden; box-shadow:var(--shadow); transition:box-shadow .15s; }
+    .req-card:hover { box-shadow:var(--shadow-md); }
+    .req-card-main { padding:20px 22px; }
+    .req-card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:16px; gap:12px; }
+    .rch-left { flex:1; }
+    .req-card-title { font-size:1.0625rem; font-weight:700; margin-bottom:4px; }
+    .req-card-meta { font-size:.8125rem; color:var(--text-muted); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .rch-right { text-align:right; flex-shrink:0; }
+    .req-comp-band { font-size:.875rem; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .req-open-days { font-size:.8125rem; color:var(--text-muted); }
+    /* Health score dims */
+    .req-health { margin-bottom:16px; }
+    .rh-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .rh-title { font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); }
+    .rh-overall { font-size:.8125rem; font-weight:700; }
+    .rh-dims { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .rh-dim-name { font-size:.72rem; color:var(--text-muted); margin-bottom:4px; }
+    .rh-dim-track { height:6px; background:var(--bg); border-radius:3px; overflow:hidden; margin-bottom:3px; }
+    .rh-dim-fill { height:100%; border-radius:3px; }
+    .rhf-good{background:#16a34a} .rhf-med{background:#f59e0b} .rhf-low{background:#dc2626}
+    .rh-dim-val { font-size:.72rem; font-weight:700; }
+    /* Pipeline mini-progress */
+    .req-pipeline { display:flex; align-items:flex-end; gap:3px; margin-bottom:16px; }
+    .rp-stage { flex:1; }
+    .rp-bar { height:7px; border-radius:3px; margin-bottom:4px; }
+    .rps-active{background:var(--accent)} .rps-filled{background:#ddd6fe} .rps-empty{background:var(--border)}
+    .rp-label { font-size:.65rem; color:var(--text-muted); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .rp-count { font-size:.8125rem; font-weight:700; color:var(--text); text-align:center; }
+    /* Req card footer */
+    .req-card-footer { display:flex; align-items:center; justify-content:space-between; padding:10px 22px; background:var(--bg); border-top:1px solid var(--border); gap:10px; flex-wrap:wrap; }
+    .rcf-left { display:flex; align-items:center; gap:8px; }
+    .rcf-right { display:flex; gap:8px; flex-wrap:wrap; }
+    .rcf-right .btn { font-size:.8125rem; padding:6px 14px; }
+    /* Req expandable detail */
+    .req-detail { display:none; padding:20px 22px; background:var(--bg); border-top:1px solid var(--border); }
+    .req-detail.open { display:block; }
+    .req-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    @media(max-width:700px){ .req-detail-grid { grid-template-columns:1fr; } }
+    .rdg-section h5 { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin:0 0 10px; }
+    .skill-tag-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+    .skill-tag { padding:4px 10px; border-radius:4px; font-size:.78rem; border:1px solid var(--border); background:var(--bg-card); }
+    .skill-tag.required { border-color:rgba(109,40,217,.3); background:var(--accent-subtle); color:var(--accent); }
+    .skill-tag.preferred { color:var(--text-muted); }
+    /* Comp track in detail */
+    .rct-wrap { position:relative; padding:24px 0 20px; margin-bottom:6px; }
+    .rct-track { height:8px; background:var(--border); border-radius:4px; position:relative; overflow:visible; }
+    .rct-fill { position:absolute; top:0; left:0; height:100%; border-radius:4px; background:linear-gradient(to right,#ddd6fe,var(--accent)); }
+    .rct-marker { position:absolute; top:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; }
+    .rct-dot { width:13px; height:13px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+    .rct-top { position:absolute; bottom:14px; font-size:.68rem; font-weight:600; white-space:nowrap; color:var(--text-muted); }
+    .rct-bot { position:absolute; top:14px; font-size:.78rem; font-weight:700; white-space:nowrap; }
+    .rct-our .rct-dot{background:#6d28d9} .rct-our .rct-bot{color:#6d28d9}
+    .rct-med .rct-dot{background:#f59e0b} .rct-med .rct-bot{color:#b45309}
+    .rct-top75 .rct-dot{background:#16a34a} .rct-top75 .rct-bot{color:#15803d}
+    /* Supply stats */
+    .supply-stats { display:flex; gap:10px; flex-wrap:wrap; }
+    .supply-stat { padding:10px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); }
+    .ss-num { font-size:1.125rem; font-weight:800; color:var(--accent); line-height:1; margin-bottom:2px; }
+    .ss-lbl { font-size:.72rem; color:var(--text-muted); }
+    .rec-list { margin:0; padding-left:16px; font-size:.8125rem; color:var(--text-muted); line-height:1.65; }
+    .req-flag { display:flex; align-items:flex-start; gap:8px; padding:8px 12px; border-radius:var(--radius); margin-bottom:6px; font-size:.8125rem; line-height:1.45; }
+    .req-flag.warn { background:#fef3c7; border:1px solid #fde68a; }
+    .req-flag.good { background:#dcfce7; border:1px solid #86efac; }
+
+    /* ══ Recruiter — Candidate Intelligence Briefs ══ */
+    .cand-selector-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+    @media(max-width:680px){ .cand-selector-grid { grid-template-columns:1fr; } }
+    .cand-sel-card { padding:14px 16px; border:2px solid var(--border); border-radius:var(--radius-lg); cursor:pointer; transition:.15s; background:var(--bg-card); }
+    .cand-sel-card:hover { border-color:var(--accent); }
+    .cand-sel-card.active { border-color:var(--accent); background:var(--accent-subtle); }
+    .csc-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+    .cand-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.875rem; color:#fff; flex-shrink:0; }
+    .csc-name { font-size:.9375rem; font-weight:600; display:block; }
+    .csc-role { font-size:.78rem; color:var(--text-muted); }
+    .csc-bottom { display:flex; align-items:center; justify-content:space-between; margin-top:8px; }
+    .csc-fit { font-size:.8125rem; font-weight:700; color:var(--accent); }
+    .csc-status { font-size:.7rem; padding:2px 7px; border-radius:4px; font-weight:600; }
+    .csc-status.ready { background:#dcfce7; color:#166534; }
+    .csc-status.gen { background:#fef3c7; color:#92400e; }
+    /* Brief views */
+    .brief-view { display:none; }
+    .brief-view.active { display:block; }
+    /* Brief cover */
+    .cand-brief-cover { border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px; box-shadow:var(--shadow-md); }
+    .cbc-header { background:var(--accent); padding:22px 26px; color:#fff; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+    .cbc-left { display:flex; align-items:center; gap:16px; }
+    .cbc-avatar { width:54px; height:54px; border-radius:50%; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.125rem; color:#fff; flex-shrink:0; border:2px solid rgba(255,255,255,.3); }
+    .cbc-name { font-size:1.25rem; font-weight:700; margin-bottom:3px; }
+    .cbc-role { font-size:.9rem; opacity:.85; }
+    .cbc-exp { font-size:.8125rem; opacity:.75; margin-top:3px; }
+    .cbc-right { text-align:right; flex-shrink:0; }
+    .cbc-int-label { font-size:.68rem; opacity:.65; text-transform:uppercase; letter-spacing:.07em; margin-bottom:4px; }
+    .cbc-int-date { font-size:1rem; font-weight:700; }
+    .cbc-int-sub { font-size:.75rem; opacity:.75; margin-top:2px; }
+    .cbc-meta-strip { background:rgba(255,255,255,.1); display:flex; }
+    .cbc-mc { flex:1; padding:10px 18px; border-right:1px solid rgba(255,255,255,.12); }
+    .cbc-mc:last-child { border-right:none; }
+    .cbc-mc-label { font-size:.68rem; opacity:.65; text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px; }
+    .cbc-mc-val { font-size:.875rem; font-weight:500; }
+    .conf-row { display:flex; align-items:center; gap:6px; }
+    .conf-track { flex:1; height:5px; background:rgba(255,255,255,.25); border-radius:3px; }
+    .conf-fill { height:100%; border-radius:3px; background:rgba(255,255,255,.9); }
+    .conf-pct { font-size:.78rem; font-weight:700; }
+    /* Brief tabs */
+    .brief-tabs-rec { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:20px; overflow-x:auto; }
+    .btr { padding:10px 16px; font-size:.875rem; font-weight:500; cursor:pointer; color:var(--text-muted); border-bottom:2px solid transparent; margin-bottom:-2px; white-space:nowrap; transition:.15s; background:none; border-top:none; border-left:none; border-right:none; }
+    .btr:hover { color:var(--text); }
+    .btr.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+    .btc { display:none; }
+    .btc.active { display:block; }
+    /* Career timeline */
+    .cand-timeline { display:flex; flex-direction:column; }
+    .ct-row { display:grid; grid-template-columns:90px 1fr; }
+    .ct-left { display:flex; flex-direction:column; align-items:center; padding-right:16px; }
+    .ct-year { font-size:.72rem; font-weight:700; color:var(--text-muted); margin-bottom:6px; white-space:nowrap; text-align:center; }
+    .ct-dot { width:10px; height:10px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+    .ct-row.past .ct-dot { background:var(--text-muted-2); }
+    .ct-line { flex:1; width:2px; background:var(--border); margin:2px auto 0; }
+    .ct-row:last-child .ct-line { display:none; }
+    .ct-body { padding:0 0 18px; }
+    .ct-role { font-size:.9375rem; font-weight:600; margin-bottom:2px; }
+    .ct-company { font-size:.8125rem; color:var(--text-muted); margin-bottom:6px; }
+    .ct-signals { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+    .ct-signal { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px; font-size:.72rem; font-weight:500; }
+    .cts-pub { background:var(--accent-subtle); color:var(--accent); }
+    .cts-stat { background:#dcfce7; color:#166534; }
+    .cts-note { background:var(--bg); border:1px solid var(--border); color:var(--text-muted); }
+    /* Skill evidence */
+    .skill-evidence-list { display:flex; flex-direction:column; gap:10px; }
+    .se-card { border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; background:var(--bg-card); }
+    .se-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+    .se-skill-name { font-size:.9375rem; font-weight:600; }
+    .se-strength { display:flex; align-items:center; gap:8px; }
+    .se-bar-track { width:70px; height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+    .se-bar-fill { height:100%; border-radius:3px; }
+    .seb-strong{background:var(--accent)} .seb-med{background:#f59e0b} .seb-low{background:#dc2626}
+    .se-strength-label { font-size:.75rem; font-weight:600; }
+    .se-evidence { font-size:.8125rem; color:var(--text-muted); line-height:1.5; margin-bottom:6px; }
+    .se-sources { display:flex; gap:6px; flex-wrap:wrap; }
+    .se-src { padding:2px 8px; border-radius:4px; font-size:.72rem; background:var(--bg); border:1px solid var(--border); color:var(--text-muted); }
+    /* Conversation guide */
+    .conv-section { margin-bottom:20px; }
+    .conv-section-label { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); margin-bottom:10px; }
+    .conv-q { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; background:var(--bg); border-radius:var(--radius); margin-bottom:8px; border:1px solid var(--border); }
+    .conv-q-num { width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:.75rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+    .conv-q-body strong { display:block; font-size:.875rem; margin-bottom:3px; }
+    .conv-q-body span { font-size:.8125rem; color:var(--text-muted); line-height:1.45; }
+    .listen-for { padding:12px 16px; background:var(--accent-subtle); border-radius:var(--radius); border-left:3px solid var(--accent); font-size:.875rem; margin-bottom:8px; }
+    .listen-for strong { display:block; color:var(--accent); margin-bottom:4px; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; }
+    .redflag-item { display:flex; align-items:flex-start; gap:8px; padding:10px 14px; background:#fee2e2; border:1px solid #fca5a5; border-radius:var(--radius); margin-bottom:6px; font-size:.8125rem; line-height:1.45; }
+    /* Verification flags */
+    .verif-flag { display:flex; align-items:flex-start; gap:12px; padding:12px 16px; border-radius:var(--radius); margin-bottom:8px; }
+    .verif-flag.warn { background:#fef3c7; border:1px solid #fde68a; }
+    .verif-flag.ok { background:#dcfce7; border:1px solid #86efac; }
+    .verif-flag.critical { background:#fee2e2; border:1px solid #fca5a5; }
+    .vf-sev { font-size:.68rem; font-weight:700; text-transform:uppercase; padding:2px 6px; border-radius:3px; flex-shrink:0; margin-top:2px; }
+    .vf-sev.warn{background:#f59e0b;color:#fff} .vf-sev.ok{background:#16a34a;color:#fff} .vf-sev.critical{background:#dc2626;color:#fff}
+    .vf-body strong { display:block; font-size:.875rem; margin-bottom:3px; }
+    .vf-body span { font-size:.8125rem; color:var(--text-muted); line-height:1.45; }
+    /* Motivation signals */
+    .motiv-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:600px){ .motiv-grid { grid-template-columns:1fr; } }
+    .motiv-card { padding:14px 16px; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); }
+    .motiv-card h5 { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin:0 0 8px; }
+    .motiv-signal-label { font-size:.875rem; font-weight:600; margin-bottom:6px; }
+    .motiv-track { height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:4px; }
+    .motiv-fill { height:100%; border-radius:3px; background:var(--accent); }
+    .motiv-evidence { font-size:.78rem; color:var(--text-muted); line-height:1.45; }
+    /* Debrief area */
+    .debrief-area { border:1px dashed var(--border); border-radius:var(--radius-lg); padding:18px; margin-top:20px; background:var(--bg); }
+    .debrief-area h5 { margin:0 0 10px; font-size:.9375rem; }
+    .debrief-area textarea { width:100%; min-height:80px; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius); font-family:inherit; font-size:.875rem; resize:vertical; box-sizing:border-box; margin-bottom:10px; }
+    .debrief-area textarea:focus { outline:none; border-color:var(--accent); }
+
+    /* ══ Briefs — Org → Position → Candidate hierarchy ══ */
+    .brief-layout { display:grid; grid-template-columns:320px 1fr; gap:24px; min-height:420px; }
+    @media(max-width:900px){ .brief-layout { grid-template-columns:1fr; } }
+    .brief-nav { border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--bg-card); overflow:hidden; }
+    .brief-nav-section { padding:14px 16px; border-bottom:1px solid var(--border); }
+    .brief-nav-section:last-child { border-bottom:none; }
+    .brief-nav-title { font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); margin-bottom:10px; }
+    .brief-pos-list { display:flex; flex-direction:column; gap:4px; }
+    .brief-pos-item { padding:10px 14px; border-radius:var(--radius); cursor:pointer; transition:.15s; font-size:.875rem; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .brief-pos-item:hover { background:var(--bg); }
+    .brief-pos-item.active { background:var(--accent-subtle); color:var(--accent); font-weight:600; }
+    .brief-pos-name { flex:1; }
+    .brief-pos-count { font-size:.75rem; color:var(--text-muted); font-weight:normal; }
+    .brief-cand-list { display:flex; flex-direction:column; gap:6px; max-height:320px; overflow-y:auto; }
+    .brief-cand-row { display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-card); cursor:pointer; transition:.15s; flex-wrap:wrap; }
+    .brief-cand-row:hover { border-color:var(--accent); background:var(--accent-subtle); }
+    .brief-cand-row.selected { border-color:var(--accent); background:var(--accent-subtle); box-shadow:0 0 0 2px rgba(109,40,217,.2); }
+    .brief-cand-row.rejected { opacity:.6; }
+    .brief-cand-row.shortlisted { border-color:#16a34a; background:#f0fdf4; }
+    .bcr-avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8125rem; color:#fff; flex-shrink:0; }
+    .bcr-main { flex:1; min-width:0; }
+    .bcr-name { font-size:.9375rem; font-weight:600; display:block; }
+    .bcr-meta { font-size:.75rem; color:var(--text-muted); margin-top:2px; }
+    .bcr-badges { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .cand-source-badge { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:3px 8px; border-radius:4px; }
+    .cand-source-badge.applied { background:#dbeafe; color:#1d4ed8; }
+    .cand-source-badge.agent { background:var(--accent-subtle); color:var(--accent); }
+    .bcr-match { font-size:.8125rem; font-weight:700; color:var(--accent); }
+    .bcr-actions { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+    .bcr-actions .btn { font-size:.75rem; padding:5px 10px; }
+    .bcr-actions .btn-shortlist { color:#15803d; border-color:#86efac; }
+    .bcr-actions .btn-shortlist:hover { background:#dcfce7; }
+    .bcr-actions .btn-reject { color:#dc2626; border-color:#fca5a5; }
+    .bcr-actions .btn-reject:hover { background:#fee2e2; }
+    .brief-detail-pane { border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--bg-card); overflow:hidden; min-height:360px; }
+    .brief-detail-pane.empty { display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:.9375rem; padding:40px; text-align:center; }
+    /* Outreach / Scheduler / Offers: org → position → actions */
+    .pos-group { margin-bottom: 28px; }
+    .pos-group:last-child { margin-bottom: 0; }
+    .pos-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; padding: 14px 18px; background: var(--bg); border-radius: var(--radius-lg); border: 1px solid var(--border); }
+    .pos-header-logo { width: 40px; height: 40px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; color: var(--accent); }
+    .pos-header-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .pos-header-meta { font-size: .8125rem; color: var(--text-muted); }
+    .outreach-draft-list { display: flex; flex-direction: column; gap: 14px; }
+    .outreach-draft-item { padding: 14px 18px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); }
+    .outreach-draft-item strong { display: block; margin-bottom: 6px; }
+    .outreach-draft-actions { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+  </style>
 </head>
 <body>
   <div class="app-shell">
@@ -29,49 +349,136 @@
       <div id="panel-pipeline" class="panel active">
         <div class="app-header">
           <h1>Pipeline</h1>
-          <p>TalentAgent™ overview. All stages respect the Human Handoff Protocol.</p>
+          <p>View pipeline by organization. Select a company to see requisitions and candidate flow. All stages respect the Human Handoff Protocol.</p>
         </div>
         <div class="stats-row">
+          <div class="stat-card"><div class="value">3</div><div class="label">Organizations</div></div>
           <div class="stat-card"><div class="value">12</div><div class="label">Active requisitions</div></div>
           <div class="stat-card"><div class="value">47</div><div class="label">Candidates in pipeline</div></div>
-          <div class="stat-card"><div class="value">26</div><div class="label">Avg. days to first interview</div></div>
           <div class="stat-card"><div class="value">3</div><div class="label">Awaiting your approval</div></div>
         </div>
-        <div class="card">
-          <h2>Pipeline by stage</h2>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Requisition</th><th>Sourced</th><th>Shortlist</th><th>Outreach sent</th><th>Interview scheduled</th><th>Offer</th><th>Agent status</th></tr></thead>
-              <tbody>
-                <tr>
-                  <td>Senior ML Engineer — London</td>
-                  <td>24</td>
-                  <td>5</td>
-                  <td>3</td>
-                  <td>2</td>
-                  <td>—</td>
-                  <td><span class="agent-status">RadarAgent active</span></td>
-                </tr>
-                <tr>
-                  <td>Product Manager — Remote</td>
-                  <td>18</td>
-                  <td>4</td>
-                  <td>4</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td><span class="badge badge-amber">Your approval: shortlist</span></td>
-                </tr>
-                <tr>
-                  <td>Frontend Engineer — Berlin</td>
-                  <td>31</td>
-                  <td>6</td>
-                  <td>5</td>
-                  <td>3</td>
-                  <td>—</td>
-                  <td><span class="agent-status">SchedulerAgent active</span></td>
-                </tr>
-              </tbody>
-            </table>
+
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view its pipeline by stage.</p>
+        <div class="org-cards" id="pipeline-org-cards">
+          <div class="org-card active" onclick="selectPipelineOrg('techcorp')" id="pipeline-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">req</span></span>
+              <span class="ocs"><span class="ocs-num">24</span><span class="ocs-lbl">sourced</span></span>
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">interview</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectPipelineOrg('buildco')" id="pipeline-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">req</span></span>
+              <span class="ocs"><span class="ocs-num">18</span><span class="ocs-lbl">sourced</span></span>
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">offer</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectPipelineOrg('scaleup')" id="pipeline-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">req</span></span>
+              <span class="ocs"><span class="ocs-num">31</span><span class="ocs-lbl">sourced</span></span>
+              <span class="ocs"><span class="ocs-num">3</span><span class="ocs-lbl">interview</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pipeline detail: TechCorp -->
+        <div class="org-detail open" id="pipeline-detail-techcorp">
+          <div class="org-detail-header">
+            <span class="org-detail-title">TechCorp — Pipeline by stage</span>
+            <span class="org-detail-sub">1 requisition · RadarAgent active</span>
+          </div>
+          <div class="card org-pipeline-table">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Requisition</th><th>Sourced</th><th>Shortlist</th><th>Outreach sent</th><th>Interview scheduled</th><th>Offer</th><th>Agent status</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Senior ML Engineer — London</td>
+                    <td>24</td>
+                    <td>5</td>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>—</td>
+                    <td><span class="agent-status">RadarAgent active</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pipeline detail: BuildCo -->
+        <div class="org-detail" id="pipeline-detail-buildco">
+          <div class="org-detail-header">
+            <span class="org-detail-title">BuildCo — Pipeline by stage</span>
+            <span class="org-detail-sub">1 requisition · Your approval: shortlist</span>
+          </div>
+          <div class="card org-pipeline-table">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Requisition</th><th>Sourced</th><th>Shortlist</th><th>Outreach sent</th><th>Interview scheduled</th><th>Offer</th><th>Agent status</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Product Manager — Remote</td>
+                    <td>18</td>
+                    <td>4</td>
+                    <td>4</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td><span class="badge badge-amber">Your approval: shortlist</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pipeline detail: ScaleUp -->
+        <div class="org-detail" id="pipeline-detail-scaleup">
+          <div class="org-detail-header">
+            <span class="org-detail-title">ScaleUp — Pipeline by stage</span>
+            <span class="org-detail-sub">1 requisition · SchedulerAgent active</span>
+          </div>
+          <div class="card org-pipeline-table">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Requisition</th><th>Sourced</th><th>Shortlist</th><th>Outreach sent</th><th>Interview scheduled</th><th>Offer</th><th>Agent status</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Frontend Engineer — Berlin</td>
+                    <td>31</td>
+                    <td>6</td>
+                    <td>5</td>
+                    <td>3</td>
+                    <td>—</td>
+                    <td><span class="agent-status">SchedulerAgent active</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -80,48 +487,1127 @@
       <div id="panel-requisitions" class="panel">
         <div class="app-header">
           <h1>Requisitions</h1>
-          <p>Requisition Intelligence: JDs, skill mapping, comp benchmarks. Approval workflow before sourcing.</p>
+          <p>View requisitions by organization. Select a company to see JDs, health scores, and pipeline. TalentAgent™ analyzes each JD for skill clarity, comp competitiveness, and market supply.</p>
         </div>
-        <div class="card">
-          <h2>Open requisitions</h2>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Role</th><th>Location</th><th>Comp band</th><th>Health score</th><th>Status</th></tr></thead>
-              <tbody>
-                <tr><td>Senior ML Engineer</td><td>London</td><td>£100K–£130K</td><td><span class="badge badge-green">Good</span></td><td>Sourcing</td></tr>
-                <tr><td>Product Manager</td><td>Remote</td><td>€80K–€100K</td><td><span class="badge badge-amber">Review comp</span></td><td>Shortlist pending</td></tr>
-                <tr><td>Frontend Engineer</td><td>Berlin</td><td>€65K–€85K</td><td><span class="badge badge-green">Good</span></td><td>Interview stage</td></tr>
-              </tbody>
-            </table>
+
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">3</div><div class="label">Organizations</div></div>
+          <div class="stat-card"><div class="value">12</div><div class="label">Open requisitions</div></div>
+          <div class="stat-card"><div class="value">3</div><div class="label">Awaiting your approval</div></div>
+          <div class="stat-card"><div class="value" style="color:#dc2626">2</div><div class="label">Comp mismatches flagged</div></div>
+        </div>
+
+        <div class="req-action-bar">
+          <button class="btn btn-primary" style="font-size:.875rem">+ New requisition</button>
+          <div class="req-filter-chips">
+            <span class="rfc active" onclick="filterReq(this,'all')">All (12)</span>
+            <span class="rfc" onclick="filterReq(this,'active')">Active (9)</span>
+            <span class="rfc" onclick="filterReq(this,'pending')">Pending approval (3)</span>
+            <span class="rfc" onclick="filterReq(this,'paused')">Paused (0)</span>
           </div>
-          <p class="text-muted mt-2">Requisition health: TalentAgent™ flags mismatches between seniority and comp; suggests adjustments from market supply.</p>
         </div>
-      </div>
+
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view its requisitions.</p>
+        <div class="org-cards" id="req-org-cards">
+          <div class="org-card active" onclick="selectReqsOrg('techcorp')" id="req-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">open req</span></span>
+              <span class="ocs"><span class="ocs-num">86</span><span class="ocs-lbl">health</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectReqsOrg('buildco')" id="req-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">open req</span></span>
+              <span class="ocs" style="color:#f59e0b"><span class="ocs-num">62</span><span class="ocs-lbl">health</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectReqsOrg('scaleup')" id="req-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">open req</span></span>
+              <span class="ocs"><span class="ocs-num">91</span><span class="ocs-lbl">health</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TechCorp requisitions -->
+        <div class="org-detail open" id="req-detail-techcorp">
+          <div class="org-req-header">
+            <div class="org-req-logo">TC</div>
+            <div class="org-req-info">
+              <div class="org-req-org-name">TechCorp</div>
+              <div class="org-req-org-meta">London, UK · 1 open requisition</div>
+              <div class="org-req-summary"><span>Avg health 86</span><span><strong>RadarAgent</strong> active</span></div>
+            </div>
+          </div>
+          <div class="org-req-cards req-cards">
+
+          <!-- Req 1 — Senior ML Engineer (TechCorp) -->
+          <div class="req-card">
+            <div class="req-card-main">
+              <div class="req-card-header">
+                <div class="rch-left">
+                  <div class="req-card-title">Senior ML Engineer</div>
+                  <div class="req-card-meta">
+                    <span>📍 London, UK</span>
+                    <span style="color:var(--border)">|</span>
+                    <span>Engineering · AI/ML</span>
+                    <span style="color:var(--border)">|</span>
+                    <span class="badge badge-blue">Sourcing</span>
+                  </div>
+                </div>
+                <div class="rch-right">
+                  <div class="req-comp-band">£100K – £130K</div>
+                  <div class="req-open-days">Open 14 days</div>
+                </div>
+              </div>
+
+              <!-- Health -->
+              <div class="req-health">
+                <div class="rh-header">
+                  <span class="rh-title">Requisition health</span>
+                  <span class="rh-overall" style="color:#16a34a">86 / 100 · Good</span>
+                </div>
+                <div class="rh-dims">
+                  <div>
+                    <div class="rh-dim-name">Comp vs market</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:85%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">85%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">JD clarity</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:90%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">90%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">Skills clarity</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:80%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">80%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">Market supply</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-med" style="width:60%"></div></div>
+                    <div class="rh-dim-val" style="color:#f59e0b">60%</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pipeline -->
+              <div class="req-pipeline">
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">24</div>
+                  <div class="rp-label">Sourced</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-active"></div>
+                  <div class="rp-count">5</div>
+                  <div class="rp-label">Shortlist</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">3</div>
+                  <div class="rp-label">Outreach</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">2</div>
+                  <div class="rp-label">Interview</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-empty"></div>
+                  <div class="rp-count" style="color:var(--text-muted)">—</div>
+                  <div class="rp-label">Offer</div>
+                </div>
+              </div>
+            </div>
+            <div class="req-card-footer">
+              <div class="rcf-left">
+                <span class="agent-status">RadarAgent active · 3 new profiles found</span>
+              </div>
+              <div class="rcf-right">
+                <button class="btn" onclick="toggleReqDetail('req1')">View intelligence ↓</button>
+                <button class="btn btn-primary">Manage pipeline</button>
+              </div>
+            </div>
+
+            <!-- Expandable detail -->
+            <div class="req-detail" id="req1">
+              <div class="req-detail-grid">
+                <div class="rdg-section">
+                  <h5>JD intelligence · Skill taxonomy</h5>
+                  <div style="margin-bottom:6px;font-size:.78rem;color:var(--text-muted)">Required skills</div>
+                  <div class="skill-tag-row">
+                    <span class="skill-tag required">PyTorch</span>
+                    <span class="skill-tag required">MLOps</span>
+                    <span class="skill-tag required">LLM fine-tuning</span>
+                    <span class="skill-tag required">Python</span>
+                    <span class="skill-tag required">Distributed training</span>
+                  </div>
+                  <div style="margin-bottom:6px;font-size:.78rem;color:var(--text-muted)">Preferred skills</div>
+                  <div class="skill-tag-row">
+                    <span class="skill-tag preferred">Kubernetes</span>
+                    <span class="skill-tag preferred">Rust</span>
+                    <span class="skill-tag preferred">RAG architectures</span>
+                  </div>
+                  <div class="req-flag good" style="margin-top:4px">
+                    <span class="req-flag-icon">✓</span>
+                    JD is well-structured; seniority level (IC4) aligns with required experience.
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>Comp benchmark · London market</h5>
+                  <div class="rct-wrap">
+                    <div class="rct-track">
+                      <div class="rct-fill" style="width:85%"></div>
+                      <!-- Floor -->
+                      <div class="rct-marker rct-med" style="left:10%">
+                        <div class="rct-top">Floor</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">£85K</div>
+                      </div>
+                      <!-- Our band min -->
+                      <div class="rct-marker rct-our" style="left:42%">
+                        <div class="rct-top">Our min</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">£100K</div>
+                      </div>
+                      <!-- Market median -->
+                      <div class="rct-marker rct-med" style="left:60%">
+                        <div class="rct-top">Median</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">£112K</div>
+                      </div>
+                      <!-- Our band max -->
+                      <div class="rct-marker rct-our" style="left:80%">
+                        <div class="rct-top">Our max</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">£130K</div>
+                      </div>
+                      <!-- P75 -->
+                      <div class="rct-marker rct-top75" style="left:92%">
+                        <div class="rct-top">P75</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">£138K</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="req-flag good">
+                    <span class="req-flag-icon">✓</span>
+                    Band covers median and reaches P66. Competitive for top candidates.
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>Market supply intelligence</h5>
+                  <div class="supply-stats">
+                    <div class="supply-stat"><div class="ss-num">218</div><div class="ss-lbl">Matching profiles in London</div></div>
+                    <div class="supply-stat"><div class="ss-num">41</div><div class="ss-lbl">Open to opportunities</div></div>
+                    <div class="supply-stat"><div class="ss-num">6</div><div class="ss-lbl">LLM fine-tuning specialists</div></div>
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>TalentAgent™ recommendations</h5>
+                  <ul class="rec-list">
+                    <li>Add "LLM evaluation frameworks" to preferred — 28% of top candidates list it</li>
+                    <li>Mention on-site GPU compute access — high signal for ML candidates</li>
+                    <li>Market supply for LLM specialists is tight; extend outreach to Dublin + Amsterdam</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div>
+        </div>
+
+        <!-- BuildCo requisitions -->
+        <div class="org-detail" id="req-detail-buildco">
+          <div class="org-req-header">
+            <div class="org-req-logo">BC</div>
+            <div class="org-req-info">
+              <div class="org-req-org-name">BuildCo</div>
+              <div class="org-req-org-meta">Remote (EU) · 1 open requisition</div>
+              <div class="org-req-summary"><span>Avg health 62</span><span><strong>Approval needed</strong> shortlist</span></div>
+            </div>
+          </div>
+          <div class="org-req-cards req-cards">
+
+          <!-- Req 2 — Product Manager (BuildCo) -->
+          <div class="req-card" style="border-color:#fde68a">
+            <div class="req-card-main">
+              <div class="req-card-header">
+                <div class="rch-left">
+                  <div class="req-card-title">Product Manager</div>
+                  <div class="req-card-meta">
+                    <span>📍 Remote (EU)</span>
+                    <span style="color:var(--border)">|</span>
+                    <span>Product</span>
+                    <span style="color:var(--border)">|</span>
+                    <span class="badge badge-amber">⚠ Approval needed: shortlist</span>
+                  </div>
+                </div>
+                <div class="rch-right">
+                  <div class="req-comp-band">€80K – €100K</div>
+                  <div class="req-open-days">Open 22 days</div>
+                </div>
+              </div>
+
+              <!-- Health -->
+              <div class="req-health">
+                <div class="rh-header">
+                  <span class="rh-title">Requisition health</span>
+                  <span class="rh-overall" style="color:#f59e0b">62 / 100 · Needs attention</span>
+                </div>
+                <div class="rh-dims">
+                  <div>
+                    <div class="rh-dim-name">Comp vs market</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-low" style="width:42%"></div></div>
+                    <div class="rh-dim-val" style="color:#dc2626">42%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">JD clarity</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:75%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">75%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">Skills clarity</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-med" style="width:68%"></div></div>
+                    <div class="rh-dim-val" style="color:#f59e0b">68%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">Market supply</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:88%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">88%</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pipeline -->
+              <div class="req-pipeline">
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">18</div>
+                  <div class="rp-label">Sourced</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-active"></div>
+                  <div class="rp-count">4</div>
+                  <div class="rp-label">Shortlist</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">4</div>
+                  <div class="rp-label">Outreach</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">1</div>
+                  <div class="rp-label">Interview</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">1</div>
+                  <div class="rp-label">Offer</div>
+                </div>
+              </div>
+            </div>
+            <div class="req-card-footer" style="background:#fef3c7">
+              <div class="rcf-left">
+                <span style="font-size:.8125rem;color:#92400e;font-weight:600">⚠ TalentAgent flagged comp below market median — review before approving shortlist</span>
+              </div>
+              <div class="rcf-right">
+                <button class="btn" onclick="toggleReqDetail('req2')">View intelligence ↓</button>
+                <button class="btn" style="border-color:#f59e0b">Edit comp band</button>
+                <button class="btn btn-primary">Approve shortlist (4)</button>
+              </div>
+            </div>
+
+            <!-- Expandable detail -->
+            <div class="req-detail" id="req2">
+              <div class="req-detail-grid">
+                <div class="rdg-section">
+                  <h5>JD intelligence · Skill taxonomy</h5>
+                  <div style="margin-bottom:6px;font-size:.78rem;color:var(--text-muted)">Required skills</div>
+                  <div class="skill-tag-row">
+                    <span class="skill-tag required">Product discovery</span>
+                    <span class="skill-tag required">Roadmapping</span>
+                    <span class="skill-tag required">Stakeholder mgmt</span>
+                    <span class="skill-tag required">Data analysis</span>
+                  </div>
+                  <div style="margin-bottom:6px;font-size:.78rem;color:var(--text-muted)">Preferred skills</div>
+                  <div class="skill-tag-row">
+                    <span class="skill-tag preferred">B2B SaaS experience</span>
+                    <span class="skill-tag preferred">SQL</span>
+                    <span class="skill-tag preferred">Figma</span>
+                  </div>
+                  <div class="req-flag warn">
+                    <span class="req-flag-icon">⚠</span>
+                    JD uses vague language: "drive growth" — TalentAgent suggests quantifying scope (team size, ARR, user base).
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>Comp benchmark · Remote EU market</h5>
+                  <div class="rct-wrap">
+                    <div class="rct-track">
+                      <div class="rct-fill" style="width:70%"></div>
+                      <div class="rct-marker rct-med" style="left:10%">
+                        <div class="rct-top">Floor</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€72K</div>
+                      </div>
+                      <div class="rct-marker rct-our" style="left:28%">
+                        <div class="rct-top">Our min</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€80K</div>
+                      </div>
+                      <div class="rct-marker rct-med" style="left:60%">
+                        <div class="rct-top">Median</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€108K</div>
+                      </div>
+                      <div class="rct-marker rct-our" style="left:42%">
+                        <div class="rct-top">Our max</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€100K</div>
+                      </div>
+                      <div class="rct-marker rct-top75" style="left:80%">
+                        <div class="rct-top">P75</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€125K</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="req-flag warn">
+                    <span class="req-flag-icon">⚠</span>
+                    Current band tops out at €100K — 7% below market median (€108K). Top candidates are unlikely to accept.
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>Market supply intelligence</h5>
+                  <div class="supply-stats">
+                    <div class="supply-stat"><div class="ss-num">1,420</div><div class="ss-lbl">EU remote-eligible PMs</div></div>
+                    <div class="supply-stat"><div class="ss-num">312</div><div class="ss-lbl">Open to opportunities</div></div>
+                    <div class="supply-stat"><div class="ss-num">87</div><div class="ss-lbl">B2B SaaS specialists</div></div>
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>TalentAgent™ recommendations</h5>
+                  <ul class="rec-list">
+                    <li><strong>Increase band to €85K–€115K</strong> to reach median and attract top-tier candidates</li>
+                    <li>Add "product operations" and "PLG metrics" to preferred — trending in this segment</li>
+                    <li>Specify time zone overlap expectations — reduces drop-off from EU candidates</li>
+                    <li>Consider adding equity component — strong signal for senior PM candidates</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div>
+        </div>
+
+        <!-- ScaleUp requisitions -->
+        <div class="org-detail" id="req-detail-scaleup">
+          <div class="org-req-header">
+            <div class="org-req-logo">SU</div>
+            <div class="org-req-info">
+              <div class="org-req-org-name">ScaleUp</div>
+              <div class="org-req-org-meta">Berlin, Germany · 1 open requisition</div>
+              <div class="org-req-summary"><span>Avg health 91</span><span><strong>SchedulerAgent</strong> active</span></div>
+            </div>
+          </div>
+          <div class="org-req-cards req-cards">
+
+          <!-- Req 3 — Frontend Engineer (ScaleUp) -->
+          <div class="req-card">
+            <div class="req-card-main">
+              <div class="req-card-header">
+                <div class="rch-left">
+                  <div class="req-card-title">Frontend Engineer</div>
+                  <div class="req-card-meta">
+                    <span>📍 Berlin, Germany</span>
+                    <span style="color:var(--border)">|</span>
+                    <span>Engineering · Web</span>
+                    <span style="color:var(--border)">|</span>
+                    <span class="badge badge-green">Interview stage</span>
+                  </div>
+                </div>
+                <div class="rch-right">
+                  <div class="req-comp-band">€65K – €85K</div>
+                  <div class="req-open-days">Open 31 days</div>
+                </div>
+              </div>
+
+              <!-- Health -->
+              <div class="req-health">
+                <div class="rh-header">
+                  <span class="rh-title">Requisition health</span>
+                  <span class="rh-overall" style="color:#16a34a">91 / 100 · Excellent</span>
+                </div>
+                <div class="rh-dims">
+                  <div>
+                    <div class="rh-dim-name">Comp vs market</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:88%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">88%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">JD clarity</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:95%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">95%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">Skills clarity</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:92%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">92%</div>
+                  </div>
+                  <div>
+                    <div class="rh-dim-name">Market supply</div>
+                    <div class="rh-dim-track"><div class="rh-dim-fill rhf-good" style="width:82%"></div></div>
+                    <div class="rh-dim-val" style="color:#16a34a">82%</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pipeline -->
+              <div class="req-pipeline">
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">31</div>
+                  <div class="rp-label">Sourced</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">6</div>
+                  <div class="rp-label">Shortlist</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-filled"></div>
+                  <div class="rp-count">5</div>
+                  <div class="rp-label">Outreach</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-active"></div>
+                  <div class="rp-count">3</div>
+                  <div class="rp-label">Interview</div>
+                </div>
+                <div class="rp-stage">
+                  <div class="rp-bar rps-empty"></div>
+                  <div class="rp-count" style="color:var(--text-muted)">—</div>
+                  <div class="rp-label">Offer</div>
+                </div>
+              </div>
+            </div>
+            <div class="req-card-footer">
+              <div class="rcf-left">
+                <span class="agent-status">SchedulerAgent active · 3 interviews this week</span>
+              </div>
+              <div class="rcf-right">
+                <button class="btn" onclick="toggleReqDetail('req3')">View intelligence ↓</button>
+                <button class="btn btn-primary">View interviews</button>
+              </div>
+            </div>
+
+            <!-- Expandable detail -->
+            <div class="req-detail" id="req3">
+              <div class="req-detail-grid">
+                <div class="rdg-section">
+                  <h5>JD intelligence · Skill taxonomy</h5>
+                  <div style="margin-bottom:6px;font-size:.78rem;color:var(--text-muted)">Required skills</div>
+                  <div class="skill-tag-row">
+                    <span class="skill-tag required">React</span>
+                    <span class="skill-tag required">TypeScript</span>
+                    <span class="skill-tag required">CSS architecture</span>
+                    <span class="skill-tag required">Performance optimization</span>
+                  </div>
+                  <div style="margin-bottom:6px;font-size:.78rem;color:var(--text-muted)">Preferred skills</div>
+                  <div class="skill-tag-row">
+                    <span class="skill-tag preferred">Next.js</span>
+                    <span class="skill-tag preferred">GraphQL</span>
+                    <span class="skill-tag preferred">Storybook</span>
+                    <span class="skill-tag preferred">Testing (Vitest)</span>
+                  </div>
+                  <div class="req-flag good">
+                    <span class="req-flag-icon">✓</span>
+                    JD is highly specific with clear seniority signals. Strong candidate conversion expected.
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>Comp benchmark · Berlin market</h5>
+                  <div class="rct-wrap">
+                    <div class="rct-track">
+                      <div class="rct-fill" style="width:88%"></div>
+                      <div class="rct-marker rct-med" style="left:8%">
+                        <div class="rct-top">Floor</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€58K</div>
+                      </div>
+                      <div class="rct-marker rct-our" style="left:35%">
+                        <div class="rct-top">Our min</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€65K</div>
+                      </div>
+                      <div class="rct-marker rct-med" style="left:55%">
+                        <div class="rct-top">Median</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€76K</div>
+                      </div>
+                      <div class="rct-marker rct-our" style="left:75%">
+                        <div class="rct-top">Our max</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€85K</div>
+                      </div>
+                      <div class="rct-marker rct-top75" style="left:88%">
+                        <div class="rct-top">P75</div>
+                        <div class="rct-dot"></div>
+                        <div class="rct-bot">€92K</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="req-flag good">
+                    <span class="req-flag-icon">✓</span>
+                    Band spans floor to P68. Well-positioned; max €85K allows flexibility for strong candidates.
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>Market supply intelligence</h5>
+                  <div class="supply-stats">
+                    <div class="supply-stat"><div class="ss-num">543</div><div class="ss-lbl">React/TS engineers in Berlin</div></div>
+                    <div class="supply-stat"><div class="ss-num">118</div><div class="ss-lbl">Open to opportunities</div></div>
+                    <div class="supply-stat"><div class="ss-num">31</div><div class="ss-lbl">With performance specialization</div></div>
+                  </div>
+                </div>
+
+                <div class="rdg-section">
+                  <h5>TalentAgent™ recommendations</h5>
+                  <ul class="rec-list">
+                    <li>Shortlist is strong — 3 candidates in interview stage match 90%+ of requirements</li>
+                    <li>Brief scheduled for all 3 interviewers via SchedulerAgent</li>
+                    <li>Consider adding Vitest or Playwright to required — growing signal among senior FE candidates in Berlin</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          </div>
+        </div>
+
+        </div>
 
       <!-- Candidate Intelligence Briefs -->
       <div id="panel-briefs" class="panel">
         <div class="app-header">
-          <h1>Candidate Intelligence Brief™</h1>
-          <p>IntelligenceAgent synthesis: career narrative, skills evidence, motivations, conversation angles. Dummy example below.</p>
+          <h1>Candidate Intelligence Brief&#x2122;</h1>
+          <p>Browse by organization and position. View briefs, shortlist or reject candidates. Applied = candidate applied to the role; Agent match = sourced by TalentAgent™.</p>
         </div>
-        <div class="card">
-          <h2>Sample brief — Priya M.</h2>
-          <p class="text-muted mb-0">Candidate for Product Manager — Remote. Brief generated by IntelligenceAgent (dummy).</p>
-          <div class="brief-block mt-2">
-            <strong>Career narrative</strong><br>
-            <span class="muted">4 years in product; moved from analytics into PM at current company. Public posts emphasise “owning the full lifecycle” and “data-driven prioritisation”. Likely motivated by ownership and impact, not just title.</span>
+
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization, then a position, then a candidate to view the intelligence brief.</p>
+        <div class="org-cards" id="brief-org-cards">
+          <div class="org-card" onclick="selectBriefOrg('techcorp')" id="brief-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">candidates</span></span>
+            </div>
           </div>
-          <div class="brief-block">
-            <strong>Skills evidence</strong><br>
-            <span class="muted">Product discovery — mentioned in 3 LinkedIn posts + current JD. Roadmapping — Notion template shared on Twitter. SQL — listed on profile; no public certs; worth verifying in interview.</span>
+          <div class="org-card active" onclick="selectBriefOrg('buildco')" id="brief-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">candidates</span></span>
+            </div>
           </div>
-          <div class="brief-block">
-            <strong>Conversation recommendations</strong><br>
-            <span class="muted">1) Lead with scope of the product area and decision rights. 2) Ask about a time she had to say no to a stakeholder. 3) Clarify remote cadence and team overlap expectations.</span>
+          <div class="org-card" onclick="selectBriefOrg('scaleup')" id="brief-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">candidates</span></span>
+            </div>
           </div>
-          <div class="brief-block">
-            <strong>Verification flags</strong><br>
-            <span class="muted">Tenure at current role 18 months — explore whether she’s open to move or only testing the market. No gap between roles; education dates align.</span>
+        </div>
+
+        <div class="brief-layout">
+          <div class="brief-nav">
+            <!-- TechCorp: position + candidates -->
+            <div class="brief-nav-org" id="brief-nav-techcorp" style="display:none">
+              <div class="brief-nav-section">
+                <div class="brief-nav-title">Position</div>
+                <div class="brief-pos-list">
+                  <div class="brief-pos-item active"><span class="brief-pos-name">Senior ML Engineer &#x2014; London</span><span class="brief-pos-count">2</span></div>
+                </div>
+              </div>
+              <div class="brief-nav-section">
+                <div class="brief-nav-title">Candidates</div>
+                <div class="brief-cand-list">
+                  <div class="brief-cand-row" id="brief-cand-sam" onclick="showBriefView('sam')" data-cand="sam">
+                    <div class="bcr-avatar" style="background:#0891b2">ST</div>
+                    <div class="bcr-main">
+                      <span class="bcr-name">Sam T.</span>
+                      <span class="bcr-meta">Staff ML Engineer, DeepStack AI</span>
+                      <div class="bcr-badges" style="margin-top:6px">
+                        <span class="cand-source-badge agent">Agent match</span>
+                        <span class="bcr-match">88% match</span>
+                        <span class="csc-status ready">Brief ready</span>
+                      </div>
+                    </div>
+                    <div class="bcr-actions" onclick="event.stopPropagation()">
+                      <button type="button" class="btn btn-shortlist" onclick="shortlistCandidate('sam')">Shortlist</button>
+                      <button type="button" class="btn btn-reject" onclick="rejectCandidate('sam')">Reject</button>
+                    </div>
+                  </div>
+                  <div class="brief-cand-row" id="brief-cand-alex" onclick="showBriefView('alex')" data-cand="alex">
+                    <div class="bcr-avatar" style="background:#64748b">AK</div>
+                    <div class="bcr-main">
+                      <span class="bcr-name">Alex K.</span>
+                      <span class="bcr-meta">Senior ML Engineer, 6 yrs</span>
+                      <div class="bcr-badges" style="margin-top:6px">
+                        <span class="cand-source-badge applied">Applied</span>
+                        <span class="bcr-match">85% match</span>
+                        <span class="csc-status ready">Brief ready</span>
+                      </div>
+                    </div>
+                    <div class="bcr-actions" onclick="event.stopPropagation()">
+                      <button type="button" class="btn btn-shortlist" onclick="shortlistCandidate('alex')">Shortlist</button>
+                      <button type="button" class="btn btn-reject" onclick="rejectCandidate('alex')">Reject</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- BuildCo: position + candidates (default) -->
+            <div class="brief-nav-org" id="brief-nav-buildco">
+              <div class="brief-nav-section">
+                <div class="brief-nav-title">Position</div>
+                <div class="brief-pos-list">
+                  <div class="brief-pos-item active"><span class="brief-pos-name">Product Manager &#x2014; Remote</span><span class="brief-pos-count">2</span></div>
+                </div>
+              </div>
+              <div class="brief-nav-section">
+                <div class="brief-nav-title">Candidates</div>
+                <div class="brief-cand-list">
+                  <div class="brief-cand-row shortlisted" id="brief-cand-priya" onclick="showBriefView('priya')" data-cand="priya">
+                    <div class="bcr-avatar" style="background:#7c3aed">PM</div>
+                    <div class="bcr-main">
+                      <span class="bcr-name">Priya M.</span>
+                      <span class="bcr-meta">Senior Associate PM, FinoTech Ltd</span>
+                      <div class="bcr-badges" style="margin-top:6px">
+                        <span class="cand-source-badge applied">Applied</span>
+                        <span class="bcr-match">92% match</span>
+                        <span class="csc-status ready">Brief ready</span>
+                      </div>
+                    </div>
+                    <div class="bcr-actions" onclick="event.stopPropagation()">
+                      <button type="button" class="btn btn-shortlist" disabled title="Shortlisted">Shortlisted</button>
+                      <button type="button" class="btn btn-reject" onclick="rejectCandidate('priya')">Reject</button>
+                    </div>
+                  </div>
+                  <div class="brief-cand-row" id="brief-cand-jordan" onclick="showBriefView('jordan')" data-cand="jordan">
+                    <div class="bcr-avatar" style="background:#b45309">JL</div>
+                    <div class="bcr-main">
+                      <span class="bcr-name">Jordan L.</span>
+                      <span class="bcr-meta">Product Lead, B2B SaaS startup</span>
+                      <div class="bcr-badges" style="margin-top:6px">
+                        <span class="cand-source-badge agent">Agent match</span>
+                        <span class="bcr-match">84% match</span>
+                        <span class="csc-status gen">Generating&hellip;</span>
+                      </div>
+                    </div>
+                    <div class="bcr-actions" onclick="event.stopPropagation()">
+                      <button type="button" class="btn btn-shortlist" onclick="shortlistCandidate('jordan')">Shortlist</button>
+                      <button type="button" class="btn btn-reject" onclick="rejectCandidate('jordan')">Reject</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ScaleUp: position + candidates -->
+            <div class="brief-nav-org" id="brief-nav-scaleup" style="display:none">
+              <div class="brief-nav-section">
+                <div class="brief-nav-title">Position</div>
+                <div class="brief-pos-list">
+                  <div class="brief-pos-item active"><span class="brief-pos-name">Frontend Engineer &#x2014; Berlin</span><span class="brief-pos-count">2</span></div>
+                </div>
+              </div>
+              <div class="brief-nav-section">
+                <div class="brief-nav-title">Candidates</div>
+                <div class="brief-cand-list">
+                  <div class="brief-cand-row" id="brief-cand-morgan" onclick="showBriefView('morgan')" data-cand="morgan">
+                    <div class="bcr-avatar" style="background:#0d9488">MR</div>
+                    <div class="bcr-main">
+                      <span class="bcr-name">Morgan R.</span>
+                      <span class="bcr-meta">Senior Frontend Engineer, 5 yrs</span>
+                      <div class="bcr-badges" style="margin-top:6px">
+                        <span class="cand-source-badge applied">Applied</span>
+                        <span class="bcr-match">89% match</span>
+                        <span class="csc-status ready">Brief ready</span>
+                      </div>
+                    </div>
+                    <div class="bcr-actions" onclick="event.stopPropagation()">
+                      <button type="button" class="btn btn-shortlist" onclick="shortlistCandidate('morgan')">Shortlist</button>
+                      <button type="button" class="btn btn-reject" onclick="rejectCandidate('morgan')">Reject</button>
+                    </div>
+                  </div>
+                  <div class="brief-cand-row" id="brief-cand-casey" onclick="showBriefView('casey')" data-cand="casey">
+                    <div class="bcr-avatar" style="background:#7c3aed">CL</div>
+                    <div class="bcr-main">
+                      <span class="bcr-name">Casey L.</span>
+                      <span class="bcr-meta">Frontend Lead, React specialist</span>
+                      <div class="bcr-badges" style="margin-top:6px">
+                        <span class="cand-source-badge agent">Agent match</span>
+                        <span class="bcr-match">91% match</span>
+                        <span class="csc-status ready">Brief ready</span>
+                      </div>
+                    </div>
+                    <div class="bcr-actions" onclick="event.stopPropagation()">
+                      <button type="button" class="btn btn-shortlist" onclick="shortlistCandidate('casey')">Shortlist</button>
+                      <button type="button" class="btn btn-reject" onclick="rejectCandidate('casey')">Reject</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="brief-detail-pane" id="brief-detail-pane">
+            <!-- Empty state (hidden when a brief is shown) -->
+            <div class="brief-detail-pane empty" id="brief-empty-state">Select a candidate to view their intelligence brief.</div>
+
+        <!-- Brief: Priya M. -->
+        <div class="brief-view active" id="bv-priya">
+          <div class="cand-brief-cover">
+            <div class="cbc-header">
+              <div class="cbc-left">
+                <div class="cbc-avatar">PM</div>
+                <div>
+                  <div class="cbc-name">Priya M.</div>
+                  <div class="cbc-role">Candidate &middot; Product Manager &#x2014; Remote</div>
+                  <div class="cbc-exp">4 yrs experience &middot; Current: Senior Associate PM, FinoTech Ltd</div>
+                </div>
+              </div>
+              <div class="cbc-right">
+                <div class="cbc-int-label">Interview scheduled</div>
+                <div class="cbc-int-date">Wed 20 Mar &middot; 14:00 GMT</div>
+                <div class="cbc-int-sub">via Google Meet &middot; 60 min</div>
+              </div>
+            </div>
+            <div class="cbc-meta-strip">
+              <div class="cbc-mc"><div class="cbc-mc-label">Match score</div><div class="cbc-mc-val" style="font-weight:700">92%</div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Brief confidence</div><div class="cbc-mc-val"><div class="conf-row"><div class="conf-track"><div class="conf-fill" style="width:88%"></div></div><span class="conf-pct">88%</span></div></div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Sources analyzed</div><div class="cbc-mc-val">LinkedIn &middot; GitHub &middot; Twitter &middot; CV &middot; Glassdoor</div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Brief generated</div><div class="cbc-mc-val">2026-03-15 &middot; 08:14 GMT</div></div>
+            </div>
+          </div>
+
+          <div class="brief-tabs-rec">
+            <button class="btr active" onclick="showBriefTab(this,'priya','360')">360&#176; Profile</button>
+            <button class="btr" onclick="showBriefTab(this,'priya','skills')">Skills evidence</button>
+            <button class="btr" onclick="showBriefTab(this,'priya','conv')">Conversation guide</button>
+            <button class="btr" onclick="showBriefTab(this,'priya','verif')">Verification flags</button>
+            <button class="btr" onclick="showBriefTab(this,'priya','motiv')">Motivation signals</button>
+          </div>
+
+          <div class="btc active" id="btc-priya-360">
+            <div style="font-size:.9375rem;color:var(--text-muted);line-height:1.7;margin-bottom:20px;padding:16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)">
+              Priya transitioned from a data analyst role at a logistics firm into PM at FinoTech Ltd 18 months ago, where she now owns the payments product surface. Her public writing consistently emphasizes &ldquo;owning the full lifecycle&rdquo; and &ldquo;data-driven prioritisation&rdquo;. LinkedIn activity increased sharply in the past 3 weeks (4 posts vs. avg 0.8/month), correlating with two VP departures at FinoTech in Feb 2026 &#x2014; suggesting genuine openness to a move.
+            </div>
+            <div class="cand-timeline">
+              <div class="ct-row">
+                <div class="ct-left"><div class="ct-year">2024&#x2013;now</div><div class="ct-dot" style="background:var(--accent)"></div><div class="ct-line"></div></div>
+                <div class="ct-body">
+                  <div class="ct-role">Senior Associate PM &middot; Payments</div>
+                  <div class="ct-company">FinoTech Ltd &middot; London (Remote)</div>
+                  <div style="font-size:.8125rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px">Owns checkout + payments product surface. Launched 3-click checkout. Manages cross-functional squad of 6.</div>
+                  <div class="ct-signals"><span class="ct-signal cts-pub">3 LinkedIn posts on product leadership</span><span class="ct-signal cts-stat">Revenue impact in annual report</span></div>
+                </div>
+              </div>
+              <div class="ct-row past">
+                <div class="ct-left"><div class="ct-year">2022&#x2013;24</div><div class="ct-dot"></div><div class="ct-line"></div></div>
+                <div class="ct-body">
+                  <div class="ct-role">Associate PM &middot; Growth</div>
+                  <div class="ct-company">FinoTech Ltd &middot; London</div>
+                  <div style="font-size:.8125rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px">Internal move from data team. Led growth experiments on referral and onboarding flows. Shared Notion roadmap template publicly (1.2K saves).</div>
+                  <div class="ct-signals"><span class="ct-signal cts-note">Notion template &#x2014; 1.2K saves</span></div>
+                </div>
+              </div>
+              <div class="ct-row past">
+                <div class="ct-left"><div class="ct-year">2020&#x2013;22</div><div class="ct-dot"></div><div class="ct-line"></div></div>
+                <div class="ct-body">
+                  <div class="ct-role">Data Analyst</div>
+                  <div class="ct-company">LogiCore Solutions &middot; London</div>
+                  <div style="font-size:.8125rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px">Built reporting dashboards and supply chain analytics. Left voluntarily for product role.</div>
+                  <div class="ct-signals"><span class="ct-signal cts-pub">LinkedIn post on transition to PM</span></div>
+                </div>
+              </div>
+              <div class="ct-row past">
+                <div class="ct-left"><div class="ct-year">2018&#x2013;20</div><div class="ct-dot"></div></div>
+                <div class="ct-body">
+                  <div class="ct-role">BSc Computer Science</div>
+                  <div class="ct-company">University of Edinburgh</div>
+                  <div style="font-size:.8125rem;color:var(--text-muted)">First-class honours. Dissertation on recommendation systems. 2 hackathon wins (ProductHunt Student 2019, 2020).</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btc" id="btc-priya-skills">
+            <div class="skill-evidence-list">
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">Product discovery &amp; research</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-strong" style="width:90%"></div></div><span class="se-strength-label" style="color:var(--accent)">Strong</span></div></div><div class="se-evidence">Mentioned in 3 LinkedIn posts describing user interview sessions and Jobs-to-be-Done methodology. Current JD lists product discovery under responsibilities.</div><div class="se-sources"><span class="se-src">LinkedIn (3 posts)</span><span class="se-src">Current JD</span><span class="se-src">ProductCon 2025</span></div></div>
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">Roadmapping &amp; prioritisation</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-strong" style="width:85%"></div></div><span class="se-strength-label" style="color:var(--accent)">Strong</span></div></div><div class="se-evidence">Published Notion roadmap template widely shared in PM community (1.2K saves). Posts about RICE scoring and ruthless prioritization.</div><div class="se-sources"><span class="se-src">Notion template (public)</span><span class="se-src">Twitter thread</span></div></div>
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">Stakeholder management</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-med" style="width:65%"></div></div><span class="se-strength-label" style="color:#f59e0b">Medium</span></div></div><div class="se-evidence">Indirect evidence only &#x2014; references to aligning engineering and marketing in one post. No direct evidence of C-suite stakeholder management at scale.</div><div class="se-sources"><span class="se-src">LinkedIn (1 post)</span><span class="se-src">Verify in interview</span></div></div>
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">Data analysis &amp; SQL</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-med" style="width:70%"></div></div><span class="se-strength-label" style="color:#f59e0b">Medium</span></div></div><div class="se-evidence">Listed on LinkedIn profile. Background in analytics role evidences baseline. No public SQL projects or certifications. Verify depth in interview.</div><div class="se-sources"><span class="se-src">LinkedIn profile</span><span class="se-src">Prior role (LogiCore)</span></div></div>
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">Cross-functional team leadership</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-strong" style="width:80%"></div></div><span class="se-strength-label" style="color:var(--accent)">Strong</span></div></div><div class="se-evidence">Currently managing a 6-person cross-functional squad per company announcement. Posts about squad health and enabling teams.</div><div class="se-sources"><span class="se-src">Company blog</span><span class="se-src">LinkedIn (2 posts)</span></div></div>
+            </div>
+          </div>
+
+          <div class="btc" id="btc-priya-conv">
+            <div class="conv-section">
+              <div class="conv-section-label">Opening &#x2014; establish rapport &amp; context</div>
+              <div class="conv-q"><div class="conv-q-num">1</div><div class="conv-q-body"><strong>Tell me about the product surface you own at FinoTech &#x2014; what does owning the full lifecycle look like day-to-day?</strong><span>Her posts use this phrase. Gives space to tell her story authentically while revealing actual depth of ownership.</span></div></div>
+              <div class="conv-q"><div class="conv-q-num">2</div><div class="conv-q-body"><strong>What does the squad you work with look like, and how do you work with engineering on prioritisation?</strong><span>Probes squad leadership evidence and engineering relationship &#x2014; medium-confidence skill area.</span></div></div>
+            </div>
+            <div class="conv-section">
+              <div class="conv-section-label">Deep dives &#x2014; skill probing</div>
+              <div class="conv-q"><div class="conv-q-num">3</div><div class="conv-q-body"><strong>Walk me through a time you had to say no to a stakeholder. How did you frame it, and what happened?</strong><span>Directly tests stakeholder management &#x2014; flagged as medium-confidence from public data alone.</span></div></div>
+              <div class="conv-q"><div class="conv-q-num">4</div><div class="conv-q-body"><strong>How do you decide what to build next? Walk me through your current prioritisation process.</strong><span>She has shared RICE-scoring content publicly. Confirms depth and whether she applies frameworks in practice.</span></div></div>
+              <div class="conv-q"><div class="conv-q-num">5</div><div class="conv-q-body"><strong>Describe the most complex data problem you have solved to drive a product decision.</strong><span>Probes SQL/data skills beyond resume claim. Probe for technical depth.</span></div></div>
+            </div>
+            <div class="conv-section">
+              <div class="conv-section-label">What to listen for</div>
+              <div class="listen-for"><strong>Positive signals</strong> Specific metrics cited (conversion rate %, revenue impact), evidence of cross-team influence without authority, language around user outcomes over feature delivery.</div>
+              <div class="listen-for" style="border-left-color:#f59e0b;background:#fef3c7"><strong style="color:#92400e">Watch for</strong> Generic leadership language without specifics. Overemphasis on delivery over strategy. Reluctance to discuss failures.</div>
+            </div>
+            <div class="conv-section">
+              <div class="conv-section-label">Red flags &#x2014; if observed, probe further</div>
+              <div class="redflag-item">&#x2691; Cannot name a metric tied to her work at FinoTech &#x2014; suggests limited accountability or data access</div>
+              <div class="redflag-item">&#x2691; Mentions org tension or leadership changes at FinoTech &#x2014; may be fleeing, not choosing. Verify: What would make you stay?</div>
+              <div class="redflag-item">&#x2691; Avoids discussing the Notion template depth &#x2014; may be a surface-level artifact, not deep practice</div>
+            </div>
+          </div>
+
+          <div class="btc" id="btc-priya-verif">
+            <div class="verif-flag warn"><span class="vf-sev warn">Review</span><div class="vf-body"><strong>Tenure: 18 months in current role</strong><span>Short tenure for a Senior title &#x2014; ask whether this reflects an accelerated internal promotion or external hire. Explore: is she fully embedded or still ramping?</span></div></div>
+            <div class="verif-flag warn"><span class="vf-sev warn">Review</span><div class="vf-body"><strong>LinkedIn activity spike in past 3 weeks</strong><span>Unusual increase (4 posts vs. 0.8/month avg) correlates with two VP-level departures at FinoTech in Feb 2026. May indicate push rather than pull motivation.</span></div></div>
+            <div class="verif-flag ok"><span class="vf-sev ok">Clear</span><div class="vf-body"><strong>No employment gaps</strong><span>Timeline is continuous from graduation (2020) to present. Education dates align with profile. No unexplained gaps detected across sources.</span></div></div>
+            <div class="verif-flag ok"><span class="vf-sev ok">Clear</span><div class="vf-body"><strong>Education verified</strong><span>University of Edinburgh BSc CS confirmed via alumni directory and LinkedIn. Graduation year consistent across all sources.</span></div></div>
+            <div class="verif-flag warn"><span class="vf-sev warn">Verify</span><div class="vf-body"><strong>SQL proficiency &#x2014; no direct evidence</strong><span>Listed on profile and inferred from analytics role, but no public projects, certificates, or SQL post evidence found. Confirm depth during technical screen.</span></div></div>
+          </div>
+
+          <div class="btc" id="btc-priya-motiv">
+            <div style="font-size:.8125rem;color:var(--text-muted);margin-bottom:16px;padding:10px 14px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)">Motivation signals are inferred by IntelligenceAgent from public posts, writing style, and behavioral patterns. Treat as directional, not definitive.</div>
+            <div class="motiv-grid">
+              <div class="motiv-card"><h5>Autonomy &amp; ownership</h5><div class="motiv-signal-label">Very high signal</div><div class="motiv-track"><div class="motiv-fill" style="width:92%"></div></div><div class="motiv-evidence">Repeated use of owning, full lifecycle, my product in 5+ posts. Chose a smaller fintech over larger Corp offers (inferred from alumni forum, 2022).</div></div>
+              <div class="motiv-card"><h5>Impact &amp; user outcomes</h5><div class="motiv-signal-label">High signal</div><div class="motiv-track"><div class="motiv-fill" style="width:80%"></div></div><div class="motiv-evidence">Consistently frames work in terms of user outcomes rather than features. Does this actually help the user? cited as a decision criterion in a podcast appearance.</div></div>
+              <div class="motiv-card"><h5>Title &amp; prestige</h5><div class="motiv-signal-label">Low signal</div><div class="motiv-track"><div class="motiv-fill" style="width:22%"></div></div><div class="motiv-evidence">No public posts about title or org level. Declined a senior role at a well-known brand in 2023 &#x2014; prioritised product scope over brand.</div></div>
+              <div class="motiv-card"><h5>Compensation</h5><div class="motiv-signal-label">Medium signal</div><div class="motiv-track"><div class="motiv-fill" style="width:55%"></div></div><div class="motiv-evidence">Glassdoor anonymous review (matching role/date) mentions compensation is fair but not market-leading. May be a factor worth exploring sensitively.</div></div>
+            </div>
+          </div>
+
+          <div class="debrief-area">
+            <h5>Post-interview debrief &middot; Priya M.</h5>
+            <p style="font-size:.8125rem;color:var(--text-muted);margin-bottom:10px">Log your impressions after the interview. IntelligenceAgent will update the profile accordingly.</p>
+            <textarea placeholder="Overall impression, standout moments, concerns, skills verified or contradicted..."></textarea>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary">Save debrief</button>
+              <button class="btn">Advance to offer stage</button>
+              <button class="btn" style="color:#dc2626;border-color:#fca5a5">Archive candidate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brief: Sam T. -->
+        <div class="brief-view" id="bv-sam">
+          <div class="cand-brief-cover">
+            <div class="cbc-header" style="background:#0e7490">
+              <div class="cbc-left">
+                <div class="cbc-avatar">ST</div>
+                <div>
+                  <div class="cbc-name">Sam T.</div>
+                  <div class="cbc-role">Candidate &middot; Senior ML Engineer &#x2014; London</div>
+                  <div class="cbc-exp">7 yrs experience &middot; Current: Staff ML Engineer, DeepStack AI</div>
+                </div>
+              </div>
+              <div class="cbc-right">
+                <div class="cbc-int-label">Interview scheduled</div>
+                <div class="cbc-int-date">Thu 21 Mar &middot; 10:00 GMT</div>
+                <div class="cbc-int-sub">On-site &middot; 90 min &middot; Technical panel</div>
+              </div>
+            </div>
+            <div class="cbc-meta-strip" style="background:rgba(0,0,0,.12)">
+              <div class="cbc-mc"><div class="cbc-mc-label">Match score</div><div class="cbc-mc-val" style="font-weight:700">88%</div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Brief confidence</div><div class="cbc-mc-val"><div class="conf-row"><div class="conf-track"><div class="conf-fill" style="width:91%"></div></div><span class="conf-pct">91%</span></div></div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Sources analyzed</div><div class="cbc-mc-val">LinkedIn &middot; GitHub (312 repos) &middot; ArXiv &middot; HuggingFace &middot; CV</div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Brief generated</div><div class="cbc-mc-val">2026-03-15 &middot; 08:31 GMT</div></div>
+            </div>
+          </div>
+
+          <div class="brief-tabs-rec">
+            <button class="btr active" onclick="showBriefTab(this,'sam','360')">360&#176; Profile</button>
+            <button class="btr" onclick="showBriefTab(this,'sam','skills')">Skills evidence</button>
+            <button class="btr" onclick="showBriefTab(this,'sam','conv')">Conversation guide</button>
+            <button class="btr" onclick="showBriefTab(this,'sam','verif')">Verification flags</button>
+            <button class="btr" onclick="showBriefTab(this,'sam','motiv')">Motivation signals</button>
+          </div>
+
+          <div class="btc active" id="btc-sam-360">
+            <div style="font-size:.9375rem;color:var(--text-muted);line-height:1.7;margin-bottom:20px;padding:16px;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border)">
+              Sam is a self-described builder and researcher &#x2014; 7 years at the intersection of ML research and production systems. GitHub is exceptionally active (312 repos, 1.8K stars), with a focus on distributed training and model evaluation frameworks. Two ArXiv preprints on efficient fine-tuning methods. Currently at DeepStack AI, which shows Series B signals but no public announcement.
+            </div>
+            <div class="cand-timeline">
+              <div class="ct-row">
+                <div class="ct-left"><div class="ct-year">2022&#x2013;now</div><div class="ct-dot" style="background:#0891b2"></div><div class="ct-line"></div></div>
+                <div class="ct-body">
+                  <div class="ct-role">Staff ML Engineer</div>
+                  <div class="ct-company">DeepStack AI &middot; London (Hybrid)</div>
+                  <div style="font-size:.8125rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px">Leads LLM infrastructure team. Owns fine-tuning pipeline serving 4M+ inferences/day. Authored internal MLOps framework now open-sourced (1.2K GitHub stars).</div>
+                  <div class="ct-signals"><span class="ct-signal cts-pub">Open-source project (1.2K &#x2605;)</span><span class="ct-signal cts-stat">2 ArXiv preprints</span></div>
+                </div>
+              </div>
+              <div class="ct-row past">
+                <div class="ct-left"><div class="ct-year">2019&#x2013;22</div><div class="ct-dot"></div><div class="ct-line"></div></div>
+                <div class="ct-body">
+                  <div class="ct-role">Senior ML Engineer</div>
+                  <div class="ct-company">TensorFlow Labs &middot; London</div>
+                  <div style="font-size:.8125rem;color:var(--text-muted);line-height:1.5;margin-bottom:4px">NLP and recommendation system work. Early PyTorch adopter; contributed to 3 internal frameworks. Left following acquisition.</div>
+                </div>
+              </div>
+              <div class="ct-row past">
+                <div class="ct-left"><div class="ct-year">2017&#x2013;19</div><div class="ct-dot"></div></div>
+                <div class="ct-body">
+                  <div class="ct-role">MEng Machine Learning</div>
+                  <div class="ct-company">Imperial College London</div>
+                  <div style="font-size:.8125rem;color:var(--text-muted)">Distinction. Thesis on attention mechanisms. Won IC Hackathon 2018.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btc" id="btc-sam-skills">
+            <div class="skill-evidence-list">
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">LLM fine-tuning</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-strong" style="width:97%"></div></div><span class="se-strength-label" style="color:var(--accent)">Expert</span></div></div><div class="se-evidence">2 ArXiv papers on LoRA and QLoRA variants. HuggingFace model cards show 3 published fine-tuned models. Open-source fine-tuning tooling with 1.2K stars.</div><div class="se-sources"><span class="se-src">ArXiv (2 papers)</span><span class="se-src">HuggingFace</span><span class="se-src">GitHub</span></div></div>
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">PyTorch &amp; distributed training</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-strong" style="width:92%"></div></div><span class="se-strength-label" style="color:var(--accent)">Expert</span></div></div><div class="se-evidence">312 GitHub repos, majority PyTorch. Distributed training framework OSS project. Talk at PyTorch Conference 2024 (video available).</div><div class="se-sources"><span class="se-src">GitHub (312 repos)</span><span class="se-src">Conference talk</span></div></div>
+              <div class="se-card"><div class="se-top"><div class="se-skill-name">MLOps &amp; production systems</div><div class="se-strength"><div class="se-bar-track"><div class="se-bar-fill seb-strong" style="width:88%"></div></div><span class="se-strength-label" style="color:var(--accent)">Strong</span></div></div><div class="se-evidence">Open-sourced internal MLOps framework. LinkedIn posts describe multi-region inference infrastructure. Role description mentions 4M+ daily inferences.</div><div class="se-sources"><span class="se-src">LinkedIn</span><span class="se-src">GitHub OSS project</span></div></div>
+            </div>
+          </div>
+
+          <div class="btc" id="btc-sam-conv">
+            <div class="conv-section">
+              <div class="conv-section-label">Technical depth probes</div>
+              <div class="conv-q"><div class="conv-q-num">1</div><div class="conv-q-body"><strong>Walk me through your decision to open-source your MLOps framework. What tradeoffs did you face?</strong><span>Probes judgment, business awareness, and community mindset beyond pure technical skill.</span></div></div>
+              <div class="conv-q"><div class="conv-q-num">2</div><div class="conv-q-body"><strong>How do you approach evaluating a fine-tuned LLM for production readiness? What can go wrong?</strong><span>Sam has written about this &#x2014; tests whether research knowledge translates to engineering pragmatism.</span></div></div>
+              <div class="conv-q"><div class="conv-q-num">3</div><div class="conv-q-body"><strong>Describe the largest distributed training setup you have worked with. What were the failure modes?</strong><span>Verifies practical hands-on experience at the scale claimed in their current role.</span></div></div>
+            </div>
+            <div class="conv-section">
+              <div class="conv-section-label">What to listen for</div>
+              <div class="listen-for"><strong>Positive signals</strong> Specificity about failure modes, latency/cost tradeoffs, and business impact of ML decisions. Evidence they write for others (OSS, docs, papers).</div>
+              <div class="redflag-item">&#x2691; Overspecialized &#x2014; if all answers are research-oriented with no production story, probe further for systems thinking</div>
+            </div>
+          </div>
+
+          <div class="btc" id="btc-sam-verif">
+            <div class="verif-flag ok"><span class="vf-sev ok">Clear</span><div class="vf-body"><strong>Technical claims verified via public artifacts</strong><span>GitHub, ArXiv, HuggingFace, and conference content corroborate all key technical claims independently.</span></div></div>
+            <div class="verif-flag warn"><span class="vf-sev warn">Review</span><div class="vf-body"><strong>Company may be in funding round / restructure</strong><span>Secondary signals suggest Series B in progress. Motivation to move may be uncertainty-driven. Probe: What is making now the right time?</span></div></div>
+          </div>
+
+          <div class="btc" id="btc-sam-motiv">
+            <div class="motiv-grid">
+              <div class="motiv-card"><h5>Technical depth &amp; craft</h5><div class="motiv-signal-label">Very high signal</div><div class="motiv-track"><div class="motiv-fill" style="width:95%"></div></div><div class="motiv-evidence">Maintains OSS projects on weekends. Writes ArXiv papers outside work. Describes best work periods as when I can go deep on a hard problem.</div></div>
+              <div class="motiv-card"><h5>Research-adjacent work</h5><div class="motiv-signal-label">High signal</div><div class="motiv-track"><div class="motiv-fill" style="width:80%"></div></div><div class="motiv-evidence">Consistent interest in staying close to state-of-art. Lead with research exposure and publication culture in your team.</div></div>
+              <div class="motiv-card"><h5>Management / leadership</h5><div class="motiv-signal-label">Low signal</div><div class="motiv-track"><div class="motiv-fill" style="width:25%"></div></div><div class="motiv-evidence">Declined people manager track at TensorFlow Labs. Prefers IC path with influence. Do not position this role as a management track.</div></div>
+              <div class="motiv-card"><h5>Compensation</h5><div class="motiv-signal-label">Medium signal</div><div class="motiv-track"><div class="motiv-fill" style="width:58%"></div></div><div class="motiv-evidence">No public comp discussion. Equity in meaningful projects likely more motivating than pure cash. Emphasise GPU budget, compute access, and research freedom.</div></div>
+            </div>
+          </div>
+
+          <div class="debrief-area">
+            <h5>Post-interview debrief &middot; Sam T.</h5>
+            <p style="font-size:.8125rem;color:var(--text-muted);margin-bottom:10px">Log your impressions after the technical panel.</p>
+            <textarea placeholder="Technical depth, systems thinking, culture fit, concerns..."></textarea>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary">Save debrief</button>
+              <button class="btn">Advance to offer stage</button>
+              <button class="btn" style="color:#dc2626;border-color:#fca5a5">Archive candidate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brief: Jordan L. (generating) -->
+        <div class="brief-view" id="bv-jordan">
+          <div class="cand-brief-cover">
+            <div class="cbc-header" style="background:#92400e">
+              <div class="cbc-left">
+                <div class="cbc-avatar">JL</div>
+                <div>
+                  <div class="cbc-name">Jordan L.</div>
+                  <div class="cbc-role">Candidate &middot; Product Manager &#x2014; Remote</div>
+                  <div class="cbc-exp">5 yrs experience &middot; Current: Product Lead, B2B SaaS startup</div>
+                </div>
+              </div>
+              <div class="cbc-right">
+                <div class="cbc-int-label">Interview scheduled</div>
+                <div class="cbc-int-date">Fri 22 Mar &middot; 15:30 GMT</div>
+                <div class="cbc-int-sub">via Zoom &middot; 60 min</div>
+              </div>
+            </div>
+            <div class="cbc-meta-strip" style="background:rgba(0,0,0,.12)">
+              <div class="cbc-mc"><div class="cbc-mc-label">Match score</div><div class="cbc-mc-val" style="font-weight:700">84%</div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Brief status</div><div class="cbc-mc-val" style="color:#fbbf24">&#x23F3; Generating &#x2014; est. 4 min remaining</div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Sources found</div><div class="cbc-mc-val">LinkedIn &middot; Twitter &middot; 2 conference talks &middot; CV</div></div>
+              <div class="cbc-mc"><div class="cbc-mc-label">Started</div><div class="cbc-mc-val">2026-03-15 &middot; 09:02 GMT</div></div>
+            </div>
+          </div>
+          <div style="padding:40px;text-align:center;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);margin-top:4px">
+            <div style="font-size:2.5rem;margin-bottom:14px">&#x1F916;</div>
+            <div style="font-size:1rem;font-weight:600;margin-bottom:8px">IntelligenceAgent is building Jordan's brief</div>
+            <div style="font-size:.875rem;color:var(--text-muted);max-width:440px;margin:0 auto 20px">Scanning LinkedIn, Twitter, conference talks, and CV. Synthesizing career narrative, skill evidence, and motivation signals.</div>
+            <div style="max-width:320px;margin:0 auto;height:7px;background:var(--border);border-radius:4px;overflow:hidden">
+              <div style="width:62%;height:100%;background:var(--accent);border-radius:4px"></div>
+            </div>
+            <div style="font-size:.8125rem;color:var(--text-muted);margin-top:10px">62% complete &middot; Currently: extracting motivation signals</div>
+          </div>
+        </div>
+
           </div>
         </div>
       </div>
@@ -132,19 +1618,113 @@
           <h1>Outreach</h1>
           <p>OutreachAgent drafts personalised messages; you approve before first send. Human Handoff applies.</p>
         </div>
-        <div class="card">
-          <h2>Pending your approval</h2>
-          <p class="text-muted">Shortlist for Product Manager — Remote. Review and approve outreach before send.</p>
-          <div class="brief-block mt-2">
-            <strong>To: Alex K.</strong> (Senior PM, 6 yrs, fintech)<br>
-            <span class="muted">Draft: "Hi Alex — I noticed your work on the payments roadmap at [Company] and your post about prioritising merchant experience. We’re hiring a PM to own our core checkout experience and would love to share the scope…"</span>
-            <div class="mt-2"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">3</div><div class="label">Organizations</div></div>
+          <div class="stat-card"><div class="value">2</div><div class="label">Positions with drafts</div></div>
+          <div class="stat-card"><div class="value">4</div><div class="label">Pending your approval</div></div>
+        </div>
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view positions and approve outreach drafts.</p>
+        <div class="org-cards" id="outreach-org-cards">
+          <div class="org-card" onclick="selectOutreachOrg('techcorp')" id="outreach-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">0</span><span class="ocs-lbl">drafts</span></span>
+            </div>
           </div>
-          <div class="brief-block">
-            <strong>To: Jordan L.</strong> (Product lead, 5 yrs, B2B SaaS)<br>
-            <span class="muted">Draft: "Hi Jordan — Your experience leading zero-to-one products at [Company] and your focus on PLG metrics stood out. We’re building a new product line and looking for someone who’s done this before…"</span>
-            <div class="mt-2"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+          <div class="org-card active" onclick="selectOutreachOrg('buildco')" id="outreach-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">drafts</span></span>
+            </div>
           </div>
+          <div class="org-card" onclick="selectOutreachOrg('scaleup')" id="outreach-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">drafts</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail open" id="outreach-detail-buildco">
+          <div class="org-detail-header">
+            <span class="org-detail-title">BuildCo — Pending outreach approval</span>
+            <span class="org-detail-sub">1 position · 2 drafts</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">PM</div>
+              <div>
+                <div class="pos-header-title">Product Manager — Remote</div>
+                <div class="pos-header-meta">Shortlist · Review and approve before send</div>
+              </div>
+            </div>
+            <div class="outreach-draft-list">
+              <div class="outreach-draft-item">
+                <strong>To: Alex K.</strong> (Senior PM, 6 yrs, fintech)
+                <p class="text-muted" style="font-size:.875rem;margin:8px 0 0">Draft: "Hi Alex — I noticed your work on the payments roadmap at [Company] and your post about prioritising merchant experience. We’re hiring a PM to own our core checkout experience and would love to share the scope…"</p>
+                <div class="outreach-draft-actions"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+              </div>
+              <div class="outreach-draft-item">
+                <strong>To: Jordan L.</strong> (Product lead, 5 yrs, B2B SaaS)
+                <p class="text-muted" style="font-size:.875rem;margin:8px 0 0">Draft: "Hi Jordan — Your experience leading zero-to-one products at [Company] and your focus on PLG metrics stood out. We’re building a new product line and looking for someone who’s done this before…"</p>
+                <div class="outreach-draft-actions"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail" id="outreach-detail-scaleup">
+          <div class="org-detail-header">
+            <span class="org-detail-title">ScaleUp — Pending outreach approval</span>
+            <span class="org-detail-sub">1 position · 2 drafts</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">FE</div>
+              <div>
+                <div class="pos-header-title">Frontend Engineer — Berlin</div>
+                <div class="pos-header-meta">Shortlist · Review and approve before send</div>
+              </div>
+            </div>
+            <div class="outreach-draft-list">
+              <div class="outreach-draft-item">
+                <strong>To: Morgan R.</strong> (Frontend lead, 4 yrs, design systems)
+                <p class="text-muted" style="font-size:.875rem;margin:8px 0 0">Draft: "Hi Morgan — Your work on the design system at [Company] and your talks at React Conf stood out. We're scaling our frontend platform and would love to discuss…"</p>
+                <div class="outreach-draft-actions"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+              </div>
+              <div class="outreach-draft-item">
+                <strong>To: Casey L.</strong> (Senior FE, 5 yrs, accessibility)
+                <p class="text-muted" style="font-size:.875rem;margin:8px 0 0">Draft: "Hi Casey — Your a11y contributions and the open-source component library you maintain align with our standards. We're hiring for our core UI team…"</p>
+                <div class="outreach-draft-actions"><button class="btn btn-primary">Approve</button> <button class="btn">Edit</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail" id="outreach-detail-techcorp">
+          <div class="org-detail-header">
+            <span class="org-detail-title">TechCorp — Pending outreach approval</span>
+            <span class="org-detail-sub">No drafts pending</span>
+          </div>
+          <p class="text-muted" style="padding:24px;margin:0">No outreach drafts awaiting your approval for this organization.</p>
         </div>
       </div>
 
@@ -154,19 +1734,112 @@
           <h1>Scheduler</h1>
           <p>SchedulerAgent coordinates calendars and sends pre-interview briefs to both parties.</p>
         </div>
-        <div class="card">
-          <h2>Upcoming interviews</h2>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Candidate</th><th>Role</th><th>Date & time</th><th>Brief sent</th></tr></thead>
-              <tbody>
-                <tr><td>Priya M.</td><td>Product Manager — Remote</td><td>Wed 20 Mar, 14:00 GMT</td><td><span class="badge badge-green">Yes</span></td></tr>
-                <tr><td>Sam T.</td><td>Senior ML Engineer — London</td><td>Thu 21 Mar, 10:00 GMT</td><td><span class="badge badge-green">Yes</span></td></tr>
-                <tr><td>Jordan L.</td><td>Product Manager — Remote</td><td>Fri 22 Mar, 15:30 GMT</td><td><span class="agent-status">Sending</span></td></tr>
-              </tbody>
-            </table>
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">3</div><div class="label">Organizations</div></div>
+          <div class="stat-card"><div class="value">3</div><div class="label">Upcoming interviews</div></div>
+          <div class="stat-card"><div class="value">2</div><div class="label">Briefs sent</div></div>
+        </div>
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view positions and upcoming interviews.</p>
+        <div class="org-cards" id="scheduler-org-cards">
+          <div class="org-card active" onclick="selectSchedulerOrg('techcorp')" id="scheduler-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">interview</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectSchedulerOrg('buildco')" id="scheduler-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">interviews</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectSchedulerOrg('scaleup')" id="scheduler-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">0</span><span class="ocs-lbl">interviews</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail open" id="scheduler-detail-techcorp">
+          <div class="org-detail-header">
+            <span class="org-detail-title">TechCorp — Upcoming interviews</span>
+            <span class="org-detail-sub">1 position · SchedulerAgent active</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">ML</div>
+              <div>
+                <div class="pos-header-title">Senior ML Engineer — London</div>
+                <div class="pos-header-meta">Pre-meeting briefs sent to candidate and you</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Candidate</th><th>Date & time</th><th>Brief sent</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <tr><td>Sam T.</td><td>Thu 21 Mar, 10:00 GMT</td><td><span class="badge badge-green">Yes</span></td><td><button class="btn">Reschedule</button> <button class="btn">View brief</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
           <p class="text-muted mt-2">Candidate and you both receive context-rich pre-meeting briefs. Rescheduling is handled by SchedulerAgent.</p>
+        </div>
+
+        <div class="org-detail" id="scheduler-detail-buildco">
+          <div class="org-detail-header">
+            <span class="org-detail-title">BuildCo — Upcoming interviews</span>
+            <span class="org-detail-sub">1 position · 2 interviews</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">PM</div>
+              <div>
+                <div class="pos-header-title">Product Manager — Remote</div>
+                <div class="pos-header-meta">Pre-meeting briefs sent to both parties</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Candidate</th><th>Date & time</th><th>Brief sent</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <tr><td>Priya M.</td><td>Wed 20 Mar, 14:00 GMT</td><td><span class="badge badge-green">Yes</span></td><td><button class="btn">Reschedule</button> <button class="btn">View brief</button></td></tr>
+                    <tr><td>Jordan L.</td><td>Fri 22 Mar, 15:30 GMT</td><td><span class="agent-status">Sending</span></td><td><button class="btn">Reschedule</button> <button class="btn" disabled>View brief</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <p class="text-muted mt-2">Candidate and you both receive context-rich pre-meeting briefs. Rescheduling is handled by SchedulerAgent.</p>
+        </div>
+
+        <div class="org-detail" id="scheduler-detail-scaleup">
+          <div class="org-detail-header">
+            <span class="org-detail-title">ScaleUp — Upcoming interviews</span>
+            <span class="org-detail-sub">No interviews scheduled</span>
+          </div>
+          <p class="text-muted" style="padding:24px;margin:0">No upcoming interviews for this organization.</p>
         </div>
       </div>
 
@@ -176,26 +1849,121 @@
           <h1>Offer Management</h1>
           <p>OfferAgent recommends packages; you review and approve before any offer is extended.</p>
         </div>
-        <div class="card">
-          <h2>Recommended offer (awaiting your approval)</h2>
-          <p class="text-muted">Priya M. — Product Manager — Remote. Verbal alignment in principle; generate formal offer after your sign-off.</p>
-          <div class="brief-block mt-2">
-            <strong>OfferAgent recommendation</strong><br>
-            Base €88,000 · Bonus 10% · Equity 0.08% (4yr) · Start date flexible. Market benchmark: 50th percentile for role/geo. Candidate floor (inferred): ~€85K.
-          </div>
-          <div class="mt-2"><button class="btn btn-primary">Approve & generate offer</button> <button class="btn">Edit terms</button></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">3</div><div class="label">Organizations</div></div>
+          <div class="stat-card"><div class="value">1</div><div class="label">Awaiting your approval</div></div>
+          <div class="stat-card"><div class="value">2</div><div class="label">Recent offers</div></div>
         </div>
-        <div class="card">
-          <h2>Recent offers</h2>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Candidate</th><th>Role</th><th>Status</th><th>Approved by</th></tr></thead>
-              <tbody>
-                <tr><td>Sam T.</td><td>Senior ML Engineer</td><td><span class="badge badge-blue">Sent</span></td><td>You, 14 Mar</td></tr>
-                <tr><td>Alex K.</td><td>Product Manager</td><td><span class="badge badge-green">Accepted</span></td><td>You, 10 Mar</td></tr>
-              </tbody>
-            </table>
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view positions and approve or manage offers.</p>
+        <div class="org-cards" id="offers-org-cards">
+          <div class="org-card" onclick="selectOffersOrg('techcorp')" id="offers-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">recent</span></span>
+            </div>
           </div>
+          <div class="org-card active" onclick="selectOffersOrg('buildco')" id="offers-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">pending</span></span>
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">recent</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectOffersOrg('scaleup')" id="offers-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">0</span><span class="ocs-lbl">offers</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail open" id="offers-detail-buildco">
+          <div class="org-detail-header">
+            <span class="org-detail-title">BuildCo — Offer management</span>
+            <span class="org-detail-sub">1 position · 1 pending approval, 1 recent</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">PM</div>
+              <div>
+                <div class="pos-header-title">Product Manager — Remote</div>
+                <div class="pos-header-meta">OfferAgent recommendation and recent offers</div>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Recommended offer (awaiting your approval)</h2>
+              <p class="text-muted">Priya M. — Verbal alignment in principle; generate formal offer after your sign-off.</p>
+              <div class="brief-block mt-2">
+                <strong>OfferAgent recommendation</strong><br>
+                Base €88,000 · Bonus 10% · Equity 0.08% (4yr) · Start date flexible. Market benchmark: 50th percentile for role/geo. Candidate floor (inferred): ~€85K.
+              </div>
+              <div class="mt-2"><button class="btn btn-primary">Approve &amp; generate offer</button> <button class="btn">Edit terms</button></div>
+            </div>
+            <div class="card">
+              <h2>Recent offers</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Candidate</th><th>Status</th><th>Approved by</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <tr><td>Alex K.</td><td><span class="badge badge-green">Accepted</span></td><td>You, 10 Mar</td><td><button class="btn">View offer</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail" id="offers-detail-techcorp">
+          <div class="org-detail-header">
+            <span class="org-detail-title">TechCorp — Offer management</span>
+            <span class="org-detail-sub">1 position · 1 recent offer</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">ML</div>
+              <div>
+                <div class="pos-header-title">Senior ML Engineer — London</div>
+                <div class="pos-header-meta">Recent offers</div>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Recent offers</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Candidate</th><th>Status</th><th>Approved by</th><th>Actions</th></tr></thead>
+                  <tbody>
+                    <tr><td>Sam T.</td><td><span class="badge badge-blue">Sent</span></td><td>You, 14 Mar</td><td><button class="btn">View offer</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail" id="offers-detail-scaleup">
+          <div class="org-detail-header">
+            <span class="org-detail-title">ScaleUp — Offer management</span>
+            <span class="org-detail-sub">No offers</span>
+          </div>
+          <p class="text-muted" style="padding:24px;margin:0">No offers for this organization.</p>
         </div>
       </div>
 
@@ -205,10 +1973,67 @@
           <h1>NegotiationCoach™</h1>
           <p>Live advisory during the offer conversation. You and the candidate each see a private view; agents advise, they do not negotiate.</p>
         </div>
-        <div class="card">
-          <h2>Mock session — Recruiter view (private)</h2>
-          <p class="text-muted">During the call, your dashboard shows real-time guidance. Candidate has a separate private view. Dummy data below.</p>
-          <div class="nego-columns mt-2">
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">3</div><div class="label">Organizations</div></div>
+          <div class="stat-card"><div class="value">1</div><div class="label">Active session</div></div>
+          <div class="stat-card"><div class="value">2</div><div class="label">Completed this week</div></div>
+        </div>
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view positions and active or recent negotiation sessions.</p>
+        <div class="org-cards" id="negotiation-org-cards">
+          <div class="org-card" onclick="selectNegotiationOrg('techcorp')" id="negotiation-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">0</span><span class="ocs-lbl">active</span></span>
+            </div>
+          </div>
+          <div class="org-card active" onclick="selectNegotiationOrg('buildco')" id="negotiation-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">active</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectNegotiationOrg('scaleup')" id="negotiation-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">0</span><span class="ocs-lbl">active</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail open" id="negotiation-detail-buildco">
+          <div class="org-detail-header">
+            <span class="org-detail-title">BuildCo — Negotiation sessions</span>
+            <span class="org-detail-sub">1 position · 1 active</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">PM</div>
+              <div>
+                <div class="pos-header-title">Product Manager — Remote</div>
+                <div class="pos-header-meta">Priya M. · Live session — Recruiter view (private)</div>
+              </div>
+            </div>
+            <div class="card">
+              <p class="text-muted">During the call, your dashboard shows real-time guidance. Candidate has a separate private view.</p>
+              <div class="nego-columns mt-2">
             <div class="nego-panel">
               <h4>Your view (Recruiter)</h4>
               <ul>
@@ -230,13 +2055,31 @@
               </ul>
             </div>
           </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail" id="negotiation-detail-techcorp">
+          <div class="org-detail-header">
+            <span class="org-detail-title">TechCorp — Negotiation sessions</span>
+            <span class="org-detail-sub">No active sessions</span>
+          </div>
+          <p class="text-muted" style="padding:24px;margin:0">No active negotiation sessions for this organization.</p>
+        </div>
+
+        <div class="org-detail" id="negotiation-detail-scaleup">
+          <div class="org-detail-header">
+            <span class="org-detail-title">ScaleUp — Negotiation sessions</span>
+            <span class="org-detail-sub">No active sessions</span>
+          </div>
+          <p class="text-muted" style="padding:24px;margin:0">No active negotiation sessions for this organization.</p>
         </div>
       </div>
 
       <!-- Analytics -->
       <div id="panel-analytics" class="panel">
         <div class="app-header">
-          <h1>Analytics & Reporting</h1>
+          <h1>Analytics &amp; Reporting</h1>
           <p>Pipeline velocity, diversity, recruiter performance. CHRO-ready exports.</p>
         </div>
         <div class="stats-row">
@@ -244,20 +2087,182 @@
           <div class="stat-card"><div class="value">86%</div><div class="label">Offer acceptance rate</div></div>
           <div class="stat-card"><div class="value">4.2 min</div><div class="label">Avg. prep time per interview</div></div>
         </div>
-        <div class="card">
-          <h2>Pipeline velocity (last 30 days)</h2>
-          <p class="text-muted">Requisitions by stage. TalentAgent™ metrics streamed in real time.</p>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Stage</th><th>Count</th><th>Avg. time in stage</th></tr></thead>
-              <tbody>
-                <tr><td>Sourced</td><td>89</td><td>3.2 days</td></tr>
-                <tr><td>Shortlist approved</td><td>24</td><td>1.1 days</td></tr>
-                <tr><td>Outreach sent</td><td>18</td><td>4.0 days</td></tr>
-                <tr><td>Interview scheduled</td><td>12</td><td>7.0 days</td></tr>
-                <tr><td>Offer</td><td>4</td><td>5.0 days</td></tr>
-              </tbody>
-            </table>
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view pipeline velocity and position-level metrics.</p>
+        <div class="org-cards" id="analytics-org-cards">
+          <div class="org-card active" onclick="selectAnalyticsOrg('techcorp')" id="analytics-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">position</span></span>
+              <span class="ocs"><span class="ocs-num">24</span><span class="ocs-lbl">sourced</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectAnalyticsOrg('buildco')" id="analytics-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">position</span></span>
+              <span class="ocs"><span class="ocs-num">18</span><span class="ocs-lbl">sourced</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectAnalyticsOrg('scaleup')" id="analytics-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">position</span></span>
+              <span class="ocs"><span class="ocs-num">31</span><span class="ocs-lbl">sourced</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail open" id="analytics-detail-techcorp">
+          <div class="org-detail-header">
+            <span class="org-detail-title">TechCorp — Pipeline velocity (last 30 days)</span>
+            <span class="org-detail-sub">1 position · TalentAgent™ metrics</span>
+          </div>
+          <div class="card">
+            <h2>Org summary</h2>
+            <p class="text-muted">Requisitions by stage. Real-time stream.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Stage</th><th>Count</th><th>Avg. time in stage</th></tr></thead>
+                <tbody>
+                  <tr><td>Sourced</td><td>24</td><td>3.1 days</td></tr>
+                  <tr><td>Shortlist approved</td><td>5</td><td>1.0 days</td></tr>
+                  <tr><td>Outreach sent</td><td>3</td><td>4.2 days</td></tr>
+                  <tr><td>Interview scheduled</td><td>2</td><td>6.5 days</td></tr>
+                  <tr><td>Offer</td><td>0</td><td>—</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">ML</div>
+              <div>
+                <div class="pos-header-title">Senior ML Engineer — London</div>
+                <div class="pos-header-meta">Position-level metrics</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Stage</th><th>Count</th><th>Avg. time</th></tr></thead>
+                  <tbody>
+                    <tr><td>Sourced</td><td>24</td><td>3.1 days</td></tr>
+                    <tr><td>Shortlist</td><td>5</td><td>1.0 days</td></tr>
+                    <tr><td>Outreach sent</td><td>3</td><td>4.2 days</td></tr>
+                    <tr><td>Interview</td><td>2</td><td>6.5 days</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail" id="analytics-detail-buildco">
+          <div class="org-detail-header">
+            <span class="org-detail-title">BuildCo — Pipeline velocity (last 30 days)</span>
+            <span class="org-detail-sub">1 position · TalentAgent™ metrics</span>
+          </div>
+          <div class="card">
+            <h2>Org summary</h2>
+            <p class="text-muted">Requisitions by stage. Real-time stream.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Stage</th><th>Count</th><th>Avg. time in stage</th></tr></thead>
+                <tbody>
+                  <tr><td>Sourced</td><td>18</td><td>3.4 days</td></tr>
+                  <tr><td>Shortlist approved</td><td>4</td><td>1.2 days</td></tr>
+                  <tr><td>Outreach sent</td><td>4</td><td>3.8 days</td></tr>
+                  <tr><td>Interview scheduled</td><td>1</td><td>7.0 days</td></tr>
+                  <tr><td>Offer</td><td>1</td><td>5.0 days</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">PM</div>
+              <div>
+                <div class="pos-header-title">Product Manager — Remote</div>
+                <div class="pos-header-meta">Position-level metrics</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Stage</th><th>Count</th><th>Avg. time</th></tr></thead>
+                  <tbody>
+                    <tr><td>Sourced</td><td>18</td><td>3.4 days</td></tr>
+                    <tr><td>Shortlist</td><td>4</td><td>1.2 days</td></tr>
+                    <tr><td>Outreach sent</td><td>4</td><td>3.8 days</td></tr>
+                    <tr><td>Interview</td><td>1</td><td>7.0 days</td></tr>
+                    <tr><td>Offer</td><td>1</td><td>5.0 days</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="org-detail" id="analytics-detail-scaleup">
+          <div class="org-detail-header">
+            <span class="org-detail-title">ScaleUp — Pipeline velocity (last 30 days)</span>
+            <span class="org-detail-sub">1 position · TalentAgent™ metrics</span>
+          </div>
+          <div class="card">
+            <h2>Org summary</h2>
+            <p class="text-muted">Requisitions by stage. Real-time stream.</p>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Stage</th><th>Count</th><th>Avg. time in stage</th></tr></thead>
+                <tbody>
+                  <tr><td>Sourced</td><td>31</td><td>3.0 days</td></tr>
+                  <tr><td>Shortlist approved</td><td>6</td><td>1.3 days</td></tr>
+                  <tr><td>Outreach sent</td><td>5</td><td>4.1 days</td></tr>
+                  <tr><td>Interview scheduled</td><td>3</td><td>7.2 days</td></tr>
+                  <tr><td>Offer</td><td>0</td><td>—</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">FE</div>
+              <div>
+                <div class="pos-header-title">Frontend Engineer — Berlin</div>
+                <div class="pos-header-meta">Position-level metrics</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Stage</th><th>Count</th><th>Avg. time</th></tr></thead>
+                  <tbody>
+                    <tr><td>Sourced</td><td>31</td><td>3.0 days</td></tr>
+                    <tr><td>Shortlist</td><td>6</td><td>1.3 days</td></tr>
+                    <tr><td>Outreach sent</td><td>5</td><td>4.1 days</td></tr>
+                    <tr><td>Interview</td><td>3</td><td>7.2 days</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -265,27 +2270,128 @@
       <!-- Compliance -->
       <div id="panel-compliance" class="panel">
         <div class="app-header">
-          <h1>Compliance & Audit</h1>
+          <h1>Compliance &amp; Audit</h1>
           <p>Human Handoff Protocol logs, bias audit, GDPR/DSAR. EU AI Act alignment.</p>
         </div>
-        <div class="card">
-          <h2>Recent human approval events</h2>
-          <p class="text-muted">Every employment decision is logged with your approval. Immutable audit trail.</p>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Timestamp</th><th>Event</th><th>Approver</th><th>Outcome</th></tr></thead>
-              <tbody>
-                <tr><td>2026-03-15 09:42</td><td>Shortlist approval — Product Manager</td><td>You</td><td>Approved (4 candidates)</td></tr>
-                <tr><td>2026-03-14 16:20</td><td>Outreach approval — Alex K.</td><td>You</td><td>Approved (message sent)</td></tr>
-                <tr><td>2026-03-14 11:00</td><td>Offer approval — Sam T.</td><td>You</td><td>Approved (offer generated)</td></tr>
-              </tbody>
-            </table>
+        <div class="stats-row">
+          <div class="stat-card"><div class="value">3</div><div class="label">Organizations</div></div>
+          <div class="stat-card"><div class="value">5</div><div class="label">Approval events (7 days)</div></div>
+          <div class="stat-card"><div class="value">—</div><div class="label">Bias audit</div></div>
+        </div>
+        <p class="text-muted" style="margin-bottom:16px;font-size:.875rem">Select an organization to view approval events by position and bias audit.</p>
+        <div class="org-cards" id="compliance-org-cards">
+          <div class="org-card" onclick="selectComplianceOrg('techcorp')" id="compliance-org-techcorp">
+            <div class="org-card-top">
+              <div class="org-card-logo">TC</div>
+              <div>
+                <div class="org-card-name">TechCorp</div>
+                <div class="org-card-meta">London · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">1</span><span class="ocs-lbl">event</span></span>
+            </div>
+          </div>
+          <div class="org-card active" onclick="selectComplianceOrg('buildco')" id="compliance-org-buildco">
+            <div class="org-card-top">
+              <div class="org-card-logo">BC</div>
+              <div>
+                <div class="org-card-name">BuildCo</div>
+                <div class="org-card-meta">Remote (EU) · Product</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">2</span><span class="ocs-lbl">events</span></span>
+            </div>
+          </div>
+          <div class="org-card" onclick="selectComplianceOrg('scaleup')" id="compliance-org-scaleup">
+            <div class="org-card-top">
+              <div class="org-card-logo">SU</div>
+              <div>
+                <div class="org-card-name">ScaleUp</div>
+                <div class="org-card-meta">Berlin · Engineering</div>
+              </div>
+            </div>
+            <div class="org-card-stats">
+              <span class="ocs"><span class="ocs-num">0</span><span class="ocs-lbl">events</span></span>
+            </div>
           </div>
         </div>
-        <div class="card">
-          <h2>Bias audit</h2>
-          <p class="text-muted">Real-time disparate impact checks at each agent decision. Last run: 2026-03-15 08:00.</p>
-          <p><span class="badge badge-green">Pass</span> No demographic parity threshold breaches in the last 7 days.</p>
+
+        <div class="org-detail open" id="compliance-detail-buildco">
+          <div class="org-detail-header">
+            <span class="org-detail-title">BuildCo — Human approval events</span>
+            <span class="org-detail-sub">Immutable audit trail · 2 events</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">PM</div>
+              <div>
+                <div class="pos-header-title">Product Manager — Remote</div>
+                <div class="pos-header-meta">Approvals by position</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Timestamp</th><th>Event</th><th>Approver</th><th>Outcome</th></tr></thead>
+                  <tbody>
+                    <tr><td>2026-03-15 09:42</td><td>Shortlist approval — Product Manager</td><td>You</td><td>Approved (4 candidates)</td></tr>
+                    <tr><td>2026-03-14 16:20</td><td>Outreach approval — Alex K.</td><td>You</td><td>Approved (message sent)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Bias audit — BuildCo</h2>
+            <p class="text-muted">Real-time disparate impact checks. Last run: 2026-03-15 08:00.</p>
+            <p><span class="badge badge-green">Pass</span> No demographic parity threshold breaches in the last 7 days.</p>
+          </div>
+        </div>
+
+        <div class="org-detail" id="compliance-detail-techcorp">
+          <div class="org-detail-header">
+            <span class="org-detail-title">TechCorp — Human approval events</span>
+            <span class="org-detail-sub">Immutable audit trail · 1 event</span>
+          </div>
+          <div class="pos-group">
+            <div class="pos-header">
+              <div class="pos-header-logo">ML</div>
+              <div>
+                <div class="pos-header-title">Senior ML Engineer — London</div>
+                <div class="pos-header-meta">Approvals by position</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Timestamp</th><th>Event</th><th>Approver</th><th>Outcome</th></tr></thead>
+                  <tbody>
+                    <tr><td>2026-03-14 11:00</td><td>Offer approval — Sam T.</td><td>You</td><td>Approved (offer generated)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Bias audit — TechCorp</h2>
+            <p class="text-muted">Real-time disparate impact checks. Last run: 2026-03-15 08:00.</p>
+            <p><span class="badge badge-green">Pass</span> No demographic parity threshold breaches in the last 7 days.</p>
+          </div>
+        </div>
+
+        <div class="org-detail" id="compliance-detail-scaleup">
+          <div class="org-detail-header">
+            <span class="org-detail-title">ScaleUp — Human approval events</span>
+            <span class="org-detail-sub">No events in last 7 days</span>
+          </div>
+          <p class="text-muted" style="padding:24px;margin:0">No human approval events for this organization in the last 7 days.</p>
+          <div class="card">
+            <h2>Bias audit — ScaleUp</h2>
+            <p class="text-muted">Last run: 2026-03-15 08:00.</p>
+            <p><span class="badge badge-green">Pass</span> No demographic parity threshold breaches.</p>
+          </div>
         </div>
       </div>
     </main>
@@ -293,11 +2399,12 @@
 
   <script src="js/app.js"></script>
   <script>
+    // ── Panel navigation ──
     (function() {
       var panels = document.querySelectorAll('.panel');
       var links = document.querySelectorAll('.nav-link');
       function showPanel(id) {
-        var target = id || (window.location.hash && window.location.hash.slice(1));
+        var target = id || (window.location.hash && window.location.hash.replace(/^#/, ''));
         if (!target) target = 'pipeline';
         panels.forEach(function(p) {
           p.classList.toggle('active', p.id === 'panel-' + target);
@@ -316,6 +2423,199 @@
       });
       window.addEventListener('hashchange', function() { showPanel(); });
       showPanel();
+      window.addEventListener('load', function() { showPanel(); });
+      if (window.location.hash) setTimeout(function() { showPanel(); }, 10);
+    })();
+
+    // ── Pipeline: select organization ──
+    function selectPipelineOrg(orgId) {
+      document.querySelectorAll('#pipeline-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-pipeline .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('pipeline-org-' + orgId);
+      var detail = document.getElementById('pipeline-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── Requisitions: select organization ──
+    function selectReqsOrg(orgId) {
+      document.querySelectorAll('#req-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-requisitions .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('req-org-' + orgId);
+      var detail = document.getElementById('req-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── Outreach: select organization ──
+    function selectOutreachOrg(orgId) {
+      document.querySelectorAll('#outreach-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-outreach .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('outreach-org-' + orgId);
+      var detail = document.getElementById('outreach-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── Scheduler: select organization ──
+    function selectSchedulerOrg(orgId) {
+      document.querySelectorAll('#scheduler-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-scheduler .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('scheduler-org-' + orgId);
+      var detail = document.getElementById('scheduler-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── Offer Management: select organization ──
+    function selectOffersOrg(orgId) {
+      document.querySelectorAll('#offers-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-offers .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('offers-org-' + orgId);
+      var detail = document.getElementById('offers-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── NegotiationCoach: select organization ──
+    function selectNegotiationOrg(orgId) {
+      document.querySelectorAll('#negotiation-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-negotiation .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('negotiation-org-' + orgId);
+      var detail = document.getElementById('negotiation-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── Analytics: select organization ──
+    function selectAnalyticsOrg(orgId) {
+      document.querySelectorAll('#analytics-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-analytics .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('analytics-org-' + orgId);
+      var detail = document.getElementById('analytics-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── Compliance: select organization ──
+    function selectComplianceOrg(orgId) {
+      document.querySelectorAll('#compliance-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('#panel-compliance .org-detail').forEach(function(d) { d.classList.remove('open'); });
+      var card = document.getElementById('compliance-org-' + orgId);
+      var detail = document.getElementById('compliance-detail-' + orgId);
+      if (card) card.classList.add('active');
+      if (detail) detail.classList.add('open');
+    }
+
+    // ── Requisitions ──
+    function filterReq(chip, filter) {
+      document.querySelectorAll('.rfc').forEach(function(c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      // In a real app, this would filter cards. Here it's decorative.
+    }
+
+    function toggleReqDetail(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var isOpen = el.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.req-detail').forEach(function(d) { d.classList.remove('open'); });
+      document.querySelectorAll('.rcf-right .btn:first-child').forEach(function(b) {
+        b.textContent = b.textContent.replace('Hide', 'View').replace('↑', '↓');
+      });
+      if (!isOpen) {
+        el.classList.add('open');
+        var btn = el.previousElementSibling && el.previousElementSibling.querySelector('.rcf-right .btn');
+        // Find the toggle button in the footer of this card
+        var card = el.closest('.req-card');
+        if (card) {
+          var toggleBtn = card.querySelector('.rcf-right .btn');
+          if (toggleBtn) toggleBtn.textContent = 'Hide intelligence ↑';
+        }
+      }
+    }
+
+    // ── Candidate Intelligence Briefs: Org → Position → Candidate ──
+    function selectBriefOrg(orgId) {
+      document.querySelectorAll('#brief-org-cards .org-card').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('.brief-nav-org').forEach(function(n) { n.style.display = 'none'; });
+      var card = document.getElementById('brief-org-' + orgId);
+      var nav = document.getElementById('brief-nav-' + orgId);
+      if (card) card.classList.add('active');
+      if (nav) nav.style.display = 'block';
+    }
+
+    function selectBriefPosition(orgId, posId) {
+      // One position per org in this demo; no-op or future use
+    }
+
+    function showBriefView(id) {
+      var emptyState = document.getElementById('brief-empty-state');
+      var view = document.getElementById('bv-' + id);
+      document.querySelectorAll('.brief-cand-row').forEach(function(r) { r.classList.remove('selected'); });
+      var row = document.getElementById('brief-cand-' + id);
+      if (row) row.classList.add('selected');
+      document.querySelectorAll('.brief-view').forEach(function(v) { v.classList.remove('active'); });
+      if (view) {
+        view.classList.add('active');
+        if (emptyState) emptyState.style.display = 'none';
+      } else {
+        if (emptyState) {
+          emptyState.style.display = 'flex';
+          var names = { alex: 'Alex K.', morgan: 'Morgan R.', casey: 'Casey L.' };
+          emptyState.textContent = 'Brief for ' + (names[id] || id) + ' — not yet generated. View in full product.';
+        }
+      }
+    }
+
+    function rejectCandidate(id) {
+      var row = document.getElementById('brief-cand-' + id);
+      if (!row) return;
+      row.classList.add('rejected');
+      row.classList.remove('shortlisted');
+      var actions = row.querySelector('.bcr-actions');
+      if (actions) {
+        var shortlistBtn = actions.querySelector('.btn-shortlist');
+        var rejectBtn = actions.querySelector('.btn-reject');
+        if (shortlistBtn) { shortlistBtn.textContent = 'Shortlist'; shortlistBtn.disabled = false; shortlistBtn.onclick = function() { shortlistCandidate(id); }; }
+        if (rejectBtn) { rejectBtn.textContent = 'Rejected'; rejectBtn.disabled = true; rejectBtn.onclick = null; }
+      }
+    }
+
+    function shortlistCandidate(id) {
+      var row = document.getElementById('brief-cand-' + id);
+      if (!row) return;
+      row.classList.add('shortlisted');
+      row.classList.remove('rejected');
+      var actions = row.querySelector('.bcr-actions');
+      if (actions) {
+        var shortlistBtn = actions.querySelector('.btn-shortlist');
+        var rejectBtn = actions.querySelector('.btn-reject');
+        if (shortlistBtn) { shortlistBtn.textContent = 'Shortlisted'; shortlistBtn.disabled = true; shortlistBtn.onclick = null; }
+        if (rejectBtn) { rejectBtn.disabled = false; rejectBtn.onclick = function() { rejectCandidate(id); }; }
+      }
+    }
+
+    function showBriefTab(btn, candidateId, tabId) {
+      // Deactivate all tabs and content for this candidate
+      var briefView = document.getElementById('bv-' + candidateId);
+      if (!briefView) return;
+      briefView.querySelectorAll('.btr').forEach(function(b) { b.classList.remove('active'); });
+      briefView.querySelectorAll('.btc').forEach(function(c) { c.classList.remove('active'); });
+      btn.classList.add('active');
+      var content = document.getElementById('btc-' + candidateId + '-' + tabId);
+      if (content) content.classList.add('active');
+    }
+
+    // Initial state: show Priya's brief when Briefs panel loads (BuildCo default)
+    (function() {
+      var pane = document.getElementById('brief-detail-pane');
+      if (pane && document.getElementById('bv-priya')) {
+        var emptyState = document.getElementById('brief-empty-state');
+        if (emptyState) emptyState.style.display = 'none';
+        var row = document.getElementById('brief-cand-priya');
+        if (row) row.classList.add('selected');
+      }
     })();
   </script>
 </body>
