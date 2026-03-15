@@ -605,28 +605,70 @@
     .course-card-footer { padding:10px 16px; display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--border); }
     .course-card-footer .btn { font-size:.8125rem; padding:6px 14px; }
 
-    /* Career Path */
-    .path-cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:20px; }
+    /* ══ Career Path ══ */
+    .path-cards-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
     @media(max-width:800px){.path-cards-grid{grid-template-columns:1fr}}
-    .path-card { border:2px solid var(--border); border-radius:var(--radius-lg); padding:18px; cursor:pointer; transition:border-color .15s; }
-    .path-card:hover{border-color:var(--accent)}
+    .path-card { border:2px solid var(--border); border-radius:var(--radius-lg); padding:18px; cursor:pointer; transition:border-color .15s, box-shadow .15s; position:relative; }
+    .path-card:hover { border-color:var(--accent); box-shadow:var(--shadow-md); }
     .path-card.selected { border-color:var(--accent); background:var(--accent-subtle); }
-    .path-tag { display:inline-block; padding:3px 8px; border-radius:4px; font-size:.75rem; font-weight:600; margin-bottom:10px; background:var(--accent-subtle); color:var(--accent-hover); }
-    .path-card h4 { margin:0 0 6px; font-size:1rem; }
-    .path-card .ptl { font-size:.875rem; color:var(--text-muted); margin-bottom:6px; }
-    .path-card .pcomp { font-weight:700; font-size:.9375rem; color:var(--text); }
+    .path-tag { display:inline-block; padding:3px 8px; border-radius:4px; font-size:.72rem; font-weight:700; margin-bottom:10px; background:var(--accent-subtle); color:var(--accent-hover); }
+    .path-tag.rec { background:var(--accent); color:#fff; }
+    .path-card h4 { margin:0 0 5px; font-size:.9375rem; line-height:1.35; }
+    .path-card .ptl { font-size:.8125rem; color:var(--text-muted); margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+    .path-card .pcomp { font-weight:700; font-size:.875rem; color:var(--accent); margin-bottom:10px; }
+    .path-card .pdesc { font-size:.8125rem; color:var(--text-muted); line-height:1.45; margin-bottom:12px; }
+    .path-confidence { margin-top:2px; }
+    .pc-label { font-size:.72rem; color:var(--text-muted); margin-bottom:4px; display:flex; justify-content:space-between; }
+    .pc-track { height:5px; background:var(--border); border-radius:3px; overflow:hidden; }
+    .pc-fill { height:100%; border-radius:3px; background:var(--accent); }
+    .path-risk-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:4px; font-size:.72rem; font-weight:600; }
+    .prb-low{background:#dcfce7;color:#166534}.prb-med{background:#fef3c7;color:#92400e}.prb-high{background:#fee2e2;color:#b91c1c}
+    /* Path compare table */
+    .path-compare-toggle { display:flex; align-items:center; gap:8px; margin-bottom:16px; }
+    .path-compare-table { display:none; width:100%; border-collapse:collapse; font-size:.875rem; margin-bottom:20px; }
+    .path-compare-table.visible { display:table; }
+    .path-compare-table th { padding:10px 14px; text-align:left; font-size:.78rem; font-weight:700; color:var(--text-muted); border-bottom:2px solid var(--border); }
+    .path-compare-table td { padding:10px 14px; border-bottom:1px solid var(--border); }
+    .path-compare-table tr:hover td { background:var(--bg); }
+    /* Path detail */
     .path-detail { display:none; }
     .path-detail.active { display:block; }
-    .path-steps { display:flex; overflow-x:auto; gap:0; padding-bottom:8px; }
-    .path-step { display:flex; flex-direction:column; align-items:center; min-width:140px; flex-shrink:0; }
-    .path-step-top { display:flex; align-items:center; width:100%; }
-    .step-circle { width:32px; height:32px; border-radius:50%; background:var(--accent); color:#fff; font-size:.8125rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .step-conn { flex:1; height:2px; background:var(--border); }
-    .path-step:last-child .step-conn{display:none}
-    .path-step-body { text-align:center; padding:8px 8px 0; }
-    .psb-year { font-size:.75rem; color:var(--text-muted); margin-bottom:2px; }
-    .psb-title { font-size:.875rem; font-weight:600; }
-    .psb-comp { font-size:.8125rem; color:var(--accent); }
+    /* Salary trajectory SVG */
+    .traj-chart-wrap { padding:16px 0 8px; margin-bottom:20px; }
+    .traj-chart-wrap h4 { margin:0 0 14px; font-size:.9375rem; font-weight:600; }
+    .traj-chart { width:100%; overflow:visible; }
+    .traj-legend { display:flex; gap:16px; margin-top:10px; font-size:.8125rem; }
+    .traj-leg-item { display:flex; align-items:center; gap:6px; }
+    .traj-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    /* Milestone timeline */
+    .milestone-timeline { display:flex; flex-direction:column; gap:0; margin-bottom:20px; }
+    .milestone-card { display:grid; grid-template-columns:80px 1fr; gap:0; position:relative; }
+    .mc-left { display:flex; flex-direction:column; align-items:center; padding-right:16px; }
+    .mc-year { font-size:.72rem; font-weight:700; color:var(--text-muted); text-align:center; margin-bottom:6px; white-space:nowrap; }
+    .mc-circle { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.8125rem; color:#fff; flex-shrink:0; z-index:1; }
+    .mc-circle.now { background:var(--accent); }
+    .mc-circle.future { background:var(--border); color:var(--text-muted); }
+    .mc-line { flex:1; width:2px; background:var(--border); margin:0 auto; }
+    .milestone-card:last-child .mc-line { display:none; }
+    .mc-body { padding:0 0 20px 0; }
+    .mc-role { font-size:.9375rem; font-weight:700; margin-bottom:3px; }
+    .mc-comp { font-size:.8125rem; font-weight:700; color:var(--accent); margin-bottom:8px; }
+    .mc-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+    .mc-chip { padding:3px 9px; border-radius:4px; font-size:.75rem; background:var(--bg); border:1px solid var(--border); color:var(--text-muted); }
+    .mc-focus { font-size:.8125rem; color:var(--text-muted); line-height:1.5; }
+    .mc-action { margin-top:8px; padding:8px 12px; background:var(--accent-subtle); border-radius:var(--radius); font-size:.8125rem; color:var(--accent-hover); display:flex; align-items:flex-start; gap:6px; }
+    /* Aligned jobs */
+    .aligned-jobs { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+    .aligned-job-row { display:flex; align-items:center; gap:12px; padding:12px 16px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); }
+    .ajr-logo { width:32px; height:32px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.78rem; color:#fff; flex-shrink:0; }
+    .ajr-body { flex:1; }
+    .ajr-body strong { display:block; font-size:.875rem; }
+    .ajr-body span { font-size:.8125rem; color:var(--text-muted); }
+    .ajr-match { font-size:.78rem; padding:3px 8px; border-radius:4px; font-weight:600; flex-shrink:0; }
+    .ajr-match.strong{background:#dcfce7;color:#166534}.ajr-match.good{background:#fef3c7;color:#92400e}
+    /* Path agent box */
+    .path-agent-box { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; background:var(--accent-subtle); border:1px solid rgba(109,40,217,.12); border-radius:var(--radius-lg); margin-top:4px; }
+    .path-agent-box ul { margin:6px 0 0; padding-left:16px; font-size:.8125rem; color:var(--text-muted); line-height:1.65; }
   </style>
 </head>
 <body>
@@ -2039,104 +2081,301 @@
     <div id="panel-negotiation" class="panel">
       <div class="app-header">
         <h1>Negotiation Advisor</h1>
-        <p>NegotiationAdvisorAgent analyses your offer against live market data and prepares your strategy. You do the talking.</p>
+        <p>NegotiationAdvisorAgent analyses your offer against live market data and prepares your strategy — scenario by scenario. You do the talking.</p>
       </div>
 
-      <!-- Offer received -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <h2 style="margin:0">Offer received — TechCorp</h2>
-          <span class="badge badge-amber">Awaiting negotiation</span>
+      <!-- Offer selector tabs -->
+      <div class="offer-selector-tabs">
+        <div class="offer-sel-tab active" onclick="showOfferView('tc')" id="ost-tc">
+          <div class="ost-logo" style="background:#6d28d9">TC</div>
+          <div class="ost-body">
+            <div class="ost-company">TechCorp</div>
+            <div class="ost-sub">Senior PM · Received 15 Mar</div>
+          </div>
+          <div class="ost-badge"><span class="badge badge-amber">Negotiating</span></div>
         </div>
-        <p class="text-muted" style="margin-bottom:16px">Received 15 Mar · Product Manager (Senior) · Remote</p>
-        <div class="offer-box">
-          <h4>Offer package</h4>
-          <div class="offer-items">
-            <div class="offer-item"><div class="oi-label">Base salary</div><div class="oi-val">€88,000</div></div>
-            <div class="offer-item"><div class="oi-label">Bonus</div><div class="oi-val">10%</div></div>
-            <div class="offer-item"><div class="oi-label">Equity</div><div class="oi-val">0.08% (4yr)</div></div>
-            <div class="offer-item"><div class="oi-label">Remote</div><div class="oi-val">Full ✓</div></div>
-            <div class="offer-item"><div class="oi-label">Start date</div><div class="oi-val">Flexible</div></div>
+        <div class="offer-sel-tab" onclick="showOfferView('bc')" id="ost-bc">
+          <div class="ost-logo" style="background:#0891b2;opacity:.6">BC</div>
+          <div class="ost-body">
+            <div class="ost-company">BuildCo</div>
+            <div class="ost-sub">PM · Interview Fri 22 Mar</div>
+          </div>
+          <div class="ost-badge"><span class="badge" style="background:var(--bg);color:var(--text-muted);border:1px solid var(--border)">Awaiting offer</span></div>
+        </div>
+      </div>
+
+      <!-- ══ TechCorp offer view ══ -->
+      <div class="offer-view active" id="ofv-tc">
+
+        <!-- Total comp hero -->
+        <div class="total-comp-hero">
+          <div class="tch-left">
+            <div class="tch-label">Total estimated compensation</div>
+            <div class="tch-total">€101,040 / yr</div>
+            <div class="tch-sub">Base + bonus + equity value at current valuation · As received</div>
+          </div>
+          <div class="tch-components">
+            <div class="tch-comp-item"><div class="tci-val">€88K</div><div class="tci-label">Base</div></div>
+            <div class="tch-comp-item"><div class="tci-val">€8.8K</div><div class="tci-label">Bonus (10%)</div></div>
+            <div class="tch-comp-item"><div class="tci-val">~€4.2K</div><div class="tci-label">Equity / yr est.</div></div>
           </div>
         </div>
 
-        <!-- Market comparison -->
-        <div style="margin-bottom:20px">
-          <div style="font-size:.9375rem;font-weight:600;margin-bottom:4px">Market comparison</div>
+        <!-- Offer items -->
+        <div class="offer-items">
+          <div class="offer-item"><div class="oi-label">Base salary</div><div class="oi-val">€88,000</div></div>
+          <div class="offer-item"><div class="oi-label">Bonus target</div><div class="oi-val">10% (€8.8K)</div></div>
+          <div class="offer-item"><div class="oi-label">Equity</div><div class="oi-val">0.08% · 4yr vest</div></div>
+          <div class="offer-item"><div class="oi-label">Cliff</div><div class="oi-val">1 year</div></div>
+          <div class="offer-item"><div class="oi-label">Remote</div><div class="oi-val">Full ✓</div></div>
+          <div class="offer-item"><div class="oi-label">Start</div><div class="oi-val">Flexible</div></div>
+        </div>
+
+        <!-- Market band -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="market-band-header">
+            <h4>Market comparison — Senior PM · Remote · Europe</h4>
+            <span class="market-position-callout mpc-below">2.2% below median</span>
+          </div>
           <div class="comp-visual">
             <div class="comp-track">
-              <div class="comp-marker m-offer" style="left:30%">
+              <div class="comp-track-fill" style="width:100%"></div>
+              <div class="comp-marker m-offer" style="left:28%">
                 <div class="cm-top">Your offer</div>
                 <div class="cm-dot"></div>
                 <div class="cm-bot">€88K</div>
               </div>
-              <div class="comp-marker m-med" style="left:50%">
+              <div class="comp-marker m-med" style="left:46%">
                 <div class="cm-top">Median</div>
                 <div class="cm-dot"></div>
-                <div class="cm-bot" style="color:#b45309">€90K</div>
+                <div class="cm-bot">€90K</div>
               </div>
-              <div class="comp-marker m-ask" style="left:65%">
-                <div class="cm-top">Recommended ask</div>
+              <div class="comp-marker m-ask" style="left:62%">
+                <div class="cm-top">Ask target</div>
                 <div class="cm-dot"></div>
-                <div class="cm-bot" style="color:#15803d">€92K</div>
+                <div class="cm-bot">€92K</div>
               </div>
-              <div class="comp-marker m-p75" style="left:85%">
+              <div class="comp-marker m-p75" style="left:84%">
                 <div class="cm-top">75th pct</div>
                 <div class="cm-dot"></div>
                 <div class="cm-bot">€98K</div>
               </div>
             </div>
           </div>
-          <div style="font-size:.8125rem;color:var(--text-muted);margin-top:6px">Senior PM · Remote · Europe · March 2026 market data</div>
-        </div>
+          <div class="market-src">March 2026 · n=847 Senior PM offers (EU remote) · Source: NegotiationAdvisorAgent market intelligence</div>
 
-        <!-- Priority stack -->
-        <div style="margin-bottom:20px">
-          <div style="font-size:.9375rem;font-weight:600;margin-bottom:10px">Your priority stack (from Career Intelligence Session)</div>
-          <div class="priority-stack">
-            <div class="priority-item"><div class="pr-rank">1</div><span>Base salary — floor €85K, target €92K+</span></div>
-            <div class="priority-item"><div class="pr-rank">2</div><span>Equity vesting — prefer 3yr cliff over 4yr</span></div>
-            <div class="priority-item"><div class="pr-rank">3</div><span>Full remote — non-negotiable</span></div>
+          <!-- Nego intelligence cards -->
+          <div class="nego-intel-grid">
+            <div class="nego-intel-card">
+              <div class="nic-tag green">Agent intel — Base flexibility</div>
+              <div class="nic-card-title">TechCorp base is often movable 3–5%</div>
+              <div class="nic-body">Three data points in NegotiationAdvisorAgent's database show TechCorp agreed to base increases of €3K–€5K for senior hires in the last 12 months. Your ask of €92K is within precedent.</div>
+            </div>
+            <div class="nego-intel-card">
+              <div class="nic-tag amber">Agent intel — Sign-on</div>
+              <div class="nic-card-title">Sign-on is available for senior roles</div>
+              <div class="nic-body">TechCorp has offered one-time sign-on payments of €3K–€6K to at least 2 confirmed senior hires. This doesn't affect their salary band budget — useful as a fallback if base is stuck.</div>
+            </div>
+            <div class="nego-intel-card">
+              <div class="nic-tag blue">Agent intel — Equity cliff</div>
+              <div class="nic-card-title">3yr cliff granted in 2 recent cases</div>
+              <div class="nic-body">Two verified instances of TechCorp reducing the equity cliff from 4yr to 3yr on request. This costs them nothing financially today and is worth ~€8–12K in optionality for you. Push for it.</div>
+            </div>
           </div>
         </div>
 
-        <!-- Negotiation script -->
-        <div style="background:var(--bg);border-radius:var(--radius);padding:16px;margin-bottom:20px">
-          <div style="font-size:.9375rem;font-weight:600;margin-bottom:8px">Recommended opening framing</div>
-          <p style="font-size:.9375rem;color:var(--text);margin:0;line-height:1.6;font-style:italic">"I'm genuinely excited about the role and the team — TechCorp is my first choice. I do have one other offer in the €92K range, but I'd rather be here. Can we get to €92K base? If that's tight, I'd also love to talk about reducing the equity vesting cliff from 4 to 3 years."</p>
+        <!-- Priority stack -->
+        <div class="card" style="margin-bottom:16px">
+          <h4 style="margin:0 0 14px;font-size:.9375rem">Your negotiation priority stack</h4>
+          <div class="priority-stack">
+            <div class="priority-item">
+              <div class="pr-rank">1</div>
+              <div class="pr-body">
+                <strong>Base salary</strong>
+                <span>Floor €88K · Target €92K · Walk-away: nothing below current offer</span>
+              </div>
+              <span class="pr-status prs-target">In negotiation</span>
+            </div>
+            <div class="priority-item">
+              <div class="pr-rank">2</div>
+              <div class="pr-body">
+                <strong>Equity vesting cliff</strong>
+                <span>4yr → 3yr cliff · Costs TechCorp nothing · Worth ~€8–12K optionality</span>
+              </div>
+              <span class="pr-status prs-target">Not yet raised</span>
+            </div>
+            <div class="priority-item">
+              <div class="pr-rank">3</div>
+              <div class="pr-body">
+                <strong>Sign-on bonus</strong>
+                <span>€3K–€5K if base gets stuck · Fallback lever only</span>
+              </div>
+              <span class="pr-status prs-target">Hold in reserve</span>
+            </div>
+            <div class="priority-item">
+              <div class="pr-rank">4</div>
+              <div class="pr-body">
+                <strong>Full remote</strong>
+                <span>Already confirmed in writing — do not use as a concession</span>
+              </div>
+              <span class="pr-status prs-achieved">Secured ✓</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenario playbook -->
+        <div class="card" style="margin-bottom:16px">
+          <h4 style="margin:0 0 4px;font-size:.9375rem">Scenario playbook</h4>
+          <p style="margin:0 0 16px;font-size:.8125rem;color:var(--text-muted)">NegotiationAdvisorAgent has prepared a response for every likely counter. Click to expand.</p>
+
+          <div class="scenario-item">
+            <div class="scenario-head" onclick="toggleScenario(this)">
+              <span class="scenario-if">If</span>
+              <span class="scenario-trigger">"The salary band is fixed — we can't go higher."</span>
+              <button class="scenario-toggle">Expand ↓</button>
+            </div>
+            <div class="scenario-body">
+              <strong>Don't accept or withdraw.</strong> This is a standard opening position, not a final answer. Pivot immediately to the equity cliff.<br><br>
+              <div class="scenario-script">"I completely understand — I know bands are set centrally. I'd love to make this work. Could we look at reducing the vesting cliff from 4 years to 3? And separately, is there any flexibility on a one-time sign-on to bridge the gap between the offer and my current package?"</div>
+            </div>
+          </div>
+
+          <div class="scenario-item">
+            <div class="scenario-head" onclick="toggleScenario(this)">
+              <span class="scenario-if">If</span>
+              <span class="scenario-trigger">"We can go to €90K, but that's our max."</span>
+              <button class="scenario-toggle">Expand ↓</button>
+            </div>
+            <div class="scenario-body">
+              <strong>€90K is a good result but not your target.</strong> Accept the base increment and immediately shift to sign-on.<br><br>
+              <div class="scenario-script">"€90K works — thank you for moving on that. Given I'm coming in slightly below my current total comp, would you consider a one-time sign-on of €4K? It doesn't affect the ongoing salary structure and would really help me make the transition work."</div>
+            </div>
+          </div>
+
+          <div class="scenario-item">
+            <div class="scenario-head" onclick="toggleScenario(this)">
+              <span class="scenario-if">If</span>
+              <span class="scenario-trigger">"Another candidate has accepted at this level."</span>
+              <button class="scenario-toggle">Expand ↓</button>
+            </div>
+            <div class="scenario-body">
+              <strong>This is a pressure tactic — don't react emotionally.</strong> Stay grounded and keep the conversation factual.<br><br>
+              <div class="scenario-script">"I appreciate the transparency — I'd still like to make this work. I'm specifically looking at the gap between the offer and the market median for this role in the European market, which sits around €90K. Is there any flexibility there, or on the vesting terms? I want to say yes."</div>
+            </div>
+          </div>
+
+          <div class="scenario-item">
+            <div class="scenario-head" onclick="toggleScenario(this)">
+              <span class="scenario-if">If</span>
+              <span class="scenario-trigger">"We need a decision by end of day."</span>
+              <button class="scenario-toggle">Expand ↓</button>
+            </div>
+            <div class="scenario-body">
+              <strong>Don't be pressured into deciding without your final negotiation attempt completed.</strong> Ask for 24 hours — this is always reasonable.<br><br>
+              <div class="scenario-script">"I want to make the right decision and I want to join TechCorp. Could I have until tomorrow noon? I just want to make sure the family-side logistics work — and I'd love to have one more quick conversation about the vesting terms before I sign."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opening script -->
+        <div class="card" style="margin-bottom:16px">
+          <h4 style="margin:0 0 10px;font-size:.9375rem">Recommended opening statement</h4>
+          <div style="padding:16px 18px;background:var(--bg);border-radius:var(--radius);border-left:3px solid var(--accent);font-size:.9375rem;line-height:1.65;font-style:italic;color:var(--text)">"I'm genuinely excited about the role and the team — TechCorp is my first choice. I do have one other offer in the €92K range, but I'd rather be here. Can we explore getting to €92K on the base? If the band is tight, I'd also love to discuss the equity vesting cliff — moving from 4 to 3 years would mean a lot to me."</div>
+          <p style="font-size:.8125rem;color:var(--text-muted);margin:10px 0 0">✓ Leads with enthusiasm · ✓ References competing offer (not bluffing, you have ScaleUp) · ✓ Names a specific number · ✓ Offers an alternative lever immediately</p>
         </div>
 
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="btn btn-primary" id="live-mode-btn" onclick="toggleLiveMode()">Activate live coaching mode</button>
-          <span class="text-muted">NegotiationCoach™ will show real-time prompts during your call</span>
+          <span class="text-muted" style="font-size:.875rem">NegotiationCoach™ shows real-time prompts during your call — private to you only</span>
+        </div>
+      </div>
+
+      <!-- ══ BuildCo offer view (pending) ══ -->
+      <div class="offer-view" id="ofv-bc">
+        <div class="card" style="text-align:center;padding:40px 24px">
+          <div class="agent-status" style="justify-content:center;margin-bottom:12px">NegotiationAdvisorAgent on standby</div>
+          <h3 style="margin:0 0 8px">No offer from BuildCo yet</h3>
+          <p style="color:var(--text-muted);font-size:.9375rem;max-width:380px;margin:0 auto 20px">Your interview with BuildCo (Sarah Kim, Head of Product) is scheduled for Fri 22 Mar. Once an offer is received, NegotiationAdvisorAgent will analyse it within 2 hours and prepare your personalised strategy.</p>
+          <div style="padding:14px 16px;background:var(--accent-subtle);border-radius:var(--radius);max-width:400px;margin:0 auto;text-align:left;font-size:.875rem;color:var(--text)">
+            <strong>Pre-interview preparation:</strong> Your BuildCo target is €90K–€95K base. CareerPathAgent notes their Series B stage makes equity an important lever — push for 0.10–0.15% if base is constrained.
+          </div>
         </div>
       </div>
 
       <!-- Live coaching mode -->
       <div class="nego-live" id="nego-live">
         <div class="card">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-            <span class="agent-status">NegotiationCoach™ live</span>
-            <span class="text-muted" style="font-size:.875rem">Private coaching prompts — only you see this</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="agent-status">NegotiationCoach™ live</span>
+              <span class="text-muted" style="font-size:.875rem">Private to you · Only you see this</span>
+            </div>
+            <button class="btn" onclick="toggleLiveMode()" style="font-size:.8125rem">End session</button>
           </div>
-          <div class="live-prompt">
-            <span class="lp-icon">💡</span>
-            <span>You are below market median (€88K vs €90K). Open by expressing excitement, then anchor at €92K. Don't open below your target.</span>
+
+          <!-- Phase tracker -->
+          <div class="live-phase-tracker" id="live-phases">
+            <div class="live-phase lp-active" onclick="setLivePhase(0)">Opening</div>
+            <div class="live-phase" onclick="setLivePhase(1)">Counter-offer</div>
+            <div class="live-phase" onclick="setLivePhase(2)">If-then</div>
+            <div class="live-phase" onclick="setLivePhase(3)">Close</div>
           </div>
-          <div class="live-prompt">
-            <span class="lp-icon">💡</span>
-            <span>If they say "the band is fixed": pivot immediately to equity cliff. Ask to move from 4yr to 3yr — this costs them nothing today and is worth ~€8K in your Year 1 optionality.</span>
+
+          <!-- Phase content (toggled by JS) -->
+          <div id="lp-phase-0">
+            <div class="live-prompt insight">
+              <span class="lp-icon">💡</span>
+              <span class="lp-text">You are €2K below market median. <strong>Open with excitement first</strong>, then anchor at €92K. Do not open below your target or with a range.</span>
+            </div>
+            <div class="live-prompt insight">
+              <span class="lp-icon">💡</span>
+              <span class="lp-text">You have a competing offer (ScaleUp, ~€90K). Mention it once, factually. Don't reference it repeatedly — it becomes noise.</span>
+            </div>
+            <div class="live-prompt strategy">
+              <span class="lp-icon">→</span>
+              <span class="lp-text">Opening script: <em>"TechCorp is my first choice. I have one other offer in the €92K range — can we get to €92K? If the band is tight, I'd also love to explore the vesting cliff."</em></span>
+            </div>
           </div>
-          <div class="live-prompt strategy">
-            <span class="lp-icon" style="color:var(--accent);font-weight:700">→</span>
-            <span>If they come back with €90K: accept base, then ask for a sign-on of €3K–€5K. This is common at TechCorp for senior hires and doesn't affect their salary band budget.</span>
+
+          <div id="lp-phase-1" style="display:none">
+            <div class="live-prompt insight">
+              <span class="lp-icon">💡</span>
+              <span class="lp-text">If they offer €90K: <strong>accept base positively</strong>, then immediately pivot to sign-on. Don't leave the call without raising the sign-on lever.</span>
+            </div>
+            <div class="live-prompt strategy">
+              <span class="lp-icon">→</span>
+              <span class="lp-text"><em>"€90K works — thank you. To bridge the gap with my current package, could we explore a one-time sign-on of €3K–€4K?"</em></span>
+            </div>
+            <div class="live-prompt warn">
+              <span class="lp-icon">⚠</span>
+              <span class="lp-text">Do not trade remote. It is already in writing. If they bring it up, redirect: <em>"Remote is settled — I'm focused on the base and sign-on."</em></span>
+            </div>
           </div>
-          <div class="live-prompt strategy">
-            <span class="lp-icon" style="color:var(--accent);font-weight:700">→</span>
-            <span>Remote is already confirmed. Don't trade it — it's in writing. Don't bring it up as a concession.</span>
+
+          <div id="lp-phase-2" style="display:none">
+            <p style="font-size:.8125rem;font-weight:600;color:var(--text-muted);margin:0 0 10px">Select the scenario they've raised:</p>
+            <div class="live-scenario-btns">
+              <button class="lsb" onclick="showLiveScenario('fixed')">Band is fixed</button>
+              <button class="lsb" onclick="showLiveScenario('pressure')">Deadline pressure</button>
+              <button class="lsb" onclick="showLiveScenario('competitor')">Another candidate</button>
+              <button class="lsb" onclick="showLiveScenario('cliff')">Can't move cliff</button>
+            </div>
+            <div class="live-response-box" id="live-response"></div>
           </div>
-          <div style="margin-top:16px">
-            <button class="btn" onclick="toggleLiveMode()">End live session</button>
+
+          <div id="lp-phase-3" style="display:none">
+            <div class="live-prompt strategy">
+              <span class="lp-icon">→</span>
+              <span class="lp-text">Before you accept: confirm <strong>all agreements verbally</strong> and ask for an updated written offer within 24 hours. Never sign until you have the revised letter.</span>
+            </div>
+            <div class="live-prompt insight">
+              <span class="lp-icon">💡</span>
+              <span class="lp-text">Close warmly: <em>"I'm really excited — let's make this happen. Can you send the revised offer today so I can sign first thing tomorrow?"</em></span>
+            </div>
+            <div class="live-prompt insight">
+              <span class="lp-icon">💡</span>
+              <span class="lp-text">If you're still undecided: it's acceptable to ask for 24 hours to review with your family. Don't feel pressured to sign live on the call.</span>
+            </div>
           </div>
         </div>
       </div>
@@ -2647,111 +2886,405 @@
     <div id="panel-career" class="panel">
       <div class="app-header">
         <h1>Career Path</h1>
-        <p>CareerPathAgent models your trajectory. Your stated goal: Product Lead role within 3 years.</p>
+        <p>CareerPathAgent models three plausible trajectories from your current profile, market data, and stated goals. Select a path to explore its milestones.</p>
       </div>
 
-      <div class="card">
-        <h2>Choose a path to explore</h2>
-        <p class="text-muted" style="margin-bottom:20px">Three plausible trajectories modelled from your current profile, market data, and stated goals.</p>
-
-        <div class="path-cards-grid">
-          <div class="path-card selected" id="pc-A" onclick="selectPath('A')">
-            <span class="path-tag">Path A — Recommended</span>
-            <h4>Senior PM → Lead at enterprise-stage company</h4>
-            <div class="ptl">Est. 3–4 years · Lower variance</div>
-            <div class="pcomp">Projected: €110K–€125K by Year 4</div>
-            <div style="font-size:.8125rem;margin-top:8px;color:var(--text-muted)">Stable, lower equity, clear trajectory. Best if you want predictability and skill depth.</div>
-          </div>
-          <div class="path-card" id="pc-B" onclick="selectPath('B')">
-            <span class="path-tag">Path B — High upside</span>
-            <h4>Jump to Lead at a Series B/C scale-up</h4>
-            <div class="ptl">Est. 2–3 years · Higher variance</div>
-            <div class="pcomp">Projected: €100K + equity upside</div>
-            <div style="font-size:.8125rem;margin-top:8px;color:var(--text-muted)">Faster to "lead" title. Requires tolerance for ambiguity and pace. Equity could be significant.</div>
-          </div>
-          <div class="path-card" id="pc-C" onclick="selectPath('C')">
-            <span class="path-tag">Path C — Specialist then lead</span>
-            <h4>Growth PM → PM Lead (domain specialist)</h4>
-            <div class="ptl">Est. 4 years · Market demand high</div>
-            <div class="pcomp">Projected: €115K–€130K by Year 5</div>
-            <div style="font-size:.8125rem;margin-top:8px;color:var(--text-muted)">Build a differentiated reputation first. "Growth PM Lead" commands premium in market.</div>
+      <!-- Path selector cards -->
+      <div class="path-cards-grid">
+        <div class="path-card selected" id="pc-A" onclick="selectPath('A')">
+          <span class="path-tag rec">Path A · Recommended</span>
+          <h4>Senior PM → Product Lead at enterprise company</h4>
+          <div class="ptl"><span>3–4 years</span><span class="path-risk-badge prb-low">Low risk</span></div>
+          <div class="pcomp">€115K–€130K by Year 4</div>
+          <div class="pdesc">Stable trajectory with clear IC-to-lead ladder. Best for building depth and predictable progression.</div>
+          <div class="path-confidence">
+            <div class="pc-label"><span>Agent confidence</span><span>88%</span></div>
+            <div class="pc-track"><div class="pc-fill" style="width:88%"></div></div>
           </div>
         </div>
-
-        <!-- Path A detail -->
-        <div class="path-detail active" id="pd-A">
-          <div style="font-size:.9375rem;font-weight:600;margin-bottom:16px">Path A · Year-by-year progression</div>
-          <div class="path-steps">
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">Now</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2026</div><div class="psb-title">Senior PM</div><div class="psb-comp">€88K–€92K</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">1</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2027</div><div class="psb-title">Senior PM (expanded scope)</div><div class="psb-comp">€95K–€100K</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">2</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2028</div><div class="psb-title">Staff PM / Group PM</div><div class="psb-comp">€105K–€115K</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">3</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2029</div><div class="psb-title">Product Lead / Director</div><div class="psb-comp">€115K–€130K</div></div>
-            </div>
-          </div>
-          <div style="background:var(--bg);border-radius:var(--radius);padding:14px;margin-top:20px;font-size:.875rem;color:var(--text-muted)">
-            <strong style="color:var(--text)">Skills to develop on this path:</strong> People management fundamentals, OKR design at team level, executive communication. The TechCorp role is a strong entry point for Path A — they have a clear IC-to-lead track.
+        <div class="path-card" id="pc-B" onclick="selectPath('B')">
+          <span class="path-tag">Path B · High upside</span>
+          <h4>Jump directly to Lead at a Series B/C scale-up</h4>
+          <div class="ptl"><span>2–3 years</span><span class="path-risk-badge prb-med">Medium risk</span></div>
+          <div class="pcomp">€100K + meaningful equity</div>
+          <div class="pdesc">Faster to "Lead" title with equity upside. Requires higher ambiguity tolerance. Equity could be significant at exit.</div>
+          <div class="path-confidence">
+            <div class="pc-label"><span>Agent confidence</span><span>71%</span></div>
+            <div class="pc-track"><div class="pc-fill" style="width:71%"></div></div>
           </div>
         </div>
-
-        <!-- Path B detail -->
-        <div class="path-detail" id="pd-B">
-          <div style="font-size:.9375rem;font-weight:600;margin-bottom:16px">Path B · Year-by-year progression</div>
-          <div class="path-steps">
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">Now</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2026</div><div class="psb-title">Senior PM</div><div class="psb-comp">€88K–€92K</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">1</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2027</div><div class="psb-title">PM Lead (Series B)</div><div class="psb-comp">€95K + equity</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">2</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2028</div><div class="psb-title">Head of Product (small team)</div><div class="psb-comp">€105K + equity</div></div>
-            </div>
-          </div>
-          <div style="background:var(--bg);border-radius:var(--radius);padding:14px;margin-top:20px;font-size:.875rem;color:var(--text-muted)">
-            <strong style="color:var(--text)">Risk factors:</strong> Scale-up may not have a clear PM career ladder. Title "Lead" is not always consistent across companies. Equity value depends on outcome. Higher reward, but validate the company's trajectory before accepting.
+        <div class="path-card" id="pc-C" onclick="selectPath('C')">
+          <span class="path-tag">Path C · Domain specialist</span>
+          <h4>Growth PM → Specialist Lead (domain expert first)</h4>
+          <div class="ptl"><span>4–5 years</span><span class="path-risk-badge prb-low">Low risk</span></div>
+          <div class="pcomp">€118K–€135K by Year 5</div>
+          <div class="pdesc">Build differentiated expertise first. "Growth PM Lead" commands a market premium and is defensible long-term.</div>
+          <div class="path-confidence">
+            <div class="pc-label"><span>Agent confidence</span><span>79%</span></div>
+            <div class="pc-track"><div class="pc-fill" style="width:79%"></div></div>
           </div>
         </div>
+      </div>
 
-        <!-- Path C detail -->
-        <div class="path-detail" id="pd-C">
-          <div style="font-size:.9375rem;font-weight:600;margin-bottom:16px">Path C · Year-by-year progression</div>
-          <div class="path-steps">
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">Now</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2026</div><div class="psb-title">Senior PM (Growth)</div><div class="psb-comp">€88K–€95K</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">1</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2027</div><div class="psb-title">Senior PM — domain expert</div><div class="psb-comp">€96K–€106K</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">2</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2028</div><div class="psb-title">Staff PM / Specialist Lead</div><div class="psb-comp">€108K–€118K</div></div>
-            </div>
-            <div class="path-step">
-              <div class="path-step-top"><div class="step-circle">3</div><div class="step-conn"></div></div>
-              <div class="path-step-body"><div class="psb-year">2029</div><div class="psb-title">Growth PM Lead</div><div class="psb-comp">€118K–€132K</div></div>
+      <!-- Compare toggle -->
+      <div class="path-compare-toggle">
+        <button class="btn" onclick="toggleCompare(this)" style="font-size:.8125rem;padding:6px 14px">Compare all paths →</button>
+        <span style="font-size:.8125rem;color:var(--text-muted)">Side-by-side comparison of key dimensions</span>
+      </div>
+      <table class="path-compare-table" id="path-compare-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Path A — Enterprise Lead</th>
+            <th>Path B — Scale-up Lead</th>
+            <th>Path C — Specialist Lead</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Time to "Lead" title</td><td>3–4 years</td><td>2–3 years</td><td>4–5 years</td></tr>
+          <tr><td>Comp ceiling (Year 5)</td><td>€115K–€130K</td><td>€100K + equity</td><td>€118K–€135K</td></tr>
+          <tr><td>Equity upside</td><td>Low–moderate</td><td>High (outcome-dependent)</td><td>Moderate</td></tr>
+          <tr><td>Role security</td><td>High</td><td>Medium (startup risk)</td><td>High</td></tr>
+          <tr><td>Skill depth</td><td>Broad PM leadership</td><td>Generalist + startup ops</td><td>Deep domain expertise</td></tr>
+          <tr><td>Risk level</td><td><span class="path-risk-badge prb-low">Low</span></td><td><span class="path-risk-badge prb-med">Medium</span></td><td><span class="path-risk-badge prb-low">Low</span></td></tr>
+          <tr><td>Active role aligned</td><td>TechCorp (92% fit)</td><td>ScaleUp (88% fit)</td><td>BuildCo (89% fit)</td></tr>
+        </tbody>
+      </table>
+
+      <!-- ══ Path A detail ══ -->
+      <div class="path-detail active" id="pd-A">
+        <div class="card">
+          <!-- Salary trajectory SVG -->
+          <div class="traj-chart-wrap">
+            <h4>Compensation trajectory — Path A</h4>
+            <svg class="traj-chart" viewBox="0 0 500 160" preserveAspectRatio="xMidYMid meet">
+              <!-- Grid lines -->
+              <line x1="60" y1="20" x2="480" y2="20" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="60" x2="480" y2="60" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="100" x2="480" y2="100" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="140" x2="480" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+              <!-- Y labels -->
+              <text x="54" y="24" font-size="10" fill="#94a3b8" text-anchor="end">€135K</text>
+              <text x="54" y="64" font-size="10" fill="#94a3b8" text-anchor="end">€115K</text>
+              <text x="54" y="104" font-size="10" fill="#94a3b8" text-anchor="end">€95K</text>
+              <text x="54" y="144" font-size="10" fill="#94a3b8" text-anchor="end">€75K</text>
+              <!-- X labels -->
+              <text x="100" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Now</text>
+              <text x="200" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 1</text>
+              <text x="300" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 2</text>
+              <text x="400" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 3</text>
+              <text x="480" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 4</text>
+              <!-- Path A line (purple) -->
+              <polyline points="100,118 200,104 300,84 400,60 480,32" fill="none" stroke="#6d28d9" stroke-width="2.5" stroke-linejoin="round"/>
+              <!-- Market median (dashed amber) -->
+              <polyline points="100,118 200,110 300,98 400,84 480,72" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <!-- Dots -->
+              <circle cx="100" cy="118" r="4" fill="#6d28d9"/>
+              <circle cx="200" cy="104" r="4" fill="#6d28d9"/>
+              <circle cx="300" cy="84" r="4" fill="#6d28d9"/>
+              <circle cx="400" cy="60" r="4" fill="#6d28d9"/>
+              <circle cx="480" cy="32" r="4" fill="#6d28d9"/>
+            </svg>
+            <div class="traj-legend">
+              <div class="traj-leg-item"><div class="traj-dot" style="background:#6d28d9"></div> Path A projection</div>
+              <div class="traj-leg-item"><div class="traj-dot" style="background:#f59e0b"></div> Market median (same cohort)</div>
             </div>
           </div>
-          <div style="background:var(--bg);border-radius:var(--radius);padding:14px;margin-top:20px;font-size:.875rem;color:var(--text-muted)">
-            <strong style="color:var(--text)">Why this works:</strong> "Growth PM Lead" is one of the highest-demand PM specialisms in 2026. Building deep expertise now creates a defensible market position and above-median compensation ceiling.
+
+          <!-- Milestone timeline -->
+          <h4 style="margin:0 0 18px;font-size:.9375rem">Year-by-year milestones</h4>
+          <div class="milestone-timeline">
+            <div class="milestone-card">
+              <div class="mc-left">
+                <div class="mc-year">2026</div>
+                <div class="mc-circle now">Now</div>
+                <div class="mc-line"></div>
+              </div>
+              <div class="mc-body">
+                <div class="mc-role">Senior Product Manager — TechCorp (target)</div>
+                <div class="mc-comp">€88K–€92K base</div>
+                <div class="mc-chips">
+                  <span class="mc-chip">Outcome-led PM</span><span class="mc-chip">OKR adoption</span><span class="mc-chip">PLG fundamentals</span>
+                </div>
+                <div class="mc-focus">Land a Senior PM role at an enterprise-stage company with a clear IC-to-lead ladder. Prioritise companies where PMs own a P&L-adjacent metric — that scope accelerates promotion.</div>
+                <div class="mc-action">→ TechCorp is the strongest match for this entry point. Accept and focus on outcome ownership in the first 6 months.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left">
+                <div class="mc-year">2027</div>
+                <div class="mc-circle future">1</div>
+                <div class="mc-line"></div>
+              </div>
+              <div class="mc-body">
+                <div class="mc-role">Senior PM — Expanded Scope</div>
+                <div class="mc-comp">€95K–€102K</div>
+                <div class="mc-chips">
+                  <span class="mc-chip">Cross-functional lead</span><span class="mc-chip">Junior PM mentoring</span><span class="mc-chip">SQL / data fluency</span>
+                </div>
+                <div class="mc-focus">Take ownership of a second product area or a junior PM's growth. Begin formal OKR design at the team level. Complete at least one SQL course to remove your data gap.</div>
+                <div class="mc-action">→ Start mentoring a junior PM — even informally. This is the critical signal for a Staff PM promotion case.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left">
+                <div class="mc-year">2028</div>
+                <div class="mc-circle future">2</div>
+                <div class="mc-line"></div>
+              </div>
+              <div class="mc-body">
+                <div class="mc-role">Staff PM / Group PM</div>
+                <div class="mc-comp">€105K–€118K</div>
+                <div class="mc-chips">
+                  <span class="mc-chip">Manages 1–2 PMs</span><span class="mc-chip">Exec comms</span><span class="mc-chip">Roadmap ownership</span>
+                </div>
+                <div class="mc-focus">Formal people management begins. Run one cycle of PM performance reviews. Represent the product team at board or exec level at least quarterly.</div>
+                <div class="mc-action">→ Begin your external brand — write one article per quarter about your product work. This accelerates your Head-of-Product candidacy.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left">
+                <div class="mc-year">2029</div>
+                <div class="mc-circle future">3</div>
+                <div class="mc-line"></div>
+              </div>
+              <div class="mc-body">
+                <div class="mc-role">Product Lead / Director of Product</div>
+                <div class="mc-comp">€115K–€130K</div>
+                <div class="mc-chips">
+                  <span class="mc-chip">3–5 direct PMs</span><span class="mc-chip">Board exposure</span><span class="mc-chip">Product strategy</span>
+                </div>
+                <div class="mc-focus">Own a full product line, manage a team of 3–5 PMs, and define the multi-year roadmap. By this point your compensation ceiling is set by your equity negotiation, not just base.</div>
+                <div class="mc-action">→ At this stage: negotiate equity vesting aggressively. A 0.1–0.3% stake at a Series D company is achievable and material.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Jobs aligned to this path -->
+          <h4 style="margin:0 0 12px;font-size:.9375rem">Active roles aligned to Path A</h4>
+          <div class="aligned-jobs">
+            <div class="aligned-job-row">
+              <div class="ajr-logo" style="background:#6d28d9">TC</div>
+              <div class="ajr-body">
+                <strong>Senior PM — TechCorp</strong>
+                <span>Clear IC-to-lead ladder · Series C · Strong PLG motion · 92% fit</span>
+              </div>
+              <span class="ajr-match strong">Ideal entry point</span>
+            </div>
+            <div class="aligned-job-row">
+              <div class="ajr-logo" style="background:#0891b2">BC</div>
+              <div class="ajr-body">
+                <strong>Product Manager — BuildCo</strong>
+                <span>Data infrastructure PM · Strong IC track · 89% fit</span>
+              </div>
+              <span class="ajr-match good">Good alternative</span>
+            </div>
+          </div>
+
+          <div class="path-agent-box">
+            <div class="agent-dot active" style="flex-shrink:0;margin-top:3px"></div>
+            <div>
+              <strong style="font-size:.875rem">CareerPathAgent — Path A analysis</strong>
+              <ul>
+                <li>Path A is your lowest-variance route to Product Lead. The TechCorp role is the strongest entry point due to their defined IC-to-lead promotion track.</li>
+                <li>Critical unlock: close the SQL gap in Year 1. PMs who can read their own data are promoted 40% faster at outcome-led companies (CareerPathAgent market model).</li>
+                <li>Your mentoring experience gap (currently 35%) is the most important thing to address by Year 2 — it is the primary signal for a Staff PM promotion case.</li>
+              </ul>
+            </div>
           </div>
         </div>
+      </div>
 
+      <!-- ══ Path B detail ══ -->
+      <div class="path-detail" id="pd-B">
+        <div class="card">
+          <div class="traj-chart-wrap">
+            <h4>Compensation trajectory — Path B</h4>
+            <svg class="traj-chart" viewBox="0 0 500 160" preserveAspectRatio="xMidYMid meet">
+              <line x1="60" y1="20" x2="480" y2="20" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="60" x2="480" y2="60" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="100" x2="480" y2="100" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="140" x2="480" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+              <text x="54" y="24" font-size="10" fill="#94a3b8" text-anchor="end">€135K</text>
+              <text x="54" y="64" font-size="10" fill="#94a3b8" text-anchor="end">€115K</text>
+              <text x="54" y="104" font-size="10" fill="#94a3b8" text-anchor="end">€95K</text>
+              <text x="54" y="144" font-size="10" fill="#94a3b8" text-anchor="end">€75K</text>
+              <text x="100" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Now</text>
+              <text x="200" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 1</text>
+              <text x="300" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 2</text>
+              <text x="400" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 3</text>
+              <text x="480" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 4</text>
+              <!-- Base trajectory (solid) -->
+              <polyline points="100,118 200,94 300,72 400,56 480,40" fill="none" stroke="#6d28d9" stroke-width="2.5" stroke-linejoin="round"/>
+              <!-- Equity upside band (dashed) -->
+              <polyline points="300,72 400,44 480,22" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <!-- Market median -->
+              <polyline points="100,118 200,110 300,98 400,84 480,72" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <circle cx="100" cy="118" r="4" fill="#6d28d9"/>
+              <circle cx="200" cy="94" r="4" fill="#6d28d9"/>
+              <circle cx="300" cy="72" r="4" fill="#6d28d9"/>
+              <circle cx="400" cy="56" r="4" fill="#6d28d9"/>
+              <circle cx="480" cy="40" r="4" fill="#6d28d9"/>
+            </svg>
+            <div class="traj-legend">
+              <div class="traj-leg-item"><div class="traj-dot" style="background:#6d28d9"></div> Path B base projection</div>
+              <div class="traj-leg-item"><div class="traj-dot" style="background:#16a34a"></div> With equity event (Series D exit)</div>
+              <div class="traj-leg-item"><div class="traj-dot" style="background:#f59e0b"></div> Market median</div>
+            </div>
+          </div>
+
+          <h4 style="margin:0 0 18px;font-size:.9375rem">Year-by-year milestones</h4>
+          <div class="milestone-timeline">
+            <div class="milestone-card">
+              <div class="mc-left"><div class="mc-year">2026</div><div class="mc-circle now">Now</div><div class="mc-line"></div></div>
+              <div class="mc-body">
+                <div class="mc-role">Senior PM — Pursuing ScaleUp / Series B target</div>
+                <div class="mc-comp">€90K–€95K + 0.1–0.15% equity</div>
+                <div class="mc-chips"><span class="mc-chip">PLG focus</span><span class="mc-chip">Ambiguity tolerance</span><span class="mc-chip">Growth metrics</span></div>
+                <div class="mc-focus">Target a Series B/C company with a defined product team of 3–5 PMs where a "Lead" slot will open within 12 months. Due-diligence their PM career ladder before accepting.</div>
+                <div class="mc-action">→ ScaleUp (Product Lead — Growth) is directly aligned. The equity component (0.12%) is above market for Series B stage.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left"><div class="mc-year">2027</div><div class="mc-circle future">1</div><div class="mc-line"></div></div>
+              <div class="mc-body">
+                <div class="mc-role">PM Lead / Head of Product (small team)</div>
+                <div class="mc-comp">€95K–€108K + equity accruing</div>
+                <div class="mc-chips"><span class="mc-chip">People management</span><span class="mc-chip">Strategy ownership</span><span class="mc-chip">Board exposure</span></div>
+                <div class="mc-focus">At a scale-up, "Lead" often means Head of Product within 12 months. Expect to define the product org, hire, and represent product at board level much earlier than Path A.</div>
+                <div class="mc-action">→ Key risk: validate the company's funding runway. A Series B with 18+ months runway is safe. Less than 12 months is a red flag.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left"><div class="mc-year">2028–29</div><div class="mc-circle future">2</div><div class="mc-line"></div></div>
+              <div class="mc-body">
+                <div class="mc-role">VP Product or exit — depends on company outcome</div>
+                <div class="mc-comp">€105K–€120K + potential liquidity event</div>
+                <div class="mc-chips"><span class="mc-chip">Exec team</span><span class="mc-chip">Equity vesting</span><span class="mc-chip">Exit scenario</span></div>
+                <div class="mc-focus">If the company raises a Series C/D or is acquired, your 0.12% equity at a €50M exit = ~€60K after dilution. At €150M exit = ~€180K. The base path pays less than A, but equity is the variable.</div>
+                <div class="mc-action">→ At this stage: consider whether to ride equity to exit or use the Head of Product title to move to a larger company at €120K+ base.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="aligned-jobs">
+            <div class="aligned-job-row">
+              <div class="ajr-logo" style="background:#16a34a">SU</div>
+              <div class="ajr-body"><strong>Product Lead — Growth · ScaleUp</strong><span>Series B · High equity · 88% fit — directly aligned to Path B</span></div>
+              <span class="ajr-match strong">Primary match</span>
+            </div>
+          </div>
+
+          <div class="path-agent-box">
+            <div class="agent-dot active" style="flex-shrink:0;margin-top:3px"></div>
+            <div>
+              <strong style="font-size:.875rem">CareerPathAgent — Path B analysis</strong>
+              <ul>
+                <li>Higher upside but more binary outcome. The equity is only valuable if the company exits or raises at a significant step-up.</li>
+                <li>Due-diligence required: ask ScaleUp for their current ARR, runway, and Series C plan before accepting. CareerPathAgent can help you prepare those questions.</li>
+                <li>Your biggest risk: scale-ups often don't have a formal PM career ladder. Get the "Lead" title and scope in writing before joining.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ Path C detail ══ -->
+      <div class="path-detail" id="pd-C">
+        <div class="card">
+          <div class="traj-chart-wrap">
+            <h4>Compensation trajectory — Path C</h4>
+            <svg class="traj-chart" viewBox="0 0 500 160" preserveAspectRatio="xMidYMid meet">
+              <line x1="60" y1="20" x2="480" y2="20" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="60" x2="480" y2="60" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="100" x2="480" y2="100" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="60" y1="140" x2="480" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+              <text x="54" y="24" font-size="10" fill="#94a3b8" text-anchor="end">€135K</text>
+              <text x="54" y="64" font-size="10" fill="#94a3b8" text-anchor="end">€115K</text>
+              <text x="54" y="104" font-size="10" fill="#94a3b8" text-anchor="end">€95K</text>
+              <text x="54" y="144" font-size="10" fill="#94a3b8" text-anchor="end">€75K</text>
+              <text x="100" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Now</text>
+              <text x="200" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 1</text>
+              <text x="300" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 2</text>
+              <text x="400" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 3</text>
+              <text x="480" y="158" font-size="10" fill="#94a3b8" text-anchor="middle">Year 4–5</text>
+              <polyline points="100,118 200,106 300,88 400,62 480,28" fill="none" stroke="#6d28d9" stroke-width="2.5" stroke-linejoin="round"/>
+              <polyline points="100,118 200,110 300,98 400,84 480,72" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <circle cx="100" cy="118" r="4" fill="#6d28d9"/>
+              <circle cx="200" cy="106" r="4" fill="#6d28d9"/>
+              <circle cx="300" cy="88" r="4" fill="#6d28d9"/>
+              <circle cx="400" cy="62" r="4" fill="#6d28d9"/>
+              <circle cx="480" cy="28" r="4" fill="#6d28d9"/>
+            </svg>
+            <div class="traj-legend">
+              <div class="traj-leg-item"><div class="traj-dot" style="background:#6d28d9"></div> Path C projection</div>
+              <div class="traj-leg-item"><div class="traj-dot" style="background:#f59e0b"></div> Market median</div>
+            </div>
+          </div>
+
+          <h4 style="margin:0 0 18px;font-size:.9375rem">Year-by-year milestones</h4>
+          <div class="milestone-timeline">
+            <div class="milestone-card">
+              <div class="mc-left"><div class="mc-year">2026</div><div class="mc-circle now">Now</div><div class="mc-line"></div></div>
+              <div class="mc-body">
+                <div class="mc-role">Senior PM — Growth focus</div>
+                <div class="mc-comp">€88K–€95K</div>
+                <div class="mc-chips"><span class="mc-chip">Growth metrics</span><span class="mc-chip">Experimentation</span><span class="mc-chip">Funnel thinking</span></div>
+                <div class="mc-focus">Explicitly target a growth PM role at a data-driven company. Prioritise environments where you'll run 10+ experiments per quarter — this builds the portfolio that makes "Growth PM Lead" defensible.</div>
+                <div class="mc-action">→ BuildCo's platform role gives you the data infrastructure exposure that underpins growth PM work at the next level.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left"><div class="mc-year">2027</div><div class="mc-circle future">1</div><div class="mc-line"></div></div>
+              <div class="mc-body">
+                <div class="mc-role">Senior PM — Domain Expert (Growth)</div>
+                <div class="mc-comp">€96K–€108K</div>
+                <div class="mc-chips"><span class="mc-chip">Recognised expertise</span><span class="mc-chip">External visibility</span><span class="mc-chip">PLG authority</span></div>
+                <div class="mc-focus">Publish your growth learnings externally. Speak at 1–2 conferences. Build a specific reputation around a sub-domain (e.g., PLG for B2B SaaS). By this point, recruiters should be coming to you.</div>
+                <div class="mc-action">→ Start writing on LinkedIn or Substack about PLG — one post per month. Compound reputation effect takes 12–18 months to materialise.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left"><div class="mc-year">2028</div><div class="mc-circle future">2</div><div class="mc-line"></div></div>
+              <div class="mc-body">
+                <div class="mc-role">Staff PM / Specialist Lead</div>
+                <div class="mc-comp">€108K–€120K</div>
+                <div class="mc-chips"><span class="mc-chip">Thought leader</span><span class="mc-chip">Team lead</span><span class="mc-chip">Advisor track</span></div>
+                <div class="mc-focus">Your domain expertise now commands a premium. Companies will seek you specifically for your PLG credentials. Begin advisory work on the side — this builds network and income.</div>
+              </div>
+            </div>
+            <div class="milestone-card">
+              <div class="mc-left"><div class="mc-year">2029–30</div><div class="mc-circle future">3</div><div class="mc-line"></div></div>
+              <div class="mc-body">
+                <div class="mc-role">Growth PM Lead / Head of Growth Product</div>
+                <div class="mc-comp">€118K–€135K</div>
+                <div class="mc-chips"><span class="mc-chip">Highest-demand PM specialism</span><span class="mc-chip">Market premium</span></div>
+                <div class="mc-focus">"Growth PM Lead" is currently one of the top 3 most-sought PM titles in the European market. At this stage you can command above-median compensation and significant flexibility in role design.</div>
+                <div class="mc-action">→ This path has the highest long-term compensation ceiling of the three — but requires patience and consistency in building the specialist brand.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="aligned-jobs">
+            <div class="aligned-job-row">
+              <div class="ajr-logo" style="background:#0891b2">BC</div>
+              <div class="ajr-body"><strong>Product Manager — BuildCo</strong><span>Data infrastructure · API platform · Strong IC track · 89% fit</span></div>
+              <span class="ajr-match good">Good entry point</span>
+            </div>
+          </div>
+
+          <div class="path-agent-box">
+            <div class="agent-dot active" style="flex-shrink:0;margin-top:3px"></div>
+            <div>
+              <strong style="font-size:.875rem">CareerPathAgent — Path C analysis</strong>
+              <ul>
+                <li>Path C has the highest compensation ceiling long-term and the most defensible market position. "Growth PM Lead" demand is growing 3x faster than general PM demand (CareerPathAgent market model, Q1 2026).</li>
+                <li>The critical unlock is external reputation — it must be built deliberately. Internal excellence alone won't create the market premium. Start publishing in Year 1.</li>
+                <li>Your experimentation and PLG gaps (currently significant) must be closed within 12 months for this path to be credible. The Reforge PLG course is the fastest way to do this.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -3392,10 +3925,65 @@ function endSession() {
 // ];
 // ── Negotiation ──
 var liveOn = false;
+var livePhase = 0;
+
+function showOfferView(id) {
+  document.querySelectorAll('.offer-sel-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.offer-view').forEach(function(v) { v.classList.remove('active'); });
+  document.getElementById('ost-' + id).classList.add('active');
+  document.getElementById('ofv-' + id).classList.add('active');
+}
+
 function toggleLiveMode() {
   liveOn = !liveOn;
   document.getElementById('nego-live').classList.toggle('active', liveOn);
-  document.getElementById('live-mode-btn').textContent = liveOn ? 'End live session' : 'Activate live coaching mode';
+  var btn = document.getElementById('live-mode-btn');
+  if (btn) btn.textContent = liveOn ? 'End coaching session' : 'Activate live coaching mode';
+  if (liveOn) { livePhase = 0; renderLivePhase(0); }
+}
+
+function setLivePhase(idx) {
+  livePhase = idx;
+  renderLivePhase(idx);
+}
+
+function renderLivePhase(idx) {
+  for (var i = 0; i < 4; i++) {
+    var ph = document.getElementById('lp-phase-' + i);
+    if (ph) ph.style.display = i === idx ? 'block' : 'none';
+    var lph = document.querySelectorAll('.live-phase')[i];
+    if (lph) {
+      lph.classList.remove('lp-active','lp-done');
+      if (i < idx) lph.classList.add('lp-done');
+      else if (i === idx) lph.classList.add('lp-active');
+    }
+  }
+  // reset scenario buttons
+  document.querySelectorAll('.lsb').forEach(function(b) { b.classList.remove('active'); });
+  var rb = document.getElementById('live-response');
+  if (rb) rb.classList.remove('visible');
+}
+
+var liveScenarios = {
+  fixed: '"I understand — I know the bands are set centrally. Could we look at reducing the vesting cliff from 4 to 3 years? And is there any flexibility on a one-time sign-on to bridge the package gap? I want to make this work."',
+  pressure: '"I completely understand the timeline — I want to give you a definite yes. Could I have until tomorrow noon? I just need 24 hours to make sure the logistics work on my end. I\'m very close to a yes."',
+  competitor: '"I appreciate you sharing that. I\'m not trying to play games — I\'m specifically looking at the market median for this role in Europe, which sits around €90K. Is there any room to close that gap? Even €1K–€2K would make a real difference."',
+  cliff: '"Completely understood — if the equity structure is fixed, could we look at a sign-on instead? €3K–€4K would really help me make the transition work and wouldn\'t affect the ongoing salary structure."'
+};
+
+function showLiveScenario(key) {
+  document.querySelectorAll('.lsb').forEach(function(b) { b.classList.remove('active'); });
+  event.target.classList.add('active');
+  var rb = document.getElementById('live-response');
+  if (rb) { rb.textContent = liveScenarios[key] || ''; rb.classList.add('visible'); }
+}
+
+function toggleScenario(head) {
+  var body = head.nextElementSibling;
+  var btn = head.querySelector('.scenario-toggle');
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  btn.textContent = open ? 'Expand ↓' : 'Collapse ↑';
 }
 
 // ── Brief tabs ──
@@ -3423,6 +4011,12 @@ function selectPath(p) {
     document.getElementById('pc-' + x).classList.toggle('selected', x === p);
     document.getElementById('pd-' + x).classList.toggle('active', x === p);
   });
+}
+function toggleCompare(btn) {
+  var table = document.getElementById('path-compare-table');
+  var open = table.classList.contains('visible');
+  table.classList.toggle('visible', !open);
+  btn.textContent = open ? 'Compare all paths →' : 'Hide comparison ↑';
 }
 </script>
 </body>
