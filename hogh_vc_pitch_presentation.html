@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HireOrGetHired — Second Brain for Hiring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* Design tokens aligned with platform demo (index.html) */
+    :root {
+      --page: #F7F6FF;
+      --card: #FFFFFF;
+      --subtle: #F0EFFE;
+      --primary: #6366F1;
+      --primary-h: #4F46E5;
+      --primary-lt: #EEF2FF;
+      --secondary: #8B5CF6;
+      --accent: #0EA5E9;
+      --txt: #1E1B4B;
+      --txt-2: #6B7280;
+      --txt-3: #9CA3AF;
+      --border: #EAE8F8;
+      --border-2: #D4D0F0;
+      --grad: linear-gradient(135deg, #6366F1, #8B5CF6);
+      --grad-s: linear-gradient(135deg, #6366F1, #0EA5E9);
+      --grad-dark: linear-gradient(160deg, #0f0a1e 0%, #1e1b4b 45%, #312e81 100%);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --r: 14px;
+      --r-lg: 20px;
+      --r-md: 12px;
+      --sh: 0 6px 20px rgba(99, 102, 241, 0.09), 0 2px 6px rgba(0, 0, 0, 0.04);
+      --sh-xs: 0 1px 3px rgba(99, 102, 241, 0.05);
+      --success: #059669;
+      --ui-h: 52px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--font);
+      background: var(--page);
+      color: var(--txt);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient background */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .ambient-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.55;
+      animation: blobDrift 22s ease-in-out infinite;
+    }
+    .ambient-blob:nth-child(1) {
+      width: 55vmax;
+      height: 55vmax;
+      top: -20%;
+      left: -15%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18), transparent 70%);
+    }
+    .ambient-blob:nth-child(2) {
+      width: 45vmax;
+      height: 45vmax;
+      bottom: -10%;
+      right: -10%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.14), transparent 70%);
+      animation-delay: -8s;
+    }
+    .ambient-blob:nth-child(3) {
+      width: 35vmax;
+      height: 35vmax;
+      top: 40%;
+      left: 50%;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.1), transparent 70%);
+      animation-delay: -14s;
+    }
+    @keyframes blobDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(4%, -3%) scale(1.05); }
+      66% { transform: translate(-3%, 4%) scale(0.98); }
+    }
+
+    /* Deck shell */
+    .deck-shell {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: clamp(24px, 5vw, 56px);
+      padding-bottom: calc(var(--ui-h) + 32px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px) scale(0.985);
+      transition:
+        opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.55s;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    .slide.is-active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      z-index: 2;
+    }
+    .slide.theme-dark {
+      background: var(--grad-dark);
+      color: #e8e6ff;
+      margin: clamp(12px, 2vw, 20px);
+      border-radius: var(--r-lg);
+      box-shadow: 0 24px 80px rgba(30, 27, 75, 0.35);
+    }
+    .slide.theme-dark .eyebrow,
+    .slide.theme-dark .stat-label,
+    .slide.theme-dark li { color: rgba(232, 230, 255, 0.78); }
+    .slide.theme-dark .foot {
+      color: rgba(226, 232, 255, 0.92);
+      font-weight: 500;
+    }
+    .slide.theme-dark .foot .foot-secondary {
+      color: rgba(210, 219, 255, 0.88);
+      font-weight: 500;
+    }
+    .slide.theme-dark .title { color: #fff; }
+    .slide.theme-dark .card-lite {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Typography */
+    .eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+    .slide.theme-dark .eyebrow { color: #a5b4fc; }
+    .title {
+      font-size: clamp(1.75rem, 4.2vw, 3.15rem);
+      font-weight: 900;
+      letter-spacing: -0.045em;
+      line-height: 1.1;
+      max-width: min(34ch, 100%);
+      margin-bottom: 16px;
+    }
+    .title .accent {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .slide.theme-dark .title .accent {
+      background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .subtitle {
+      font-size: clamp(0.78rem, 1.2vw, 0.92rem);
+      color: #4b5563;
+      line-height: 1.48;
+      max-width: 58ch;
+      margin-bottom: 22px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .slide.theme-dark .subtitle {
+      color: rgba(237, 242, 255, 0.88);
+      font-weight: 500;
+    }
+    .foot {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #4b5563;
+      margin-top: auto;
+      padding-top: 20px;
+      line-height: 1.45;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 3vw, 28px);
+      max-width: 1100px;
+      width: 100%;
+    }
+    @media (max-width: 820px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card-lite {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 22px 24px;
+      box-shadow: var(--sh);
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .card-lite:hover {
+      border-color: var(--border-2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
+    }
+    .card-lite h3 {
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .card-lite ul, .bullet-list {
+      list-style: none;
+      font-size: 0.82rem;
+      color: var(--txt-2);
+      line-height: 1.55;
+    }
+    .card-lite li, .bullet-list li {
+      padding-left: 18px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .card-lite li::before, .bullet-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: 2px;
+      background: var(--grad);
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      max-width: 900px;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .stat:hover { transform: scale(1.02); }
+    .stat-num {
+      font-size: 1.45rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: var(--grad-s);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: 0.68rem; color: var(--txt-2); margin-top: 6px; line-height: 1.35; }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .chip {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 100px;
+      background: var(--primary-lt);
+      color: var(--primary);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    .chip.purple { background: #F3F0FF; color: var(--secondary); border-color: rgba(139, 92, 246, 0.2); }
+    .chip.cyan { background: #E0F2FE; color: var(--accent); border-color: rgba(14, 165, 233, 0.2); }
+
+    .cols-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 1000px;
+      width: 100%;
+    }
+    @media (max-width: 768px) {
+      .cols-3 { grid-template-columns: 1fr; }
+    }
+
+    /* Slide 5 — main body on white panel (like slide 4 cards) */
+    .slide-content-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: clamp(20px, 3.2vw, 30px);
+      box-shadow: var(--sh);
+      max-width: 1000px;
+      width: 100%;
+      margin-top: 22px;
+    }
+    .slide-content-panel .arch-flow {
+      margin-top: 0;
+    }
+    .slide-content-panel .bullet-list {
+      margin-top: 18px;
+      max-width: none;
+    }
+    .slide-content-panel .demo-link-subtle {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Slide 7 — GTM four-block summary */
+    .gtm-block-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(12px, 2vw, 16px);
+      width: 100%;
+    }
+    @media (max-width: 720px) {
+      .gtm-block-grid { grid-template-columns: 1fr; }
+    }
+    .gtm-block {
+      background: var(--subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: clamp(14px, 2.2vw, 18px);
+      border-left: 3px solid var(--primary);
+    }
+    .gtm-block-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--txt);
+      margin: 0 0 8px;
+      line-height: 1.25;
+    }
+    .gtm-block-body {
+      margin: 0;
+      font-size: 0.72rem;
+      color: var(--txt-2);
+      line-height: 1.5;
+    }
+    .gtm-block-body strong {
+      color: var(--txt);
+      font-weight: 700;
+    }
+
+    .arch-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--txt-2);
+      margin-top: 16px;
+    }
+    .arch-box {
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: var(--subtle);
+      border: 1px solid var(--border);
+    }
+    .arch-box.core {
+      background: var(--grad);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    }
+
+    /* Slide 6 — moat value cards */
+    .moat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(14px, 2.5vw, 20px);
+      max-width: 1000px;
+      width: 100%;
+      margin-top: 22px;
+    }
+    @media (max-width: 720px) {
+      .moat-grid { grid-template-columns: 1fr; }
+    }
+    .moat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: clamp(18px, 2.5vw, 24px);
+      box-shadow: var(--sh);
+      border-top: 3px solid var(--primary);
+    }
+    .moat-card-kicker {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--txt-3);
+      margin-bottom: 8px;
+    }
+    .moat-card-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--txt);
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    .moat-card-value {
+      font-size: 0.78rem;
+      color: var(--txt-2);
+      line-height: 1.55;
+    }
+    .moat-card-value strong {
+      color: var(--txt);
+      font-weight: 700;
+    }
+
+    /* Slide 8 — horizontal execution roadmap */
+    .slide-content-panel.roadmap-panel {
+      margin-top: clamp(16px, 2.5vw, 22px);
+    }
+    .exec-rm-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px 6px;
+      align-items: stretch;
+      width: 100%;
+    }
+    @media (max-width: 820px) {
+      .exec-rm-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .exec-rm-arrow { display: none; }
+    }
+    .exec-rm-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--txt-3);
+      font-size: 1.15rem;
+      font-weight: 300;
+      user-select: none;
+    }
+    .exec-rm-card {
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      background: var(--subtle);
+      padding: clamp(14px, 2vw, 18px);
+      border-top: 3px solid var(--primary);
+      min-width: 0;
+    }
+    .exec-rm-grid > article.exec-rm-card:nth-of-type(2) { border-top-color: var(--secondary); }
+    .exec-rm-grid > article.exec-rm-card:nth-of-type(3) { border-top-color: var(--accent); }
+    .exec-rm-eyebrow {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--txt-3);
+      margin: 0 0 6px;
+    }
+    .exec-rm-card-title {
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--txt);
+      margin: 0 0 10px;
+      line-height: 1.2;
+    }
+    .exec-rm-list {
+      margin: 0;
+      padding: 0 0 0 1.1em;
+      font-size: 0.73rem;
+      color: var(--txt-2);
+      line-height: 1.52;
+    }
+    .exec-rm-list li { margin-bottom: 6px; }
+    .exec-rm-list li:last-child { margin-bottom: 0; }
+    .exec-rm-list strong { color: var(--txt); font-weight: 700; }
+
+    .fin-table {
+      width: 100%;
+      max-width: 920px;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    .fin-table th, .fin-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .fin-table th {
+      font-weight: 800;
+      color: var(--txt-2);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .fin-table tr:hover td { background: var(--subtle); }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 900px;
+      margin-top: 8px;
+    }
+    @media (max-width: 700px) {
+      .pillars { grid-template-columns: 1fr; }
+    }
+    .pillar {
+      text-align: center;
+      padding: 24px 16px;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--border);
+      background: var(--card);
+      transition: transform 0.25s;
+    }
+    .pillar:hover { transform: translateY(-4px); }
+    .pillar strong {
+      display: block;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .pillar span { font-size: 0.78rem; color: var(--txt-2); line-height: 1.45; }
+
+    /* Slide 5 — subtle live demo line */
+    .demo-link-subtle {
+      margin-top: 14px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--txt-3);
+      line-height: 1.5;
+      max-width: 720px;
+    }
+    .demo-link-subtle a {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.7rem;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: rgba(99, 102, 241, 0.35);
+    }
+    .demo-link-subtle a:hover {
+      color: var(--primary-h);
+      text-decoration-color: rgba(79, 70, 229, 0.55);
+    }
+    .demo-link-subtle a:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+
+    /* Orbit visual (slide 1) */
+    .orbit-wrap {
+      position: relative;
+      width: min(340px, 80vw);
+      height: min(340px, 80vw);
+      margin: 0 auto 24px;
+    }
+    .orbit-core {
+      position: absolute;
+      inset: 35%;
+      border-radius: 50%;
+      background: var(--grad);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #fff;
+      text-align: center;
+      line-height: 1.2;
+      box-shadow: 0 8px 32px rgba(99, 102, 241, 0.45);
+      animation: pulseCore 3s ease-in-out infinite;
+    }
+    @keyframes pulseCore {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(99, 102, 241, 0.45); }
+      50% { transform: scale(1.04); box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5); }
+    }
+    .orbit-node {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      border: 2px solid rgba(165, 180, 252, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 8px;
+      backdrop-filter: blur(8px);
+    }
+    .orbit-node.a { top: 0; left: 50%; transform: translateX(-50%); }
+    .orbit-node.b { bottom: 8%; left: 0; }
+    .orbit-node.c { bottom: 8%; right: 0; }
+    .orbit-ring {
+      position: absolute;
+      inset: 8%;
+      border: 1px dashed rgba(165, 180, 252, 0.35);
+      border-radius: 50%;
+      animation: spinRing 48s linear infinite;
+    }
+    @keyframes spinRing {
+      to { transform: rotate(360deg); }
+    }
+
+    /* UI chrome */
+    .ui-bar {
+      height: var(--ui-h);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(16px, 3vw, 32px);
+      border-top: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 10;
+    }
+    .logo-mark {
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--txt);
+    }
+    .logo-mark span { color: var(--primary); }
+    .progress-text {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--txt-2);
+      font-variant-numeric: tabular-nums;
+    }
+    .timer {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--txt-3);
+      font-variant-numeric: tabular-nums;
+      min-width: 52px;
+    }
+    .nav-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--txt-2);
+    }
+    .nav-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-lt);
+    }
+    .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 280px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border-2);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .dot:hover { transform: scale(1.2); background: var(--primary); }
+    .dot.is-current {
+      background: var(--primary);
+      transform: scale(1.25);
+    }
+
+    .btn-notes {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      color: var(--txt-2);
+      font-family: inherit;
+    }
+    .btn-notes.is-on {
+      background: var(--primary-lt);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Speaker notes drawer */
+    .notes-panel {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: min(380px, 92vw);
+      background: var(--card);
+      border-left: 1px solid var(--border);
+      box-shadow: -12px 0 40px rgba(30, 27, 75, 0.08);
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+    .notes-panel.is-open { transform: translateX(0); }
+    .notes-panel header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 800;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .notes-panel .body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+      line-height: 1.65;
+      color: var(--txt);
+      white-space: pre-wrap;
+      font-weight: 400;
+    }
+    .notes-close {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--txt-3);
+      line-height: 1;
+    }
+
+    /* Stagger children when slide activates */
+    .slide.is-active .reveal {
+      animation: revealIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+    .slide.is-active .reveal:nth-child(1) { animation-delay: 0.05s; }
+    .slide.is-active .reveal:nth-child(2) { animation-delay: 0.12s; }
+    .slide.is-active .reveal:nth-child(3) { animation-delay: 0.19s; }
+    .slide.is-active .reveal:nth-child(4) { animation-delay: 0.26s; }
+    .slide.is-active .reveal:nth-child(5) { animation-delay: 0.33s; }
+    .slide.is-active .reveal:nth-child(6) { animation-delay: 0.4s; }
+    @keyframes revealIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .slide-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .split-hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      max-width: 1100px;
+      width: 100%;
+    }
+    @media (max-width: 900px) {
+      .split-hero { grid-template-columns: 1fr; }
+    }
+
+    /* Shared: headline row + decorative visual (slides 2–10) */
+    .slide-top-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(220px, 380px);
+      gap: clamp(20px, 4vw, 40px);
+      align-items: center;
+      margin-bottom: clamp(16px, 3vw, 28px);
+      width: 100%;
+    }
+    .slide-top-split .title {
+      max-width: 22ch;
+    }
+    .slide-top-split .subtitle {
+      max-width: 56ch;
+      margin-bottom: 0;
+      font-size: clamp(0.76rem, 1.15vw, 0.9rem);
+    }
+    @media (max-width: 960px) {
+      .slide-top-split {
+        grid-template-columns: 1fr;
+      }
+      .slide-top-split .slide-deco {
+        order: -1;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+    }
+    .slide-deco {
+      position: relative;
+      min-height: min(260px, 42vw);
+      isolation: isolate;
+    }
+
+    @keyframes visOrbitBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    /* Slide 9 — financials + ask (no chart) */
+    .fin-slide-lead {
+      font-size: 0.74rem;
+      color: var(--txt-2);
+      line-height: 1.5;
+      margin: 0 0 12px;
+    }
+    .slide-content-panel.fin-slide-panel .fin-table {
+      margin-top: 0;
+      max-width: 100%;
+    }
+    .fin-ask-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(14px, 2.5vw, 20px);
+      margin-top: clamp(18px, 2.5vw, 22px);
+      padding-top: clamp(16px, 2.2vw, 20px);
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 820px) {
+      .fin-ask-split { grid-template-columns: 1fr; }
+    }
+    .fin-use-card,
+    .fin-ask-card {
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      background: var(--subtle);
+      padding: clamp(14px, 2vw, 18px);
+    }
+    .fin-use-card {
+      border-top: 3px solid var(--primary);
+    }
+    .fin-ask-card {
+      border-top: 3px solid var(--secondary);
+    }
+    .fin-use-title,
+    .fin-ask-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--txt-3);
+      margin: 0 0 10px;
+    }
+    .fin-use-list {
+      margin: 0;
+      padding: 0 0 0 1.05em;
+      font-size: 0.72rem;
+      color: var(--txt-2);
+      line-height: 1.52;
+    }
+    .fin-use-list li { margin-bottom: 8px; }
+    .fin-use-list li:last-child { margin-bottom: 0; }
+    .fin-use-list strong { color: var(--txt); font-weight: 700; }
+    .fin-ask-card p {
+      margin: 0 0 10px;
+      font-size: 0.76rem;
+      color: var(--txt-2);
+      line-height: 1.52;
+    }
+    .fin-ask-card p:last-child { margin-bottom: 0; }
+    .fin-ask-card strong { color: var(--txt); }
+    .fin-ask-next {
+      font-size: 0.7rem !important;
+      color: var(--txt-3) !important;
+    }
+
+    /* Slide 10 — closing (dark): commitments, no decorative bridge */
+    .slide-close .title {
+      max-width: min(22ch, 100%);
+      font-size: clamp(1.85rem, 4.5vw, 3.35rem);
+      line-height: 1.06;
+    }
+    .slide-close .subtitle {
+      max-width: 52ch;
+      margin-bottom: clamp(18px, 2.5vw, 26px);
+    }
+    .close-commitments {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(12px, 2vw, 18px);
+      width: 100%;
+      max-width: 1040px;
+      margin-top: 4px;
+    }
+    @media (max-width: 820px) {
+      .close-commitments { grid-template-columns: 1fr; }
+    }
+    .close-commitment {
+      text-align: left;
+      padding: clamp(16px, 2.2vw, 20px) clamp(16px, 2.2vw, 20px) clamp(16px, 2.2vw, 20px) 18px;
+      border-radius: var(--r-md);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-left: 3px solid #a5b4fc;
+    }
+    .close-commitment:nth-child(2) { border-left-color: #c4b5fd; }
+    .close-commitment:nth-child(3) { border-left-color: #7dd3fc; }
+    .close-commitment-kicker {
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(199, 210, 254, 0.95);
+      margin: 0 0 8px;
+    }
+    .close-commitment-body {
+      margin: 0;
+      font-size: 0.76rem;
+      font-weight: 500;
+      line-height: 1.52;
+      color: rgba(226, 232, 255, 0.9);
+    }
+    .close-commitment-body strong {
+      color: #fff;
+      font-weight: 700;
+    }
+    .slide-close .foot {
+      margin-top: clamp(20px, 3vw, 28px);
+    }
+    .close-cta-line {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: rgba(224, 231, 255, 0.95);
+      letter-spacing: 0.02em;
+    }
+
+    .slide.is-active .reveal:nth-child(7) { animation-delay: 0.47s; }
+    .slide.is-active .reveal:nth-child(8) { animation-delay: 0.54s; }
+    .slide.is-active .reveal:nth-child(9) { animation-delay: 0.61s; }
+    .slide.is-active .reveal:nth-child(10) { animation-delay: 0.68s; }
+    .slide.is-active .reveal:nth-child(11) { animation-delay: 0.75s; }
+    .slide.is-active .reveal:nth-child(12) { animation-delay: 0.82s; }
+
+    /* ----- PDF / print: one slide per page, no chrome, no speaker notes ----- */
+    @media print {
+      @page {
+        size: letter landscape;
+        margin: 0;
+      }
+      html, body {
+        height: auto !important;
+        overflow: visible !important;
+        background: var(--page) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .ambient,
+      .ui-bar,
+      .notes-panel,
+      .slide-notes-source,
+      .btn-notes {
+        display: none !important;
+      }
+      .deck-shell {
+        height: auto !important;
+        display: block !important;
+      }
+      .slide-viewport {
+        position: relative !important;
+        flex: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      .slide {
+        position: relative !important;
+        inset: auto !important;
+        left: auto !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+        width: 100% !important;
+        min-height: 7.75in;
+        max-height: none !important;
+        padding: 0.45in 0.55in 0.5in !important;
+        padding-bottom: 0.5in !important;
+        margin: 0 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        z-index: auto !important;
+        page-break-after: always;
+        break-after: page;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+        transition: none !important;
+      }
+      .slide:last-of-type {
+        page-break-after: auto;
+        break-after: auto;
+      }
+      .slide.theme-dark {
+        margin: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: var(--grad-dark) !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .slide .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+      .ambient *,
+      .orbit-wrap *,
+      .orbit-ring {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient-blob"></div>
+    <div class="ambient-blob"></div>
+    <div class="ambient-blob"></div>
+  </div>
+
+  <div class="deck-shell">
+    <div class="slide-viewport" id="viewport">
+      <!-- Slide 1 -->
+      <section
+        class="slide theme-dark is-active"
+        data-index="0"
+      >
+        <div class="slide-inner split-hero">
+          <div>
+            <p class="eyebrow reveal">HireOrGetHired · March 2026</p>
+            <h1 class="title reveal">Give Hiring a <span class="accent">Second Brain</span>—On Both Sides of the Table</h1>
+            <p class="subtitle reveal">
+              A persistent <strong>Second Brain</strong> for recruiters (<strong>TalentAgent™</strong>) and job seekers
+              (<strong>CareerAgent™</strong>)—specialist agent teams so <em>you</em> show up sharp.
+            </p>
+            <p class="foot reveal">Second Brain for talent · Agentic orchestration · Not an ATS replacement</p>
+          </div>
+          <div class="reveal">
+            <div class="orbit-wrap">
+              <div class="orbit-ring"></div>
+              <div class="orbit-node a">Recruiter<br>Second Brain</div>
+              <div class="orbit-node b">Candidate<br>Second Brain</div>
+              <div class="orbit-node c">Human<br>moment</div>
+              <div class="orbit-core">Second<br>Brain</div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 1 — TITLE &amp; HOOK
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Good [morning / afternoon]. I’m [name], and this is HireOrGetHired—HOGH for short.
+
+Here’s the one idea I want you to leave with: we’re giving hiring a Second Brain—but on both sides of the table.
+
+For years, tools gave you data. They didn’t give you a brain that thinks across sourcing, calendars, research, and prep—end to end—for the recruiter and for the candidate. That’s what we built.
+
+On the recruiter side, TalentAgent™ is your institutional memory and your research crew. On the candidate side, CareerAgent™ is your advocate and your analyst. Same philosophy everywhere: we amplify human judgment—we never replace it.
+
+So when the human conversation finally happens—the interview, the real moment—the Second Brain has already done the heavy lifting: briefs, evidence, scenarios. Then it gets out of the way.
+
+We are not trying to replace your ATS. Think of us as the intelligence and orchestration layer that sits above the stack you already have—Greenhouse, Workday, and the rest.
+
+If you want one line to remember: Second Brain. Both sides. Human sacred.
+
+(Optional, if the room wants momentum—say these are analyst-sourced, not our revenue: the agentic HR AI category is scaling fast, and enterprise adoption of agentic recruiting modules has jumped—roughly four in ten Fortune 500 HR organizations had at least one module by last year versus single digits a few years ago. We can footnote the exact figures in the deck.)
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: Isn’t this just ChatGPT for recruiting?
+A: No. This is a governed swarm of specialist agents—with approval gates, integrations, audit trails, and two separate Second Brain surfaces for recruiter and candidate. It’s not one generic chat window.
+
+Q: Do you automate interviews?
+A: No. The Second Brain prepares you; the interview stays human-to-human. We call that out explicitly in our Human Handoff Protocol™.
+
+Q: Why build for both sides? Why not just sell to employers?
+A: Two reasons—fairness and flywheel. Richer activity on the employer side makes the candidate Second Brain smarter; better signal from candidates improves matching and outcomes. We go enterprise-first to seed that loop credibly.
+        </div>
+      </section>
+
+      <!-- Slide 2 -->
+      <section
+        class="slide"
+        data-index="1"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">The problem</p>
+          <h2 class="title reveal">Hiring Has Tools for Tasks—<span class="accent">Not Intelligence for Decisions</span></h2>
+          <p class="subtitle reveal">
+            Teams are buried in logistics; candidates face opaque journeys and brutal odds—and <strong>no layer</strong> connects requisition to offer with synthesized evidence for <strong>both</strong> sides when it matters.
+          </p>
+          <div class="stat-row reveal">
+            <div class="stat"><div class="stat-num">42d</div><div class="stat-label">Avg. time-to-fill · $4.7K+ cost/hire</div></div>
+            <div class="stat"><div class="stat-num">60%+</div><div class="stat-label">Recruiter time on sourcing, scheduling, admin</div></div>
+            <div class="stat"><div class="stat-num">73%</div><div class="stat-label">Candidates: poor / opaque application experience</div></div>
+            <div class="stat"><div class="stat-num">2–4%</div><div class="stat-label">Application response rate</div></div>
+            <div class="stat"><div class="stat-num">94%</div><div class="stat-label">ATS profiles never re-surfaced</div></div>
+          </div>
+          <p class="foot reveal">Fragmentation is the real competitor · Structural: siloed sourcing / ATS / scheduling</p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 2 — THE PROBLEM (DUAL-SIDED CRISIS)
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+If slide one was the promise, this slide is the pain—and it’s symmetric.
+
+On the employer side, hiring isn’t failing because teams lack software. They have ATS, sourcing tools, calendars, inboxes. The failure is that nobody holds a synthesized picture from requisition through pipeline to the moment of judgment. Recruiters spend the majority of their week on logistics—sourcing, scheduling, admin—while time-to-fill and cost-per-hire stay stubbornly high. You can point to the numbers on screen: roughly forty-two days to fill on average, thousands of dollars per hire, and well over half of recruiter time eaten by repetitive work.
+
+On the candidate side, the experience is the opposite problem but just as expensive: opacity. Most people report a poor or opaque application experience. Response rates are tiny. Search stretches for months. And behind the ATS, the vast majority of profiles never resurface—so the “talent database” is mostly a graveyard.
+
+So the headline I want you to remember: this isn’t “we need another tab.” It’s that when stakes are highest—the screen, the interview, the offer—neither side walks in with a single, evidence-backed brain for that hire. Fragmentation isn’t a nuisance; it’s the competitor.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: Aren’t incumbents already adding AI to recruiting?
+A: Many are bolting AI into single-sided workflows. We’re architecting two persistent Second Brains, a graph, and negotiation intelligence at depth—that’s a different product DNA than a sidebar feature.
+
+Q: Is the market really big enough?
+A: HR spend is massive, and agentic recruiting is getting real budget and VC attention—we’re not inventing demand, we’re capturing a wedge with enterprise Second Brain first.
+
+Q: What’s the biggest execution risk?
+A: Change management and integration—which is why we lead with pilots and go deep on one ATS in Year one instead of boiling the ocean.
+        </div>
+      </section>
+
+      <!-- Slide 3 -->
+      <section
+        class="slide"
+        data-index="2"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">The solution</p>
+          <h2 class="title reveal">Your Second Brain Isn’t a Bot—<span class="accent">It Reflects You—Working Autonomously on Your Behalf</span></h2>
+          <p class="subtitle reveal">
+            <strong>TalentAgent™</strong> and <strong>CareerAgent™</strong> mirror how you hire and how you job-hunt: specialist agents carry out research, matching, outreach, screening, scheduling, and prep <em>on your behalf</em>—within your rules—then <strong>hand off</strong> to you for the moments that matter.
+            <strong>NegotiationCoach™</strong> does the same at the offer: private, real-time guidance on each side.
+          </p>
+          <div class="grid-2 reveal">
+            <div class="card-lite">
+              <h3>TalentAgent™ squad</h3>
+              <ul>
+                <li>Radar · Intelligence · Outreach · Screen · Scheduler · Offer · Retention</li>
+                <li><strong>Candidate Intelligence Brief™</strong>—narrative + provenance + flags</li>
+              </ul>
+              <div class="chips">
+                <span class="chip">Persistent memory</span>
+                <span class="chip purple">Approval gates</span>
+              </div>
+            </div>
+            <div class="card-lite">
+              <h3>CareerAgent™ squad</h3>
+              <ul>
+                <li>Discovery · Application · SkillMap · OpportunityIntel · InterviewCoach · NegotiationAdvisor · CareerPath</li>
+                <li><strong>Opportunity Intelligence Brief™</strong> before you walk in</li>
+              </ul>
+              <div class="chips">
+                <span class="chip cyan">Human Handoff Protocol™</span>
+                <span class="chip">No auto-offers</span>
+              </div>
+            </div>
+          </div>
+          <p class="foot reveal">
+            Category validation (research): ~30–45% time-to-fill reduction in pilots · 2× outreach response · 40% scheduling friction reduction
+          </p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 3 — THE SOLUTION (SECOND BRAIN)
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Slide three is how we make “Second Brain” concrete—without turning hiring into a black box.
+
+A Second Brain is not a clever chatbot that answers prompts. It’s closer to a reflection of you: your goals, your standards, your workflow—executed autonomously at machine scale by teams of specialist agents, with hard gates where humans stay in charge.
+
+On the recruiter side, TalentAgent™ runs the grind you wish you had a research org for: sourcing intelligence, outreach, screening logistics, scheduling, offer support, retention signal—rolled up into outputs like the Candidate Intelligence Brief™, which is narrative plus provenance and verification flags, not a raw dump.
+
+On the candidate side, CareerAgent™ does the same for the job search: discovery, applications with approval, skill mapping, opportunity intelligence, interview prep, negotiation advice, career path—culminating in an Opportunity Intelligence Brief™ before you walk into the room.
+
+NegotiationCoach™ is the same philosophy at the offer: simultaneous private guidance to each side—no agent negotiating with agent, no auto-offers, explicit acknowledgment before it activates.
+
+And we are explicit about the line: Human Handoff Protocol™—shortlist, outreach, and offers sit behind human approval; the interview itself stays fully human.
+
+If you want the category proof points on the footer, say them carefully: those pilot benchmarks are research-level validation—not yet HOGH-specific claims.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: Why so many agents instead of one model?
+A: Specialists beat monoliths on quality, cost routing, and governance—we can test, gate, and audit each capability independently.
+
+Q: Where do you get data—and what about ethics?
+A: Public footprint and official APIs where required; we bias toward transparency and correction paths for candidates.
+
+Q: Who is customer number one?
+A: Enterprise TalentAgent™ seeds real hiring velocity and signal; CareerAgent™ scales through partners once that loop is spinning.
+        </div>
+      </section>
+
+      <!-- Slide 4 -->
+      <section
+        class="slide"
+        data-index="3"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">Why now</p>
+          <h2 class="title reveal">Black-Box Hiring AI Won’t Survive Procurement—<span class="accent">Governed, Documented Systems Win</span></h2>
+          <p class="subtitle reveal">
+            Enterprises are <strong>buying</strong> agentic recruiting, investors are <strong>funding</strong> it, and the <strong>EU AI Act</strong> treats hiring as high-risk—so the winners will be vendors who can answer: where’s the human, where’s the log, and where’s the audit trail?
+          </p>
+          <div class="cols-3 reveal">
+            <div class="card-lite">
+              <h3>Adoption</h3>
+              <p class="bullet-list" style="margin:0;">
+                ~<strong>38%</strong> Fortune 500 HR with ≥1 agentic recruiting module by Q3 2025 vs <strong>7%</strong> in 2022 <em>(research)</em>
+              </p>
+            </div>
+            <div class="card-lite">
+              <h3>Capital</h3>
+              <p class="bullet-list" style="margin:0;">
+                ~<strong>$1.9B</strong> VC into agentic HR AI, 2022–2025 <em>(research)</em>
+              </p>
+            </div>
+            <div class="card-lite">
+              <h3>Regulation</h3>
+              <p class="bullet-list" style="margin:0;">
+                <strong>EU AI Act:</strong> recruitment = high-risk → human oversight, documentation, conformity path
+              </p>
+            </div>
+          </div>
+          <p class="foot reveal">Second Brain, documented. · Compliance as GTM weapon, not fear-mongering</p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 4 — WHY NOW (MARKET, CAPITAL, REGULATION)
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Slide four is timing—and it’s not hype.
+
+For the last couple of years, enterprise buyers have moved from “experiment with a copilot” to “show me multi-agent workflows I can govern.” In recruiting specifically, analyst data shows a sharp jump in Fortune 500 HR organizations running at least one agentic recruiting module—think roughly four in ten recently versus single digits a few years ago. You can cite the exact figures from the cards—flag them as analyst-sourced research, not our revenue.
+
+Capital is voting the same way: on the order of two billion dollars of venture capital has gone into agentic HR AI over the last few years. That means budgets exist, teams are chartered, and procurement is engaged.
+
+And then regulation stops being abstract. Under the EU AI Act, recruitment is treated as high-risk. That pushes buyers toward documented human oversight, traceability, and conformity—not “magic in a model.”
+
+So our positioning is simple: black-box automation loses in the room where deals get signed. A Second Brain with explicit human handoffs, approvals, and auditability is not just philosophy—it’s the architecture enterprises can defend to legal, security, and the board.
+
+I’m not selling fear—I’m selling inevitability: the same wave that funds agent stacks rewards vendors who can pass scrutiny.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: When will you be EU-ready?
+A: Phased: documentation and governance first, then conformity; we target meaningful EU region motion in Year two while building the architecture in parallel with North American pilots.
+
+Q: Are you EU-first or US-first?
+A: North America for Year one lighthouse pilots; EU requirements inform product and documentation from day one so we’re not retrofitting trust.
+
+Q: Isn’t this just compliance overhead?
+A: It’s a filter. Vendors who can’t show human oversight and logs don’t get enterprise seats—so compliance depth becomes a go-to-market advantage, not a tax.
+        </div>
+      </section>
+
+      <!-- Slide 5 + live demo -->
+      <section
+        class="slide"
+        data-index="4"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">Product · Architecture</p>
+          <h2 class="title reveal">The Second Brain Isn’t a Chat Wrapper—<span class="accent">It’s Stateful Systems, Graph Memory, and Proof</span></h2>
+          <p class="subtitle reveal">
+            <strong>LangGraph + ReAct</strong> orchestration, <strong>RAG + Neo4j</strong> for the Talent Intelligence Graph™, PostgreSQL and Pinecone for durable memory and retrieval, Kafka for events—plus <strong>hard stops</strong>: fairness checks where rankings happen, and a DB rule that blocks offer letters without a human approval record.
+          </p>
+          <div class="slide-content-panel reveal">
+            <div class="arch-flow">
+              <span class="arch-box">Clients</span>
+              <span>→</span>
+              <span class="arch-box">Gateway</span>
+              <span>→</span>
+              <span class="arch-box">Services</span>
+              <span>→</span>
+              <span class="arch-box core">Second Brain engine</span>
+              <span>→</span>
+              <span class="arch-box">PostgreSQL · Pinecone · Neo4j graph</span>
+              <span>→</span>
+              <span class="arch-box">Kafka · integrations</span>
+            </div>
+            <ul class="bullet-list">
+              <li>LangGraph + ReAct planner · <strong>Talent Intelligence Graph™</strong> (50K+ skills, 10K+ role archetypes—design targets)</li>
+              <li><strong>Audit-grade traceability:</strong> orchestration steps and human handoffs logged for reconstruction—not a black box for HR or legal · <strong>DB constraint:</strong> no offer letter without human approval record</li>
+            </ul>
+            <p class="demo-link-subtle">
+              Live demo (optional, ~1 min):
+              <a href="https://noaman.github.io/hire_get_hired/app/index.html" target="_blank" rel="noopener noreferrer">view live demo</a>
+            </p>
+          </div>
+          <p class="foot reveal">No silent autonomy on offers.</p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 5 — PRODUCT / ARCHITECTURE (+ LIVE DEMO)
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Slide five is where we earn credibility with technical buyers.
+
+If “Second Brain” were only a narrative, this deck would be vapor. What we’re shipping is stateful orchestration: LangGraph with a ReAct-style planner so agents don’t just chat—they run workflows with memory and handoffs.
+
+Underneath that is the data plane employers actually trust: PostgreSQL for durable state, Pinecone for vector retrieval, Neo4j for the Talent Intelligence Graph™—so relationships between people, skills, roles, and evidence aren’t trapped in a prompt window. Kafka is how we integrate the real world—events, ATS, HRIS—without pretending hiring is batch-only.
+
+Two trust details matter in the room. First, fairness isn’t a PDF appendix: disparate-impact checks and SHAP-style explainability sit where ranking and matching decisions happen—not as a slide you show once. Second, we encode a hard rule at the database layer: there is no offer letter without a human approval record. That’s “no silent autonomy on offers” as engineering, not marketing.
+
+Third—and this matters for enterprise procurement—you can reconstruct what the system did: agent steps, sources, and handoffs leave an audit trail suitable for HR ops, security review, and regulatory questions—not “the model said so.”
+
+Then bridge to the demo: “That’s the blueprint—give me thirty to sixty seconds in the live product so you’re not only seeing boxes.” Open the hosted demo, walk one recruiter path or one brief, come back for moat and business. Keep it under about ninety seconds so you still land the rest of the story.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: What happens to your model spend at scale?
+A: We route models by task, cache aggressively, and batch where we can—our planning model targets roughly seventy-two to seventy-five percent gross margin by year two, but we’ll stress-test that with real workloads.
+
+Q: What’s your failure mode when agents misbehave or hallucinate?
+A: Retries, guardrails, and escalation to a human—we refuse silent degradation on hires; if we’re uncertain, we surface it instead of pretending confidence.
+
+Q: Why graph plus vectors—why not just RAG?
+A: Hiring is relational: skills, roles, evidence, and tenure stories don’t live cleanly in chunks alone. The graph is how we compound signal over time across the enterprise.
+        </div>
+      </section>
+
+      <!-- Slide 6 -->
+      <section
+        class="slide"
+        data-index="5"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">Moat</p>
+          <h2 class="title reveal">Hard to Copy Because It’s <span class="accent">Architecture—Not a Smarter Chatbot</span></h2>
+          <p class="subtitle reveal">
+            Buyers can replicate a model; they can’t overnight replicate <strong>dual-sided memory</strong>, a <strong>compounding graph</strong> in the workflow stack, and <strong>trust mechanics</strong> wired into offers and interviews.
+          </p>
+          <div class="moat-grid reveal">
+            <div class="moat-card">
+              <p class="moat-card-kicker">vs copilots &amp; sidebar AI</p>
+              <h3 class="moat-card-title">Finish workstreams—not sentences</h3>
+              <p class="moat-card-value"><strong>What you get:</strong> Stateful orchestration across sourcing, briefs, scheduling, and prep with approvals—not a widget that drafts emails in isolation. Outcomes change because the system remembers the requisition and the evidence trail.</p>
+            </div>
+            <div class="moat-card">
+              <p class="moat-card-kicker">vs recruiter-only “AI hiring”</p>
+              <h3 class="moat-card-title">Two Second Brains, one flywheel</h3>
+              <p class="moat-card-value"><strong>What you get:</strong> Employer activity makes the candidate Second Brain smarter; better candidate signal improves matching for the enterprise. Single-sided tools never capture that loop—so they plateau as fancy ATS add-ons.</p>
+            </div>
+            <div class="moat-card">
+              <p class="moat-card-kicker">vs interview bots &amp; black-box offers</p>
+              <h3 class="moat-card-title">Human conversations stay human</h3>
+              <p class="moat-card-value"><strong>What you get:</strong> We refuse to automate the interview itself. Offers sit behind human approval and audit logs—so you’re not selling the highest-risk failure mode in HR AI to your board or regulators.</p>
+            </div>
+            <div class="moat-card">
+              <p class="moat-card-kicker">vs static career apps</p>
+              <h3 class="moat-card-title">Agentic through apply, prep, and the offer</h3>
+              <p class="moat-card-value"><strong>What you get:</strong> Applications, role-specific prep, and <strong>NegotiationCoach™</strong>—private guidance when candidates usually leave money on the table. Tips don’t move the needle; orchestration at those moments does.</p>
+            </div>
+          </div>
+          <p class="foot reveal">Defensibility: Talent Intelligence Graph™ flywheel · integration + compliance depth · patent roadmap (negotiation, brief synthesis, fairness-gated orchestration)</p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 6 — DIFFERENTIATION &amp; MOAT
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Slide six is the “why not LinkedIn, why not HireEZ, why not my ATS vendor’s AI” slide—and the honest answer is architecture.
+
+If the moat were only a better model, a well-funded team could swap weights and catch up in months. Our moat is the combination of four things that don’t copy-paste easily.
+
+First, versus copilots and sidebar features: we’re not optimizing for faster typing. We’re running persistent workflows—memory, handoffs, approvals—so hiring outcomes change, not just email drafts.
+
+Second, versus recruiter-only automation: we built two Second Brains on purpose. Enterprise hiring generates signal that should make the candidate experience smarter, and candidate-side depth should improve matching for employers. Single-sided tools can’t compound that flywheel.
+
+Third, trust: we draw a hard line on the interview—we don’t automate the human conversation. And we treat offers as legally and culturally sensitive: human approval and auditability, not silent autonomy.
+
+Fourth, versus static career products: we go agentic through application, prep, and especially the offer, where NegotiationCoach™ gives private guidance—because that’s where real money and fairness show up.
+
+Close with the footer: graph flywheel, workflow integration, compliance posture, and a focused patent roadmap—not vanity IP, but the mechanisms that are hard to replicate.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: What stops a big tech company or an ATS from copying you in a year?
+A: Models are fungible; our moat is dual product surfaces, workflow and trust artifacts embedded in the hire, and integrations that have to be earned customer by customer—not a single feature drop.
+
+Q: Do you have patents?
+A: We’re building toward protection on NegotiationCoach™, brief synthesis, and fairness-constrained multi-agent orchestration—aligned with what’s actually differentiated in the product.
+
+Q: Isn’t the graph just Neo4j—anyone can use a graph?
+A: Anyone can install a database; not everyone gets longitudinal hiring signal across two sides of the market with governance. The value is the data and workflow flywheel through the product, not the logo on the box.
+        </div>
+      </section>
+
+      <!-- Slide 7 -->
+      <section
+        class="slide"
+        data-index="6"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">GTM &amp; revenue</p>
+          <h2 class="title reveal">Win Recruiting Budgets First—<span class="accent">Then Candidates, Partners, and API</span></h2>
+          <p class="subtitle reveal">
+            <strong>Recruiting and HR</strong> already own hiring KPIs and budget lines—that’s why <strong>TalentAgent™</strong> is our first sale. When real requisitions run through us, <strong>CareerAgent™</strong> and the <strong>Talent Intelligence Graph™</strong> stop being demos and become products backed by live data.
+          </p>
+          <div class="slide-content-panel reveal">
+            <div class="gtm-block-grid">
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Open the market</h3>
+                <p class="gtm-block-body">
+                  <strong>Depth, not logos:</strong> 2–3 embedded enterprise pilots (~1K–5K FTE) in NA tech &amp; financial services—integrations and outcomes we can reference. Candidates via <strong>universities &amp; professional communities</strong> so CareerAgent™ rides <strong>live hiring signal</strong>, not day-one paid consumer spend.
+                </p>
+              </div>
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Core revenue</h3>
+                <p class="gtm-block-body">
+                  <strong>TalentAgent™:</strong> per-recruiter seats (~$650–800/mo) + <strong>2.5–3%</strong> placement success fees · ACVs from ~<strong>$50K</strong> to <strong>seven figures</strong>.
+                  <strong>CareerAgent™:</strong> <strong>Free</strong> (capped) · <strong>Pro $29/mo</strong> · <strong>Premium $79/mo</strong> (full Second Brain).
+                </p>
+              </div>
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Expand the surface</h3>
+                <p class="gtm-block-body">
+                  <strong>Staffing white-label:</strong> <strong>$5K–20K/mo</strong> + <strong>8%</strong> on placements.
+                  <strong>Talent Intelligence API:</strong> usage (~$0.05–0.15/call) + <strong>$50K–200K/yr</strong> bundles—<strong>ramps after</strong> core enterprise traction.
+                </p>
+              </div>
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Year-one execution</h3>
+                <p class="gtm-block-body">
+                  <strong>14 FTE</strong>—6 ML/AI, 3 backend, plus PM, sales, compliance, UX, CEO—biased to agents, integrations, and trust.
+                  <strong>Illustrative buyer ROI:</strong> ~<strong>143%</strong> Y1, ~<strong>$258K</strong> net value vs ~<strong>$180K</strong> Business-tier spend—diligence model only.
+                </p>
+              </div>
+            </div>
+          </div>
+          <p class="foot reveal">Bottom line: enterprise seats and placement fees fund the build; white-label and API widen the surface area; consumer subscriptions scale as CareerAgent™ depth proves out.</p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 7 — GTM &amp; BUSINESS MODEL
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Here’s the story of this slide in one line: we don’t try to grow a consumer app in a vacuum. We sell to the people who already sign the checks for hiring software and success fees—then everything else on the slide is how we widen from there.
+
+Start with the title and subtitle. Say it plainly: recruiting and HR have the budget and the metrics; they’re the fastest path to real revenue and real usage. Once employers are running live reqs through TalentAgent™, CareerAgent™ and the graph aren’t theoretical—they’re fed by actual hiring activity.
+
+Now walk the four boxes in reading order—top left, top right, bottom left, bottom right.
+
+First box, “Open the market”: year one we’re not chasing a hundred logos. We want a small number of deep enterprise pilots where we can integrate, prove outcomes, and get references. For candidates, we lean on universities and professional communities so we’re not lighting money on fire on paid consumer acquisition before the product has signal.
+
+Second box, “Core revenue”: TalentAgent™ is seats plus a slice of placement—that’s the enterprise engine. CareerAgent™ is a simple ladder: free tier, then twenty-nine, then seventy-nine for the full consumer Second Brain. If they want every line of the pricing page, that’s fine in Q&amp;A.
+
+Third box, “Expand the surface”: staffing partners white-label us for a platform fee plus rev share; the API is how other HR stacks buy match, graph, and briefs programmatically—and we expect that to ramp once enterprise credibility is established.
+
+Fourth box, “Year-one execution”: fourteen people, heavy on ML, AI, and backend, because integrations and governed agents are the work. The ROI number is an illustrative model for diligence—not a forecast or a guarantee.
+
+Close with the footer if you want a takeaway: enterprise funds the build; partners and API widen the surface; consumer scales as the product gets deeper. Anything granular on the model lives in the data room.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: How long is your enterprise sales cycle?
+A: Think three to six months for real procurement; year one is lighthouse accounts and design partners, not a thousand logos.
+
+Q: When does consumer revenue matter?
+A: Subscriptions become material in year two and beyond; early ARR is anchored by enterprise so the graph and integrations are real before we lean on consumer scale.
+
+Q: Why not go consumer-first like a job board or coaching app?
+A: Cold-start: candidates need credible intelligence, and that intelligence is grounded in employer-side signal. Employer-first buys us truth in the product—not just downloads.
+        </div>
+      </section>
+
+      <!-- Slide 8 -->
+      <section
+        class="slide"
+        data-index="7"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">Roadmap</p>
+          <h2 class="title reveal">36-Month Execution Roadmap—<span class="accent">Product, Integrations, Compliance</span></h2>
+          <p class="subtitle reveal">
+            We sequence <strong>depth over breadth</strong>: ship governed recruiter workflows on <strong>Greenhouse</strong> first (per our integration plan), then add ATS and HRIS coverage, then platform expansion—while tracking <strong>EU AI Act</strong> high-risk obligations on a defined timeline.
+          </p>
+          <div class="slide-content-panel roadmap-panel reveal">
+            <div class="exec-rm-grid">
+              <article class="exec-rm-card">
+                <p class="exec-rm-eyebrow">Year 1 · Months 1–12</p>
+                <h3 class="exec-rm-card-title">Foundation</h3>
+                <ul class="exec-rm-list">
+                  <li>Deliver the full recruiter workflow in production—from discovery and scheduling through structured screening to a hiring-manager-ready <strong>Intelligence Brief</strong>, so teams replace ad hoc tools with one audited path.</li>
+                  <li>Run a deep <strong>Greenhouse</strong> integration: jobs and candidates sync both ways, recruiters stop retyping data, and AI-generated briefs and notes write back while the ATS stays the legal system of record.</li>
+                  <li>Run <strong>SOC 2</strong> as a real program; begin EU AI Act evidence (technical documentation, human oversight, candidate transparency); grow <strong>CareerAgent™</strong> through universities and partners so candidates onboard next to live hiring—not paid empty signups.</li>
+                </ul>
+              </article>
+              <span class="exec-rm-arrow" aria-hidden="true">→</span>
+              <article class="exec-rm-card">
+                <p class="exec-rm-eyebrow">Year 2 · Months 13–24</p>
+                <h3 class="exec-rm-card-title">Scale &amp; depth</h3>
+                <ul class="exec-rm-list">
+                  <li>Ship <strong>NegotiationCoach™</strong> so candidates get structured, in-product guidance at offer time; improve shortlists and match quality using a full year of pipeline outcomes—who advanced, who didn’t, and why—not just model upgrades.</li>
+                  <li>Onboard <strong>Lever</strong>, <strong>Workday Recruiting</strong>, and <strong>SuccessFactors</strong> with the same connector pattern proven on Greenhouse, so large employers aren’t blocked by their ATS choice.</li>
+                  <li>Read compensation bands from <strong>HRIS</strong> (e.g. Workday / SuccessFactors HCM) so recommended offers respect policy; move EU work toward notified-body review and a conformity file for high-risk recruitment AI (~Month 24).</li>
+                </ul>
+              </article>
+              <span class="exec-rm-arrow" aria-hidden="true">→</span>
+              <article class="exec-rm-card">
+                <p class="exec-rm-eyebrow">Year 3 · Months 25–36</p>
+                <h3 class="exec-rm-card-title">Platform</h3>
+                <ul class="exec-rm-list">
+                  <li>Turn integrations into a repeatable factory: add <strong>Ashby</strong> and additional ATS connectors with predictable onboarding—less custom firefighting per customer.</li>
+                  <li>Operate <strong>staffing white-label</strong> and the <strong>Talent Intelligence API</strong> as mature revenue lines; expand <strong>APAC</strong> and industry-specific packs only where contracts already prove demand.</li>
+                  <li>Ship EU as a governed rollout aligned to <strong>CE-marking</strong> timing (~Month 30); then layer a <strong>marketplace</strong> of vetted partners and integrations—after the core hiring loop is stable and boring.</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+          <p class="foot reveal">
+            Takeaway: prove recruiter outcomes and one deep ATS integration before parallelizing systems; stack compliance and HRIS in Year 2; widen geography and ecosystem in Year 3. Revenue and funding milestones are on the financials slide.
+          </p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 8 — EXECUTION ROADMAP
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+This slide is our thirty-six-month build sequence—not a wish list. The headline is sequencing: we go deep on one ATS and real recruiter workflows before we pretend we integrate everything on day one.
+
+Start with the subtitle. Greenhouse is Phase One in our product note because it’s where we earn bidirectional sync, webhook reliability, and reference stories. EU matters because recruitment agents are high-risk under the AI Act—we bake documentation, human oversight, and transparency into the plan, not as a footnote.
+
+Walk left to right in plain English. Year one: recruiters get one end-to-end workflow with a real brief at the end; Greenhouse is live two-way sync with write-back; security and EU evidence start in parallel; candidates come in through partners next to real reqs.
+
+Year two: candidates get negotiation help inside the product; matching improves because we finally have longitudinal outcomes; we replicate the connector playbook across Lever and the big enterprise ATSs; HRIS feeds comp policy; EU shifts toward notified-body conformity.
+
+Year three: ATS onboarding is repeatable; staffing and API are real businesses not experiments; geography and verticals follow revenue; EU ships on a certification timeline; marketplace comes last on purpose.
+
+Close with the footer: if they want ARR ramps or Series A timing, send them to the financials slide—this slide is about what we build and in what order.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: Isn’t three years of scope too much?
+A: It’s sequenced with feature flags and funding gates—Year one is a narrow critical path; later years expand only after the spine works.
+
+Q: Why Greenhouse first?
+A: It’s our Phase One ATS in the architecture doc: strong API + webhooks, clear enterprise pull, and a template for every other connector.
+
+Q: How do you de-risk EU?
+A: We map Annex III obligations to months—technical file, governance, notified body, CE timing—so it’s an execution plan, not a slide bullet.
+        </div>
+      </section>
+
+      <!-- Slide 9 -->
+      <section
+        class="slide"
+        data-index="8"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">Financials &amp; ask</p>
+          <h2 class="title reveal">What the Business Looks Like at Scale—<span class="accent">and What This Round Funds</span></h2>
+          <p class="subtitle reveal">
+            <strong>Layer on ATS/HRIS</strong>—not a replacement. Below: an <strong>illustrative</strong> 3-year path—enterprise ARR first, then <strong>software-like margins</strong> as usage scales.
+          </p>
+          <div class="slide-content-panel fin-slide-panel reveal">
+            <p class="fin-slide-lead">
+              <strong>Three-year snapshot (rounded).</strong> Years 1–2 reflect investment in product, integrations, and compliance; Year 3 is where operating leverage shows up if we execute the roadmap.
+            </p>
+            <table class="fin-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Year 1</th>
+                  <th>Year 2</th>
+                  <th>Year 3</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>ARR (subscription + success fees)</td><td>~$850K</td><td>~$4.0M</td><td>~$17.9M</td></tr>
+                <tr><td>Gross margin</td><td>~60%</td><td>~74%</td><td>~74%</td></tr>
+                <tr><td>EBITDA</td><td>~($1.16M)</td><td>~($1.38M)</td><td>~$6.0M</td></tr>
+                <tr><td>Operating expenses</td><td>~$2.0M</td><td>~$5.4M</td><td>~$11.8M</td></tr>
+              </tbody>
+            </table>
+            <div class="fin-ask-split">
+              <div class="fin-use-card">
+                <h3 class="fin-use-title">Use of proceeds — Year 1 (product note scope)</h3>
+                <ul class="fin-use-list">
+                  <li><strong>Ship TalentAgent™ depth:</strong> sourcing through the <strong>Candidate Intelligence Brief™</strong>, outreach and scheduling, and Greenhouse as the first bidirectional ATS spine.</li>
+                  <li><strong>Ship CareerAgent™ core:</strong> web and mobile surfaces for apply, prep, and early negotiation support—grown with partners so signal stays real.</li>
+                  <li><strong>Platform &amp; trust:</strong> agent orchestration, integration hub, auditability; <strong>SOC 2</strong> program and the first <strong>EU AI Act</strong> documentation and oversight milestones for high-risk recruitment AI.</li>
+                  <li><strong>Go-to-market:</strong> 2–3 lighthouse enterprises and a team weighted to ML/AI, backend, and integrations—not a consumer marketing blitz.</li>
+                </ul>
+              </div>
+              <div class="fin-ask-card">
+                <h3 class="fin-ask-title">The ask</h3>
+                <p>
+                  We are raising <strong>$3.2M</strong> in <strong>Seed</strong> financing to execute <strong>Year 1</strong> of our technical and product plan: prove recruiter outcomes on <strong>Greenhouse</strong>, stand up the dual <strong>Second Brain</strong> surfaces, and fund the <strong>security and compliance</strong> baseline enterprise buyers require before they standardize on us.
+                </p>
+                <p class="fin-ask-next">
+                  <strong>Next financing</strong> is modeled as a Series A when Greenhouse-depth traction, ARR ramp, and EU readiness justify a larger integration and field build—details in the model, not a commitment on timing or terms.
+                </p>
+              </div>
+            </div>
+          </div>
+          <p class="foot reveal">
+            Cash breakeven targeted around <strong>Months 26–28</strong> on this plan. Any Series A sizing or valuation multiples in materials are <strong>illustrative comparables</strong> for discussion—not forecasts or offers.
+          </p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 9 — FINANCIALS &amp; THE ASK
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Slide nine answers two questions investors always ask: what does the business look like if we’re right, and what are you actually spending money on in the first year.
+
+Start with the subtitle. HOGH sits above the ATS—we orchestrate intelligence, briefs, scheduling, and governed automation; we don’t ask a CHRO to rip out Workday or Greenhouse on day one. That matters for margins over time: as usage grows and infrastructure amortizes, we target software-like gross margins in the mid-seventies—not services-heavy economics forever.
+
+Point at the table row by row. ARR is anchored by enterprise first—that’s consistent with slide seven. Gross margin steps up as we scale. EBITDA stays negative while we invest, then turns positive in year three on this illustrative path. OpEx is the cost of shipping agents, integrations, and compliance seriously—not a vanity brand budget.
+
+Walk the left column, use of proceeds. This is straight from what we describe in the product architecture note: TalentAgent™ through the Intelligence Brief and real Greenhouse sync; CareerAgent™ as a real product on web and mobile with partner-led growth; the boring but load-bearing work—integration hub, audit logs, SOC two, and the EU AI Act milestones for high-risk hiring AI; and a small number of lighthouse customers with a team biased to engineering.
+
+Then the ask box. We’re raising three point two million dollars in Seed to execute year one—Greenhouse depth, both Second Brains, and the compliance spine that makes procurement possible. If they push on Series A or valuation math, keep it clean: anything on multiples or round size in the appendix is for conversation, not a promise. Breakeven timing is on the footer.
+
+End by inviting them to the data room for the full model and downside cases.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: Are these numbers guaranteed?
+A: No—they’re an illustrative model with explicit assumptions; we’ll stress enterprise logo count and consumer attach in sensitivity tables.
+
+Q: Why gross margin jumps in Year 2?
+A: Mix shift toward software-like delivery, more automated inference and orchestration, and less marginal cost per incremental customer once the integration spine is working.
+
+Q: Why three point two for Seed?
+A: It’s sized to fund the year-one milestones on the roadmap slide—integrations, dual product surfaces, compliance, and a lean GTM—not to buy billboards.
+
+Q: When do you go out for Series A?
+A: When we can show Greenhouse-depth reference stories, an ARR trajectory that matches the plan, and EU readiness that doesn’t scare legal—we’ll align round size to those gates.
+        </div>
+      </section>
+
+      <!-- Slide 10 -->
+      <section
+        class="slide theme-dark slide-close"
+        data-index="9"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">Close</p>
+          <h1 class="title reveal">AI Does the <span class="accent">Prep</span>—Humans Keep the <span class="accent">Decision</span></h1>
+          <p class="subtitle reveal">
+            HireOrGetHired is a <strong>dual-sided agentic platform</strong>: <strong>TalentAgent™</strong> for recruiters and <strong>CareerAgent™</strong> for job seekers—persistent Second Brains that handle research, logistics, and synthesis <strong>above the ATS</strong>, then <strong>step back</strong> when judgment, interviews, and offers require a person.
+          </p>
+          <div class="close-commitments reveal">
+            <div class="close-commitment">
+              <p class="close-commitment-kicker">What we compound</p>
+              <p class="close-commitment-body">
+                <strong>Two products, one flywheel:</strong> real hiring volume makes candidate intelligence credible; better candidate signal improves enterprise matching. <strong>NegotiationCoach™</strong> gives each side private guidance at the offer—without collapsing trust into a single black-box score.
+              </p>
+            </div>
+            <div class="close-commitment">
+              <p class="close-commitment-kicker">What we refuse</p>
+              <p class="close-commitment-body">
+                We <strong>do not automate the interview</strong>. Shortlists can <strong>pause on bias flags</strong>; match scores ship with <strong>SHAP explainability</strong>; <strong>Candidate Intelligence Brief™</strong> claims link to <strong>provenance</strong>. Offers don’t ship without a <strong>human approval record</strong>—by design, not slogan.
+              </p>
+            </div>
+            <div class="close-commitment">
+              <p class="close-commitment-kicker">What lets us scale</p>
+              <p class="close-commitment-body">
+                <strong>HOGH Admin Console</strong>, immutable <strong>audit logs</strong>, GDPR/DSAR readiness, and a mapped <strong>EU AI Act</strong> path for high-risk recruitment AI—so HR Ops and legal can defend the rollout to the board, not fight the vendor.
+              </p>
+            </div>
+          </div>
+          <p class="foot reveal">
+            <strong>HireOrGetHired</strong> — <em>Where Intelligence Meets Opportunity™</em>
+            <span class="close-cta-line">Enterprise pilots · design partners · capital — we’re building the <strong>defensible default</strong> for agentic hiring.</span>
+            <span class="foot-secondary">Demo: noaman.github.io/hire_get_hired · Thank you.</span>
+          </p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 10 — CLOSE (LASTING IMPRESSION)
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+This is the last slide—land the company in one sentence, then three proof points, then the ask.
+
+Read the title slowly: artificial intelligence does the preparation; humans keep the decision. That is not marketing—it is how the product is architected in our technical note. Agents run research, scheduling, synthesis, and briefs; they do not replace the interview, the hiring manager’s judgment, or the signed offer.
+
+Use the subtitle to name the two surfaces: TalentAgent™ on the enterprise side, CareerAgent™ on the candidate side—both are Second Brains. Stress that we sit above the ATS as an intelligence and orchestration layer—we are not asking customers to rip out Greenhouse or Workday to try us.
+
+Walk the three columns left to right.
+
+First—what we compound. This is the strategic moat in plain language: employer activity makes the candidate product honest; candidate activity sharpens matching for the enterprise. NegotiationCoach™ is deliberately separate private guidance so trust doesn’t collapse into one opaque score both sides fight over.
+
+Second—what we refuse. This is where skeptical investors relax or push harder—either is good. No automated interviews. Bias monitor can stop a shortlist. SHAP on scores. Brief claims trace to sources. Offers require human approval in the audit trail. If someone thinks that’s too conservative, say: that conservatism is why procurement and regulators let us in.
+
+Third—what lets us scale. Admin console, audit logs, GDPR/DSAR, EU AI Act roadmap for high-risk hiring AI. Sandra—the HR Ops persona in our note—has to survive a board review. We built for her, not just for the demo.
+
+Close with the footer: brand line, then the CTA line—pilots, partners, capital—and thank them. Offer the demo link as optional homework.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: Isn’t “human in the loop” just slower?
+A: It’s faster than a lawsuit, a failed audit, or a CHRO who won’t sign the vendor form—we automate everything except the moments that legally and ethically belong to people.
+
+Q: How is this different from Copilot in an ATS?
+A: Dual-sided memory, offer-stage coaching, and hard gates on ranking and offers—not a sidebar that drafts emails.
+
+Q: What should we do next?
+A: Match the room—pilot, design partnership, diligence session, or term sheet conversation—but make the next step explicit before you leave the room.
+        </div>
+      </section>
+    </div>
+
+    <footer class="ui-bar">
+      <div class="logo-mark">Hire<span style="color:var(--primary)">OrGet</span>Hired</div>
+      <div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
+      <div class="nav-cluster">
+        <span class="progress-text" id="progressText">1 / 10</span>
+        <span class="timer" id="timer" title="Elapsed time">0:00</span>
+        <button type="button" class="btn-notes" id="toggleNotes" aria-expanded="false">Notes</button>
+        <button type="button" class="nav-btn" id="prevBtn" aria-label="Previous slide">←</button>
+        <button type="button" class="nav-btn" id="nextBtn" aria-label="Next slide">→</button>
+      </div>
+    </footer>
+  </div>
+
+  <aside class="notes-panel" id="notesPanel" aria-hidden="true">
+    <header>
+      Speaker notes
+      <button type="button" class="notes-close" id="closeNotes" aria-label="Close notes">×</button>
+    </header>
+    <div class="body" id="notesBody"></div>
+  </aside>
+
+  <script>
+(function () {
+  'use strict';
+
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+  var dotsContainer = document.getElementById('dots');
+  var progressText = document.getElementById('progressText');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var notesPanel = document.getElementById('notesPanel');
+  var notesBody = document.getElementById('notesBody');
+  var toggleNotes = document.getElementById('toggleNotes');
+  var closeNotes = document.getElementById('closeNotes');
+  var timerEl = document.getElementById('timer');
+  var timerStart = null;
+  var timerId = null;
+
+  function formatTime(seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function ensureTimer() {
+    if (timerStart !== null) return;
+    timerStart = Date.now();
+    timerId = setInterval(function () {
+      var elapsed = Math.floor((Date.now() - timerStart) / 1000);
+      timerEl.textContent = formatTime(elapsed);
+    }, 1000);
+  }
+
+  function buildDots() {
+    dotsContainer.innerHTML = '';
+    for (var i = 0; i < total; i++) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'dot' + (i === 0 ? ' is-current' : '');
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+      b.dataset.index = String(i);
+      b.addEventListener('click', function () {
+        goTo(parseInt(this.dataset.index, 10));
+      });
+      dotsContainer.appendChild(b);
+    }
+  }
+
+  function updateNotes() {
+    var el = slides[current];
+    var src = el.querySelector('.slide-notes-source');
+    var text = src ? src.textContent.trim() : '';
+    if (!text) {
+      text = el.getAttribute('data-notes') || 'No notes for this slide.';
+    }
+    notesBody.textContent = text;
+  }
+
+  function goTo(index) {
+    if (index < 0 || index >= total) return;
+    ensureTimer();
+    slides[current].classList.remove('is-active');
+    current = index;
+    slides[current].classList.add('is-active');
+    var dots = dotsContainer.querySelectorAll('.dot');
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle('is-current', i === current);
+    }
+    progressText.textContent = current + 1 + ' / ' + total;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    updateNotes();
+    slides[current].scrollTop = 0;
+  }
+
+  function next() {
+    goTo(current + 1);
+  }
+
+  function prev() {
+    goTo(current - 1);
+  }
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target.closest && e.target.closest('textarea, input, [contenteditable]')) return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      prev();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      goTo(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      goTo(total - 1);
+    } else if (e.key === 'n' || e.key === 'N') {
+      toggleNotesPanel();
+    }
+  });
+
+  function toggleNotesPanel() {
+    var open = notesPanel.classList.toggle('is-open');
+    notesPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+    toggleNotes.classList.toggle('is-on', open);
+    toggleNotes.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  toggleNotes.addEventListener('click', toggleNotesPanel);
+  closeNotes.addEventListener('click', function () {
+    notesPanel.classList.remove('is-open');
+    notesPanel.setAttribute('aria-hidden', 'true');
+    toggleNotes.classList.remove('is-on');
+    toggleNotes.setAttribute('aria-expanded', 'false');
+  });
+
+  buildDots();
+  updateNotes();
+  prevBtn.disabled = true;
+})();
+  </script>
+</body>
+</html>
