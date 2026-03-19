@@ -18,6 +18,7 @@
       --primary-lt: #EEF2FF;
       --secondary: #8B5CF6;
       --accent: #0EA5E9;
+      --accent-lt: #e0f2fe;
       --txt: #1E1B4B;
       --txt-2: #6B7280;
       --txt-3: #9CA3AF;
@@ -34,6 +35,12 @@
       --sh-xs: 0 1px 3px rgba(99, 102, 241, 0.05);
       --success: #059669;
       --ui-h: 52px;
+      /* Presentation legibility (projector / room viewing) */
+      --present-subtitle: clamp(1.06rem, 1.85vw, 1.28rem);
+      --present-foot: clamp(1rem, 1.4vw, 1.14rem);
+      --present-body: clamp(0.96rem, 1.45vw, 1.1rem);
+      --present-small: clamp(0.88rem, 1.15vw, 0.98rem);
+      --present-caption: clamp(0.82rem, 1.05vw, 0.92rem);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -139,8 +146,10 @@
     .slide.theme-dark .stat-label,
     .slide.theme-dark li { color: rgba(232, 230, 255, 0.78); }
     .slide.theme-dark .foot {
-      color: rgba(226, 232, 255, 0.92);
+      font-size: var(--present-foot);
+      color: rgba(240, 244, 255, 0.96);
       font-weight: 500;
+      line-height: 1.55;
     }
     .slide.theme-dark .foot .foot-secondary {
       color: rgba(210, 219, 255, 0.88);
@@ -154,7 +163,7 @@
 
     /* Typography */
     .eyebrow {
-      font-size: 0.72rem;
+      font-size: clamp(0.82rem, 1.05vw, 0.94rem);
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -167,7 +176,7 @@
       font-weight: 900;
       letter-spacing: -0.045em;
       line-height: 1.1;
-      max-width: min(34ch, 100%);
+      max-width: 100%;
       margin-bottom: 16px;
     }
     .title .accent {
@@ -182,25 +191,25 @@
       background-clip: text;
     }
     .subtitle {
-      font-size: clamp(0.78rem, 1.2vw, 0.92rem);
-      color: #4b5563;
-      line-height: 1.48;
-      max-width: 58ch;
+      font-size: var(--present-subtitle);
+      color: #374151;
+      line-height: 1.58;
+      max-width: 100%;
       margin-bottom: 22px;
       font-weight: 500;
       letter-spacing: -0.01em;
     }
     .slide.theme-dark .subtitle {
-      color: rgba(237, 242, 255, 0.88);
+      color: rgba(243, 244, 255, 0.95);
       font-weight: 500;
     }
     .foot {
-      font-size: 0.78rem;
+      font-size: var(--present-foot);
       font-weight: 500;
-      color: #4b5563;
+      color: #374151;
       margin-top: auto;
       padding-top: 20px;
-      line-height: 1.45;
+      line-height: 1.55;
     }
 
     .grid-2 {
@@ -228,16 +237,16 @@
       box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
     }
     .card-lite h3 {
-      font-size: 0.85rem;
+      font-size: clamp(0.95rem, 1.2vw, 1.05rem);
       font-weight: 800;
       margin-bottom: 12px;
       letter-spacing: -0.02em;
     }
     .card-lite ul, .bullet-list {
       list-style: none;
-      font-size: 0.82rem;
+      font-size: var(--present-body);
       color: var(--txt-2);
-      line-height: 1.55;
+      line-height: 1.58;
     }
     .card-lite li, .bullet-list li {
       padding-left: 18px;
@@ -279,7 +288,76 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .stat-label { font-size: 0.68rem; color: var(--txt-2); margin-top: 6px; line-height: 1.35; }
+    .stat-label { font-size: var(--present-caption); color: var(--txt-2); margin-top: 6px; line-height: 1.42; }
+
+    /* Slide 2 — recruiters vs job seekers (dual problem panels) */
+    .slide-problem-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(18px, 3vw, 28px);
+      max-width: 1100px;
+      width: 100%;
+      margin-top: clamp(10px, 2vw, 18px);
+    }
+    @media (max-width: 820px) {
+      .slide-problem-panels { grid-template-columns: 1fr; }
+    }
+    .problem-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: clamp(18px, 2.5vw, 26px) clamp(20px, 2.8vw, 28px);
+      box-shadow: var(--sh);
+      border-top: 4px solid var(--primary);
+      text-align: left;
+    }
+    .problem-panel--seeker {
+      border-top-color: var(--secondary);
+    }
+    .problem-panel h3 {
+      font-size: var(--present-small);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--txt-3);
+      margin: 0 0 14px;
+    }
+    .problem-panel ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: var(--present-body);
+      color: var(--txt-2);
+      line-height: 1.56;
+    }
+    .problem-panel li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 10px;
+    }
+    .problem-panel li:last-child { margin-bottom: 0; }
+    .problem-panel li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: 2px;
+      background: var(--grad);
+    }
+    .problem-panel--seeker li::before {
+      background: linear-gradient(135deg, var(--secondary), #ec4899);
+    }
+    .problem-num {
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.02em;
+      color: var(--primary-h);
+    }
+    .problem-panel--seeker .problem-num {
+      color: #7c3aed;
+    }
 
     .chips {
       display: flex;
@@ -288,7 +366,7 @@
       margin-top: 12px;
     }
     .chip {
-      font-size: 0.68rem;
+      font-size: var(--present-caption);
       font-weight: 700;
       padding: 6px 12px;
       border-radius: 100px;
@@ -308,6 +386,123 @@
     }
     @media (max-width: 768px) {
       .cols-3 { grid-template-columns: 1fr; }
+    }
+
+    /* Slide 4 — TAM / SAM / SOM + Perfect Storm */
+    .slide4-market-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(12px, 2vw, 18px);
+      max-width: 1000px;
+      width: 100%;
+      margin-bottom: clamp(14px, 2.2vw, 20px);
+    }
+    @media (max-width: 900px) {
+      .slide4-market-row { grid-template-columns: 1fr; }
+    }
+    .slide4-market-card {
+      background: var(--subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: clamp(12px, 2vw, 16px) clamp(14px, 2.2vw, 18px);
+      text-align: left;
+    }
+    .slide4-market-card--tam {
+      border-top: 3px solid var(--primary);
+    }
+    .slide4-market-card--sam {
+      border-top: 3px solid var(--secondary);
+    }
+    .slide4-market-card--som {
+      border-top: 3px solid var(--accent);
+    }
+    .slide4-market-card .market-kind {
+      font-size: var(--present-caption);
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--txt-3);
+      margin-bottom: 6px;
+    }
+    .slide4-market-card .market-num {
+      font-size: clamp(1.25rem, 2.6vw, 1.75rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .slide4-market-card--tam .market-num {
+      color: var(--primary-h);
+    }
+    .slide4-market-card--sam .market-num {
+      color: #7c3aed;
+    }
+    .slide4-market-card--som .market-num {
+      color: #0369a1;
+    }
+    .slide4-market-card .market-num .market-year {
+      font-size: 0.55em;
+      font-weight: 700;
+      color: var(--txt-2);
+      letter-spacing: 0;
+    }
+    .slide4-market-card .market-desc {
+      font-size: var(--present-small);
+      color: var(--txt-2);
+      line-height: 1.5;
+      margin: 0;
+    }
+    .slide4-storm-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: clamp(16px, 2.5vw, 22px) clamp(18px, 2.8vw, 24px);
+      box-shadow: var(--sh-xs);
+      max-width: 1000px;
+      width: 100%;
+      margin-bottom: clamp(14px, 2.2vw, 20px);
+    }
+    .slide4-storm-panel h3 {
+      font-size: var(--present-body);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 12px;
+      color: var(--txt);
+    }
+    .slide4-storm-panel h3 .accent-inline {
+      background: var(--grad-s);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .slide4-storm-panel .storm-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: var(--present-small);
+      color: var(--txt-2);
+      line-height: 1.55;
+      columns: 2;
+      column-gap: clamp(20px, 3vw, 36px);
+    }
+    @media (max-width: 720px) {
+      .slide4-storm-panel .storm-list { columns: 1; }
+    }
+    .slide4-storm-panel .storm-list li {
+      position: relative;
+      padding-left: 14px;
+      margin-bottom: 8px;
+      break-inside: avoid;
+    }
+    .slide4-storm-panel .storm-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 5px;
+      height: 5px;
+      border-radius: 2px;
+      background: var(--grad);
     }
 
     /* Slide 5 — main body on white panel (like slide 4 cards) */
@@ -334,6 +529,30 @@
       border-top: 1px solid var(--border);
     }
 
+    /* Slide 5 — content panel matches full inner width */
+    .slide-product-arch .slide-content-panel {
+      max-width: 100%;
+    }
+    .slide-arch-card-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px 16px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .slide-arch-card-head-label {
+      font-size: var(--present-caption);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: var(--txt-3);
+      line-height: 1.35;
+      max-width: min(42ch, 100%);
+    }
+
     /* Slide 7 — GTM four-block summary */
     .gtm-block-grid {
       display: grid;
@@ -352,7 +571,7 @@
       border-left: 3px solid var(--primary);
     }
     .gtm-block-title {
-      font-size: 0.78rem;
+      font-size: var(--present-small);
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--txt);
@@ -361,9 +580,9 @@
     }
     .gtm-block-body {
       margin: 0;
-      font-size: 0.72rem;
+      font-size: var(--present-small);
       color: var(--txt-2);
-      line-height: 1.5;
+      line-height: 1.55;
     }
     .gtm-block-body strong {
       color: var(--txt);
@@ -375,7 +594,7 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 10px;
-      font-size: 0.72rem;
+      font-size: var(--present-small);
       font-weight: 700;
       color: var(--txt-2);
       margin-top: 16px;
@@ -391,6 +610,425 @@
       color: #fff;
       border: none;
       box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+    }
+
+    /* Slide 5 — view full architecture overlay (distinct from purple “engine” flow step) */
+    .btn-view-arch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 0;
+      flex-shrink: 0;
+      font-size: var(--present-small);
+      font-weight: 700;
+      padding: 9px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      background: var(--card);
+      color: #0c4a6e;
+      border: 2px solid var(--accent);
+      box-shadow: 0 1px 3px rgba(14, 165, 233, 0.12);
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .btn-view-arch:hover {
+      transform: translateY(-1px);
+      background: var(--accent-lt);
+      border-color: #0284c7;
+      color: #075985;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.22);
+    }
+    .btn-view-arch:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .arch-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 250;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 32px);
+      background: rgba(15, 10, 30, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .arch-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .arch-overlay-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: 0 24px 80px rgba(30, 27, 75, 0.2);
+      max-width: 920px;
+      width: 100%;
+      max-height: min(92vh, 880px);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(12px) scale(0.98);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .arch-overlay.is-open .arch-overlay-panel {
+      transform: translateY(0) scale(1);
+    }
+    .arch-overlay-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--subtle);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+    }
+    .arch-overlay-title {
+      font-size: clamp(1.02rem, 1.35vw, 1.14rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--txt);
+      margin: 0;
+    }
+    .arch-overlay-sub {
+      font-size: var(--present-caption);
+      font-weight: 600;
+      color: var(--txt-2);
+      margin: 4px 0 0;
+      line-height: 1.45;
+    }
+    .arch-overlay-close {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: var(--r-sm);
+      background: var(--card);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 1.35rem;
+      line-height: 1;
+      color: var(--txt-3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+    }
+    .arch-overlay-close:hover {
+      color: var(--txt);
+      border-color: var(--border-2);
+    }
+    .arch-overlay-body {
+      overflow-y: auto;
+      padding: clamp(14px, 2.5vw, 22px) clamp(16px, 2.5vw, 24px);
+      -webkit-overflow-scrolling: touch;
+    }
+    .arch-diag-intro {
+      font-size: var(--present-small);
+      color: var(--txt-2);
+      line-height: 1.55;
+      margin: 0 0 16px;
+      max-width: 100%;
+    }
+    .arch-diag {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      font-size: clamp(0.72rem, 1.05vw, 0.82rem);
+    }
+    .arch-vline {
+      width: 2px;
+      height: 12px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .arch-layer {
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+      background: var(--page);
+    }
+    .arch-layer-label {
+      font-size: clamp(0.68rem, 0.95vw, 0.78rem);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--primary-h);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .arch-layer--gateway .arch-layer-label { color: #7c3aed; }
+    .arch-layer--app .arch-layer-label { color: var(--txt); }
+    .arch-layer--orch .arch-layer-label { color: #fff; }
+    .arch-layer--data .arch-layer-label { color: #0369a1; }
+    .arch-layer--int .arch-layer-label { color: var(--txt-2); }
+    .arch-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: center;
+      gap: 8px;
+    }
+    .arch-node {
+      flex: 1 1 auto;
+      min-width: min(100%, 140px);
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-weight: 700;
+      color: var(--txt);
+      line-height: 1.35;
+    }
+    .arch-node-sm {
+      font-size: clamp(0.68rem, 0.95vw, 0.78rem);
+      font-weight: 600;
+      color: var(--txt-2);
+      padding: 5px 8px;
+      min-width: 0;
+    }
+    .arch-gateway-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+    .arch-layer--gateway {
+      background: linear-gradient(180deg, #faf5ff 0%, var(--page) 100%);
+      border-color: rgba(124, 58, 237, 0.25);
+    }
+    .arch-layer--orch {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      border: none;
+      box-shadow: 0 8px 28px rgba(79, 70, 229, 0.25);
+    }
+    .arch-layer--orch .arch-node {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: #fff;
+    }
+    .arch-layer--orch .arch-node-sm {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.88);
+    }
+    .arch-orch-master {
+      text-align: center;
+      font-weight: 800;
+      font-size: clamp(0.72rem, 1vw, 0.82rem);
+      color: #fff;
+      margin-bottom: 8px;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+    }
+    .arch-subagents {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    @media (max-width: 560px) {
+      .arch-subagents { grid-template-columns: 1fr; }
+    }
+    .arch-data-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .arch-data-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+      margin-bottom: 0;
+    }
+    @media (max-width: 560px) {
+      .arch-data-grid { grid-template-columns: 1fr; }
+      .arch-data-grid-2 { grid-template-columns: 1fr; }
+    }
+    .arch-int-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .arch-int-chips .arch-node-sm {
+      flex: 0 1 auto;
+    }
+    .arch-kafka-note {
+      text-align: center;
+      font-size: var(--present-caption);
+      color: var(--txt-3);
+      margin-top: 8px;
+      font-weight: 600;
+    }
+    .arch-node-hint {
+      display: block;
+      font-size: clamp(0.66rem, 0.9vw, 0.76rem);
+      font-weight: 600;
+      color: var(--txt-3);
+      margin-top: 4px;
+    }
+    .arch-layer--data .arch-node .arch-node-hint {
+      color: var(--txt-2);
+    }
+
+    @media print {
+      .arch-overlay { display: none !important; }
+    }
+
+    /* Slide 10 — patents & research overlay trigger (dark slide) */
+    .close-slide-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 12px;
+      margin-top: clamp(12px, 2vw, 20px);
+      margin-bottom: 4px;
+      width: 100%;
+      max-width: 1040px;
+    }
+    .btn-view-patents {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: var(--present-small);
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.08);
+      color: #e8eaff;
+      border: 2px solid rgba(165, 180, 252, 0.55);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn-view-patents:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(199, 210, 254, 0.85);
+      color: #fff;
+    }
+    .btn-view-patents:focus-visible {
+      outline: 2px solid #a5b4fc;
+      outline-offset: 3px;
+    }
+
+    /* Patents / research overlay — deck-friendly spacing + copy density */
+    #patentsOverlay .arch-overlay-header {
+      padding: clamp(16px, 2.5vw, 20px) clamp(24px, 5vw, 56px);
+    }
+    #patentsOverlay .arch-overlay-body.patents-overlay-body {
+      padding: clamp(20px, 3vw, 28px) clamp(28px, 6vw, 64px) clamp(28px, 4vw, 40px);
+    }
+    .patents-overlay-inner {
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+    .patents-overlay-lead {
+      font-size: var(--present-small);
+      color: var(--txt-2);
+      line-height: 1.55;
+      margin: 0 0 18px;
+      max-width: 100%;
+    }
+    .patents-overlay-section-title {
+      font-size: clamp(0.78rem, 1.05vw, 0.88rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--txt-3);
+      margin: 20px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .patents-overlay-section-title:first-of-type {
+      margin-top: 0;
+    }
+    .patents-patent {
+      margin-bottom: 12px;
+      padding: 12px 16px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      background: var(--page);
+    }
+    .patents-patent-title {
+      font-size: var(--present-small);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--primary-h);
+      margin: 0 0 8px;
+      line-height: 1.35;
+    }
+    .patents-patent-text {
+      font-size: var(--present-small);
+      line-height: 1.55;
+      color: var(--txt-2);
+      margin: 0 0 10px;
+    }
+    .patents-patent-defens {
+      font-size: var(--present-small);
+      line-height: 1.5;
+      color: var(--txt-3);
+      margin: 0;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .patents-patent-defens strong {
+      font-weight: 800;
+      color: var(--txt-2);
+    }
+    .patents-research-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: var(--present-small);
+      line-height: 1.5;
+      color: var(--txt-2);
+    }
+    .patents-research-list li {
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .patents-research-list li:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+    .patents-research-list .pr-topic {
+      display: block;
+      font-size: 1.02em;
+      font-weight: 700;
+      color: var(--txt);
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+    .patents-research-list .pr-desc {
+      display: block;
+      font-size: 1em;
+      font-style: normal;
+      color: var(--txt-2);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    .patents-research-list .pr-desc em {
+      font-style: italic;
+      color: var(--txt-3);
+      font-weight: 600;
+    }
+    #patentsOverlay .arch-overlay-panel {
+      max-width: 800px;
     }
 
     /* Slide 6 — moat value cards */
@@ -414,7 +1052,7 @@
       border-top: 3px solid var(--primary);
     }
     .moat-card-kicker {
-      font-size: 0.62rem;
+      font-size: var(--present-caption);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -422,7 +1060,7 @@
       margin-bottom: 8px;
     }
     .moat-card-title {
-      font-size: 0.92rem;
+      font-size: clamp(1rem, 1.25vw, 1.12rem);
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--txt);
@@ -430,9 +1068,9 @@
       line-height: 1.25;
     }
     .moat-card-value {
-      font-size: 0.78rem;
+      font-size: var(--present-body);
       color: var(--txt-2);
-      line-height: 1.55;
+      line-height: 1.58;
     }
     .moat-card-value strong {
       color: var(--txt);
@@ -477,7 +1115,7 @@
     .exec-rm-grid > article.exec-rm-card:nth-of-type(2) { border-top-color: var(--secondary); }
     .exec-rm-grid > article.exec-rm-card:nth-of-type(3) { border-top-color: var(--accent); }
     .exec-rm-eyebrow {
-      font-size: 0.62rem;
+      font-size: var(--present-caption);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.07em;
@@ -485,7 +1123,7 @@
       margin: 0 0 6px;
     }
     .exec-rm-card-title {
-      font-size: 0.84rem;
+      font-size: clamp(0.95rem, 1.2vw, 1.06rem);
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--txt);
@@ -495,9 +1133,9 @@
     .exec-rm-list {
       margin: 0;
       padding: 0 0 0 1.1em;
-      font-size: 0.73rem;
+      font-size: var(--present-small);
       color: var(--txt-2);
-      line-height: 1.52;
+      line-height: 1.56;
     }
     .exec-rm-list li { margin-bottom: 6px; }
     .exec-rm-list li:last-child { margin-bottom: 0; }
@@ -507,7 +1145,7 @@
       width: 100%;
       max-width: 920px;
       border-collapse: collapse;
-      font-size: 0.78rem;
+      font-size: var(--present-body);
     }
     .fin-table th, .fin-table td {
       padding: 12px 14px;
@@ -517,7 +1155,7 @@
     .fin-table th {
       font-weight: 800;
       color: var(--txt-2);
-      font-size: 0.68rem;
+      font-size: var(--present-caption);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
@@ -551,21 +1189,21 @@
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .pillar span { font-size: 0.78rem; color: var(--txt-2); line-height: 1.45; }
+    .pillar span { font-size: var(--present-small); color: var(--txt-2); line-height: 1.55; }
 
     /* Slide 5 — subtle live demo line */
     .demo-link-subtle {
       margin-top: 14px;
-      font-size: 0.7rem;
+      font-size: var(--present-caption);
       font-weight: 500;
-      color: var(--txt-3);
-      line-height: 1.5;
+      color: var(--txt-2);
+      line-height: 1.55;
       max-width: 720px;
     }
     .demo-link-subtle a {
       color: var(--primary);
       font-weight: 600;
-      font-size: 0.7rem;
+      font-size: var(--present-caption);
       text-decoration: underline;
       text-underline-offset: 2px;
       text-decoration-color: rgba(99, 102, 241, 0.35);
@@ -595,7 +1233,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.65rem;
+      font-size: clamp(0.72rem, 1vw, 0.82rem);
       font-weight: 800;
       color: #fff;
       text-align: center;
@@ -609,15 +1247,15 @@
     }
     .orbit-node {
       position: absolute;
-      width: 72px;
-      height: 72px;
+      width: 78px;
+      height: 78px;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.12);
       border: 2px solid rgba(165, 180, 252, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.62rem;
+      font-size: clamp(0.68rem, 0.95vw, 0.78rem);
       font-weight: 700;
       text-align: center;
       padding: 8px;
@@ -658,13 +1296,13 @@
     }
     .logo-mark span { color: var(--primary); }
     .progress-text {
-      font-size: 0.72rem;
+      font-size: var(--present-caption);
       font-weight: 700;
       color: var(--txt-2);
       font-variant-numeric: tabular-nums;
     }
     .timer {
-      font-size: 0.72rem;
+      font-size: var(--present-caption);
       font-weight: 700;
       color: var(--txt-3);
       font-variant-numeric: tabular-nums;
@@ -719,7 +1357,7 @@
     }
 
     .btn-notes {
-      font-size: 0.72rem;
+      font-size: var(--present-caption);
       font-weight: 700;
       padding: 8px 14px;
       border-radius: 8px;
@@ -764,8 +1402,8 @@
     .notes-panel .body {
       padding: 20px;
       overflow-y: auto;
-      font-size: 0.8rem;
-      line-height: 1.65;
+      font-size: var(--present-small);
+      line-height: 1.62;
       color: var(--txt);
       white-space: pre-wrap;
       font-weight: 400;
@@ -828,12 +1466,13 @@
       width: 100%;
     }
     .slide-top-split .title {
-      max-width: 22ch;
+      max-width: 100%;
     }
     .slide-top-split .subtitle {
-      max-width: 56ch;
+      max-width: 100%;
       margin-bottom: 0;
-      font-size: clamp(0.76rem, 1.15vw, 0.9rem);
+      font-size: var(--present-subtitle);
+      line-height: 1.58;
     }
     @media (max-width: 960px) {
       .slide-top-split {
@@ -858,9 +1497,9 @@
 
     /* Slide 9 — financials + ask (no chart) */
     .fin-slide-lead {
-      font-size: 0.74rem;
+      font-size: var(--present-small);
       color: var(--txt-2);
-      line-height: 1.5;
+      line-height: 1.55;
       margin: 0 0 12px;
     }
     .slide-content-panel.fin-slide-panel .fin-table {
@@ -893,7 +1532,7 @@
     }
     .fin-use-title,
     .fin-ask-title {
-      font-size: 0.72rem;
+      font-size: var(--present-caption);
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -903,34 +1542,112 @@
     .fin-use-list {
       margin: 0;
       padding: 0 0 0 1.05em;
-      font-size: 0.72rem;
+      font-size: var(--present-small);
       color: var(--txt-2);
-      line-height: 1.52;
+      line-height: 1.55;
     }
     .fin-use-list li { margin-bottom: 8px; }
     .fin-use-list li:last-child { margin-bottom: 0; }
     .fin-use-list strong { color: var(--txt); font-weight: 700; }
     .fin-ask-card p {
       margin: 0 0 10px;
-      font-size: 0.76rem;
+      font-size: var(--present-small);
       color: var(--txt-2);
-      line-height: 1.52;
+      line-height: 1.55;
     }
     .fin-ask-card p:last-child { margin-bottom: 0; }
     .fin-ask-card strong { color: var(--txt); }
     .fin-ask-next {
-      font-size: 0.7rem !important;
+      font-size: var(--present-caption) !important;
       color: var(--txt-3) !important;
+    }
+
+    /* Slide 9 — financials: fit without slide scroll */
+    .slide-financials {
+      justify-content: flex-start;
+    }
+    .slide-financials .eyebrow {
+      margin-bottom: 8px;
+    }
+    .slide-financials .title {
+      font-size: clamp(1.5rem, 3.5vw, 2.55rem);
+      margin-bottom: 10px;
+      line-height: 1.08;
+    }
+    .slide-financials .subtitle {
+      margin-bottom: 10px;
+      line-height: 1.45;
+    }
+    .slide-financials .slide-content-panel.fin-slide-panel {
+      margin-top: 8px;
+      padding: clamp(12px, 2vw, 18px) clamp(14px, 2.2vw, 22px);
+    }
+    .slide-financials .fin-slide-lead {
+      margin-bottom: 8px;
+      line-height: 1.42;
+    }
+    .slide-financials .fin-table {
+      font-size: var(--present-caption);
+    }
+    .slide-financials .fin-table th,
+    .slide-financials .fin-table td {
+      padding: 7px 10px;
+      vertical-align: top;
+    }
+    .slide-financials .fin-table th {
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    .slide-financials .fin-ask-split {
+      margin-top: 12px;
+      padding-top: 12px;
+      gap: 12px;
+      align-items: start;
+    }
+    .slide-financials .fin-use-card,
+    .slide-financials .fin-ask-card {
+      padding: 10px 14px;
+    }
+    .slide-financials .fin-use-title,
+    .slide-financials .fin-ask-title {
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+    .slide-financials .fin-use-list {
+      line-height: 1.42;
+    }
+    .slide-financials .fin-use-list li {
+      margin-bottom: 5px;
+    }
+    .slide-financials .fin-ask-card p {
+      margin-bottom: 8px;
+      line-height: 1.45;
+    }
+    .slide-financials .foot {
+      margin-top: 8px;
+      padding-top: 12px;
+      line-height: 1.45;
+    }
+    @media (min-width: 900px) {
+      .slide-financials .fin-use-list.fin-use-list--compact {
+        columns: 2;
+        column-gap: 20px;
+        padding-left: 1.1em;
+      }
+      .slide-financials .fin-use-list.fin-use-list--compact li {
+        break-inside: avoid;
+        margin-bottom: 6px;
+      }
     }
 
     /* Slide 10 — closing (dark): commitments, no decorative bridge */
     .slide-close .title {
-      max-width: min(22ch, 100%);
+      max-width: 100%;
       font-size: clamp(1.85rem, 4.5vw, 3.35rem);
       line-height: 1.06;
     }
     .slide-close .subtitle {
-      max-width: 52ch;
+      max-width: 100%;
       margin-bottom: clamp(18px, 2.5vw, 26px);
     }
     .close-commitments {
@@ -955,7 +1672,7 @@
     .close-commitment:nth-child(2) { border-left-color: #c4b5fd; }
     .close-commitment:nth-child(3) { border-left-color: #7dd3fc; }
     .close-commitment-kicker {
-      font-size: 0.62rem;
+      font-size: var(--present-caption);
       font-weight: 800;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -964,10 +1681,10 @@
     }
     .close-commitment-body {
       margin: 0;
-      font-size: 0.76rem;
+      font-size: var(--present-small);
       font-weight: 500;
-      line-height: 1.52;
-      color: rgba(226, 232, 255, 0.9);
+      line-height: 1.58;
+      color: rgba(238, 242, 255, 0.95);
     }
     .close-commitment-body strong {
       color: #fff;
@@ -979,9 +1696,9 @@
     .close-cta-line {
       display: block;
       margin-top: 8px;
-      font-size: 0.74rem;
+      font-size: var(--present-small);
       font-weight: 600;
-      color: rgba(224, 231, 255, 0.95);
+      color: rgba(240, 244, 255, 0.98);
       letter-spacing: 0.02em;
     }
 
@@ -1150,21 +1867,36 @@ A: Two reasons—fairness and flywheel. Richer activity on the employer side mak
       >
         <div class="slide-inner">
           <p class="eyebrow reveal">The problem</p>
-          <h2 class="title reveal">Hiring Has Tools for Tasks—<span class="accent">Not Intelligence for Decisions</span></h2>
+          <h2 class="title reveal">The Problem: A Broken Hiring <span class="accent">System on Both Sides</span></h2>
           <p class="subtitle reveal">
-            Teams are buried in logistics; candidates face opaque journeys and brutal odds—and <strong>no layer</strong> connects requisition to offer with synthesized evidence for <strong>both</strong> sides when it matters.
+            Recruiters drown in time and cost; candidates face long searches, low signal, and dead-end experiences—<strong>the same market</strong>, two broken halves.
           </p>
-          <div class="stat-row reveal">
-            <div class="stat"><div class="stat-num">42d</div><div class="stat-label">Avg. time-to-fill · $4.7K+ cost/hire</div></div>
-            <div class="stat"><div class="stat-num">60%+</div><div class="stat-label">Recruiter time on sourcing, scheduling, admin</div></div>
-            <div class="stat"><div class="stat-num">73%</div><div class="stat-label">Candidates: poor / opaque application experience</div></div>
-            <div class="stat"><div class="stat-num">2–4%</div><div class="stat-label">Application response rate</div></div>
-            <div class="stat"><div class="stat-num">94%</div><div class="stat-label">ATS profiles never re-surfaced</div></div>
+          <div class="slide-problem-panels reveal">
+            <div class="problem-panel">
+              <h3>Recruiters</h3>
+              <ul>
+                <li><span class="problem-num">42–60 days</span> average time-to-fill for technical roles</li>
+                <li><span class="problem-num">18–22 hours</span> of manual sourcing per hire</li>
+                <li><span class="problem-num">$4,700–$28K</span> cost-per-hire depending on seniority</li>
+                <li><span class="problem-num">28%</span> of accepted offers fall through</li>
+                <li><span class="problem-num">67%</span> report high cognitive load from context-switching</li>
+              </ul>
+            </div>
+            <div class="problem-panel problem-panel--seeker">
+              <h3>Job seekers</h3>
+              <ul>
+                <li><span class="problem-num">2–4%</span> application response rate</li>
+                <li><span class="problem-num">5.1 months</span> average job search duration</li>
+                <li><span class="problem-num">$5K–$15K</span> left on the table — <span class="problem-num">57%</span> accept first offer</li>
+                <li><span class="problem-num">72%</span> abandon multi-step applications</li>
+                <li><span class="problem-num">81%</span> receive zero feedback after rejection</li>
+              </ul>
+            </div>
           </div>
-          <p class="foot reveal">Fragmentation is the real competitor · Structural: siloed sourcing / ATS / scheduling</p>
+          <p class="foot reveal">Fragmentation is the real competitor · Structural pain on both sides of the hire</p>
         </div>
         <div class="slide-notes-source" hidden>
-SLIDE 2 — THE PROBLEM (DUAL-SIDED CRISIS)
+SLIDE 2 — THE PROBLEM (DUAL PANELS: RECRUITERS VS JOB SEEKERS)
 
 ————————————————————
 PRESENTER SCRIPT (read aloud)
@@ -1172,11 +1904,11 @@ PRESENTER SCRIPT (read aloud)
 
 If slide one was the promise, this slide is the pain—and it’s symmetric.
 
-On the employer side, hiring isn’t failing because teams lack software. They have ATS, sourcing tools, calendars, inboxes. The failure is that nobody holds a synthesized picture from requisition through pipeline to the moment of judgment. Recruiters spend the majority of their week on logistics—sourcing, scheduling, admin—while time-to-fill and cost-per-hire stay stubbornly high. You can point to the numbers on screen: roughly forty-two days to fill on average, thousands of dollars per hire, and well over half of recruiter time eaten by repetitive work.
+Walk the left column first: recruiters aren’t short on tools—they’re short on time and margin. Forty-two to sixty days to fill technical roles, nearly a full work week of sourcing per hire, four thousand to twenty-eight thousand dollars per hire depending on seniority, more than a quarter of accepted offers still falling through, and two-thirds saying the cognitive load of context-switching is crushing them.
 
-On the candidate side, the experience is the opposite problem but just as expensive: opacity. Most people report a poor or opaque application experience. Response rates are tiny. Search stretches for months. And behind the ATS, the vast majority of profiles never resurface—so the “talent database” is mostly a graveyard.
+Then the right column: candidates live in a different kind of broken system—tiny response rates, five-month searches on average, thousands left on the table because most people take the first offer, three-quarters bouncing out of multi-step applications, and four in five getting zero feedback after a rejection.
 
-So the headline I want you to remember: this isn’t “we need another tab.” It’s that when stakes are highest—the screen, the interview, the offer—neither side walks in with a single, evidence-backed brain for that hire. Fragmentation isn’t a nuisance; it’s the competitor.
+The headline: it’s not “we need another tab.” It’s a hiring system that fails both sides at scale. Fragmentation isn’t a nuisance; it’s the competitor.
 
 ————————————————————
 EXPECTED Q&amp;A
@@ -1280,6 +2012,33 @@ A: Enterprise TalentAgent™ seeds real hiring velocity and signal; CareerAgent�
           <p class="subtitle reveal">
             Enterprises are <strong>buying</strong> agentic recruiting, investors are <strong>funding</strong> it, and the <strong>EU AI Act</strong> treats hiring as high-risk—so the winners will be vendors who can answer: where’s the human, where’s the log, and where’s the audit trail?
           </p>
+          <div class="slide4-market-row reveal">
+            <div class="slide4-market-card slide4-market-card--tam">
+              <div class="market-kind">TAM</div>
+              <div class="market-num">$180B</div>
+              <p class="market-desc">Global talent acquisition software + career services</p>
+            </div>
+            <div class="slide4-market-card slide4-market-card--sam">
+              <div class="market-kind">SAM</div>
+              <div class="market-num">$42B</div>
+              <p class="market-desc">Enterprise AI recruiting platforms in NA, EU, APAC</p>
+            </div>
+            <div class="slide4-market-card slide4-market-card--som">
+              <div class="market-kind">SOM</div>
+              <div class="market-num">$850M <span class="market-year">(Year 3)</span></div>
+              <p class="market-desc">Mid-market &amp; enterprise B2B</p>
+            </div>
+          </div>
+          <div class="slide4-storm-panel reveal">
+            <h3>Why Now: <span class="accent-inline">Perfect Storm</span></h3>
+            <ul class="storm-list">
+              <li>Agentic AI adoption exploding across enterprise</li>
+              <li>Remote work = global talent pools = complexity surge</li>
+              <li>Labor shortages driving automation urgency</li>
+              <li>Candidate expectations rising — transparency demanded</li>
+              <li>ATS market saturated — buyers seeking intelligence layer</li>
+            </ul>
+          </div>
           <div class="cols-3 reveal">
             <div class="card-lite">
               <h3>Adoption</h3>
@@ -1303,13 +2062,17 @@ A: Enterprise TalentAgent™ seeds real hiring velocity and signal; CareerAgent�
           <p class="foot reveal">Second Brain, documented. · Compliance as GTM weapon, not fear-mongering</p>
         </div>
         <div class="slide-notes-source" hidden>
-SLIDE 4 — WHY NOW (MARKET, CAPITAL, REGULATION)
+SLIDE 4 — WHY NOW (TAM/SAM/SOM + PERFECT STORM + ADOPTION / CAPITAL / REGULATION)
 
 ————————————————————
 PRESENTER SCRIPT (read aloud)
 ————————————————————
 
 Slide four is timing—and it’s not hype.
+
+Start with the market frame: TAM about one hundred eighty billion for global talent acquisition software and career services; SAM on the order of forty-two billion for enterprise AI recruiting across North America, Europe, and APAC; and our Year-three SOM wedge—eight hundred fifty million—focused on mid-market and enterprise B2B. Adjust wording if you’re using internal definitions in the room.
+
+Then the “perfect storm”: agentic AI is landing in the enterprise for real; remote work blew up talent pools and coordination cost; labor shortages force automation; candidates expect transparency; and the ATS category is crowded—buyers are looking for an intelligence layer, not another database tab.
 
 For the last couple of years, enterprise buyers have moved from “experiment with a copilot” to “show me multi-agent workflows I can govern.” In recruiting specifically, analyst data shows a sharp jump in Fortune 500 HR organizations running at least one agentic recruiting module—think roughly four in ten recently versus single digits a few years ago. You can cite the exact figures from the cards—flag them as analyst-sourced research, not our revenue.
 
@@ -1338,7 +2101,7 @@ A: It’s a filter. Vendors who can’t show human oversight and logs don’t ge
 
       <!-- Slide 5 + live demo -->
       <section
-        class="slide"
+        class="slide slide-product-arch"
         data-index="4"
       >
         <div class="slide-inner">
@@ -1347,7 +2110,16 @@ A: It’s a filter. Vendors who can’t show human oversight and logs don’t ge
           <p class="subtitle reveal">
             <strong>LangGraph + ReAct</strong> orchestration, <strong>RAG + Neo4j</strong> for the Talent Intelligence Graph™, PostgreSQL and Pinecone for durable memory and retrieval, Kafka for events—plus <strong>hard stops</strong>: fairness checks where rankings happen, and a DB rule that blocks offer letters without a human approval record.
           </p>
+          <p class="subtitle reveal" style="margin-top: -8px;">
+            HireOrGetHired is built as a <strong>cloud-native, microservices-based platform on AWS</strong>, with a clear separation between the <strong>AI/agent layer</strong>, the <strong>application layer</strong>, the <strong>data layer</strong>, and the <strong>integration layer</strong>.
+          </p>
           <div class="slide-content-panel reveal">
+            <div class="slide-arch-card-head">
+              <span class="slide-arch-card-head-label">Summary flow — not the full stack</span>
+              <button type="button" class="btn-view-arch" data-open-arch aria-haspopup="dialog" aria-controls="archOverlay" aria-expanded="false">
+                View full AWS architecture
+              </button>
+            </div>
             <div class="arch-flow">
               <span class="arch-box">Clients</span>
               <span>→</span>
@@ -1380,6 +2152,8 @@ PRESENTER SCRIPT (read aloud)
 ————————————————————
 
 Slide five is where we earn credibility with technical buyers.
+
+If you need the full systems picture in the room, use **View architecture**—it opens the layered AWS diagram (client → API gateway → application services → agent orchestration → data → integrations). Close with the X, Escape, click outside, or by changing slides.
 
 If “Second Brain” were only a narrative, this deck would be vapor. What we’re shipping is stateful orchestration: LangGraph with a ReAct-style planner so agents don’t just chat—they run workflows with memory and handoffs.
 
@@ -1566,95 +2340,102 @@ A: Cold-start: candidates need credible intelligence, and that intelligence is g
       >
         <div class="slide-inner">
           <p class="eyebrow reveal">Roadmap</p>
-          <h2 class="title reveal">36-Month Execution Roadmap—<span class="accent">Product, Integrations, Compliance</span></h2>
+          <h2 class="title reveal">18-Month Milestones to <span class="accent">Series A</span></h2>
           <p class="subtitle reveal">
-            We sequence <strong>depth over breadth</strong>: ship governed recruiter workflows on <strong>Greenhouse</strong> first (per our integration plan), then add ATS and HRIS coverage, then platform expansion—while tracking <strong>EU AI Act</strong> high-risk obligations on a defined timeline.
+            From <strong>Seed</strong> to <strong>Series A</strong> in three phases: prove enterprise pilots and ship <strong>TalentAgent™</strong> + <strong>CareerAgent™</strong> v1.0, scale customers and <strong>NegotiationCoach™</strong>, then expand geography and platform—with <strong>ARR gates</strong> and funding at each leg.
           </p>
           <div class="slide-content-panel roadmap-panel reveal">
             <div class="exec-rm-grid">
               <article class="exec-rm-card">
-                <p class="exec-rm-eyebrow">Year 1 · Months 1–12</p>
-                <h3 class="exec-rm-card-title">Foundation</h3>
+                <p class="exec-rm-eyebrow">Now</p>
+                <h3 class="exec-rm-card-title">Months 0–6</h3>
                 <ul class="exec-rm-list">
-                  <li>Deliver the full recruiter workflow in production—from discovery and scheduling through structured screening to a hiring-manager-ready <strong>Intelligence Brief</strong>, so teams replace ad hoc tools with one audited path.</li>
-                  <li>Run a deep <strong>Greenhouse</strong> integration: jobs and candidates sync both ways, recruiters stop retyping data, and AI-generated briefs and notes write back while the ATS stays the legal system of record.</li>
-                  <li>Run <strong>SOC 2</strong> as a real program; begin EU AI Act evidence (technical documentation, human oversight, candidate transparency); grow <strong>CareerAgent™</strong> through universities and partners so candidates onboard next to live hiring—not paid empty signups.</li>
+                  <li>Close <strong>5 enterprise pilots</strong></li>
+                  <li>Ship <strong>v1.0 TalentAgent™</strong> + <strong>CareerAgent™</strong></li>
+                  <li><strong>ATS integrations:</strong> Greenhouse, Lever</li>
+                  <li>Hit <strong>$850K ARR</strong></li>
+                  <li>Launch beta waitlist (<strong>10K users</strong>)</li>
+                  <li>Raise <strong>Seed ($2.5M)</strong></li>
                 </ul>
               </article>
               <span class="exec-rm-arrow" aria-hidden="true">→</span>
               <article class="exec-rm-card">
-                <p class="exec-rm-eyebrow">Year 2 · Months 13–24</p>
-                <h3 class="exec-rm-card-title">Scale &amp; depth</h3>
+                <p class="exec-rm-eyebrow">Next</p>
+                <h3 class="exec-rm-card-title">Months 6–12</h3>
                 <ul class="exec-rm-list">
-                  <li>Ship <strong>NegotiationCoach™</strong> so candidates get structured, in-product guidance at offer time; improve shortlists and match quality using a full year of pipeline outcomes—who advanced, who didn’t, and why—not just model upgrades.</li>
-                  <li>Onboard <strong>Lever</strong>, <strong>Workday Recruiting</strong>, and <strong>SuccessFactors</strong> with the same connector pattern proven on Greenhouse, so large employers aren’t blocked by their ATS choice.</li>
-                  <li>Read compensation bands from <strong>HRIS</strong> (e.g. Workday / SuccessFactors HCM) so recommended offers respect policy; move EU work toward notified-body review and a conformity file for high-risk recruitment AI (~Month 24).</li>
+                  <li>Scale to <strong>20 enterprise customers</strong></li>
+                  <li>Launch <strong>NegotiationCoach™</strong> GA</li>
+                  <li>Expand ATS integrations (<strong>Workday</strong>, <strong>SAP</strong>)</li>
+                  <li>Hit <strong>$4M ARR</strong></li>
+                  <li>Launch <strong>freemium CareerAgent™</strong></li>
+                  <li>Build <strong>Skills Graph v2.0</strong> (100K skills)</li>
                 </ul>
               </article>
               <span class="exec-rm-arrow" aria-hidden="true">→</span>
               <article class="exec-rm-card">
-                <p class="exec-rm-eyebrow">Year 3 · Months 25–36</p>
-                <h3 class="exec-rm-card-title">Platform</h3>
+                <p class="exec-rm-eyebrow">Later</p>
+                <h3 class="exec-rm-card-title">Months 12–18</h3>
                 <ul class="exec-rm-list">
-                  <li>Turn integrations into a repeatable factory: add <strong>Ashby</strong> and additional ATS connectors with predictable onboarding—less custom firefighting per customer.</li>
-                  <li>Operate <strong>staffing white-label</strong> and the <strong>Talent Intelligence API</strong> as mature revenue lines; expand <strong>APAC</strong> and industry-specific packs only where contracts already prove demand.</li>
-                  <li>Ship EU as a governed rollout aligned to <strong>CE-marking</strong> timing (~Month 30); then layer a <strong>marketplace</strong> of vetted partners and integrations—after the core hiring loop is stable and boring.</li>
+                  <li>Reach <strong>50 enterprise customers</strong></li>
+                  <li><strong>European expansion</strong> (UK, DE)</li>
+                  <li>Launch <strong>Talent Intelligence API</strong></li>
+                  <li>Hit <strong>$17.9M ARR</strong></li>
+                  <li><strong>500K+</strong> active job seekers</li>
+                  <li><strong>Series A ($15–20M)</strong></li>
                 </ul>
               </article>
             </div>
           </div>
           <p class="foot reveal">
-            Takeaway: prove recruiter outcomes and one deep ATS integration before parallelizing systems; stack compliance and HRIS in Year 2; widen geography and ecosystem in Year 3. Revenue and funding milestones are on the financials slide.
+            Sequencing: pilots + v1 + core ATS → scale enterprise + NegotiationCoach™ + ARR ramp → EU + API + Series A. Detail on multi-year compliance and HRIS depth stays in the product note.
           </p>
         </div>
         <div class="slide-notes-source" hidden>
-SLIDE 8 — EXECUTION ROADMAP
+SLIDE 8 — 18-MONTH ROADMAP (TO SERIES A)
 
 ————————————————————
 PRESENTER SCRIPT (read aloud)
 ————————————————————
 
-This slide is our thirty-six-month build sequence—not a wish list. The headline is sequencing: we go deep on one ATS and real recruiter workflows before we pretend we integrate everything on day one.
+This slide is our eighteen-month path from Seed to a Series A narrative—not every feature we’ll ever build.
 
-Start with the subtitle. Greenhouse is Phase One in our product note because it’s where we earn bidirectional sync, webhook reliability, and reference stories. EU matters because recruitment agents are high-risk under the AI Act—we bake documentation, human oversight, and transparency into the plan, not as a footnote.
+Walk left to right. **Now (0–6):** five enterprise pilots, v1.0 of both surfaces, Greenhouse and Lever, eight-fifty K ARR, a ten-thousand-person waitlist, and a two-point-five-million-dollar Seed.
 
-Walk left to right in plain English. Year one: recruiters get one end-to-end workflow with a real brief at the end; Greenhouse is live two-way sync with write-back; security and EU evidence start in parallel; candidates come in through partners next to real reqs.
+**Next (6–12):** twenty enterprise customers, NegotiationCoach™ GA, Workday and SAP on the ATS side, four million ARR, freemium CareerAgent™, and Skills Graph v2 at a hundred thousand skills.
 
-Year two: candidates get negotiation help inside the product; matching improves because we finally have longitudinal outcomes; we replicate the connector playbook across Lever and the big enterprise ATSs; HRIS feeds comp policy; EU shifts toward notified-body conformity.
+**Later (12–18):** fifty enterprises, UK and Germany, Talent Intelligence API, seventeen-point-nine million ARR, half a million active job seekers, and a fifteen-to-twenty-million-dollar Series A.
 
-Year three: ATS onboarding is repeatable; staffing and API are real businesses not experiments; geography and verticals follow revenue; EU ships on a certification timeline; marketplace comes last on purpose.
-
-Close with the footer: if they want ARR ramps or Series A timing, send them to the financials slide—this slide is about what we build and in what order.
+Close with the footer: longer-horizon compliance and HRIS depth live in the product note—this slide is the fundraising and GTM spine.
 
 ————————————————————
 EXPECTED Q&amp;A
 ————————————————————
 
-Q: Isn’t three years of scope too much?
-A: It’s sequenced with feature flags and funding gates—Year one is a narrow critical path; later years expand only after the spine works.
+Q: Are the ARR numbers tied to the financials slide?
+A: They should be consistent; if the table uses different rounding, we align offline—this slide is the milestone story, not GAAP.
 
-Q: Why Greenhouse first?
-A: It’s our Phase One ATS in the architecture doc: strong API + webhooks, clear enterprise pull, and a template for every other connector.
+Q: Why Series A at month eighteen?
+A: It’s a target window once enterprise traction and the API / EU wedge are demonstrable—not a promise on the calendar independent of execution.
 
-Q: How do you de-risk EU?
-A: We map Annex III obligations to months—technical file, governance, notified body, CE timing—so it’s an execution plan, not a slide bullet.
+Q: Isn’t fifty customers aggressive?
+A: It’s a goal tied to repeatable ATS playbooks and expansion from pilots—if asked, we walk which accounts are in pipeline vs hypothesis.
         </div>
       </section>
 
       <!-- Slide 9 -->
       <section
-        class="slide"
+        class="slide slide-financials"
         data-index="8"
       >
         <div class="slide-inner">
           <p class="eyebrow reveal">Financials &amp; ask</p>
           <h2 class="title reveal">What the Business Looks Like at Scale—<span class="accent">and What This Round Funds</span></h2>
           <p class="subtitle reveal">
-            <strong>Layer on ATS/HRIS</strong>—not a replacement. Below: an <strong>illustrative</strong> 3-year path—enterprise ARR first, then <strong>software-like margins</strong> as usage scales.
+            <strong>Layer on ATS/HRIS</strong>—not a replacement. <strong>Illustrative</strong> 3-year path: enterprise ARR first, then <strong>software-like margins</strong> as usage scales.
           </p>
           <div class="slide-content-panel fin-slide-panel reveal">
             <p class="fin-slide-lead">
-              <strong>Three-year snapshot (rounded).</strong> Years 1–2 reflect investment in product, integrations, and compliance; Year 3 is where operating leverage shows up if we execute the roadmap.
+              <strong>Three-year snapshot (rounded).</strong> Years 1–2 invest in product, integrations, and compliance; Year 3 is operating leverage if we execute.
             </p>
             <table class="fin-table">
               <thead>
@@ -1674,27 +2455,27 @@ A: We map Annex III obligations to months—technical file, governance, notified
             </table>
             <div class="fin-ask-split">
               <div class="fin-use-card">
-                <h3 class="fin-use-title">Use of proceeds — Year 1 (product note scope)</h3>
-                <ul class="fin-use-list">
-                  <li><strong>Ship TalentAgent™ depth:</strong> sourcing through the <strong>Candidate Intelligence Brief™</strong>, outreach and scheduling, and Greenhouse as the first bidirectional ATS spine.</li>
-                  <li><strong>Ship CareerAgent™ core:</strong> web and mobile surfaces for apply, prep, and early negotiation support—grown with partners so signal stays real.</li>
-                  <li><strong>Platform &amp; trust:</strong> agent orchestration, integration hub, auditability; <strong>SOC 2</strong> program and the first <strong>EU AI Act</strong> documentation and oversight milestones for high-risk recruitment AI.</li>
-                  <li><strong>Go-to-market:</strong> 2–3 lighthouse enterprises and a team weighted to ML/AI, backend, and integrations—not a consumer marketing blitz.</li>
+                <h3 class="fin-use-title">Use of proceeds — Year 1</h3>
+                <ul class="fin-use-list fin-use-list--compact">
+                  <li><strong>TalentAgent™ depth:</strong> sourcing → <strong>Candidate Intelligence Brief™</strong>, outreach/scheduling, <strong>Greenhouse</strong> bidirectional spine.</li>
+                  <li><strong>CareerAgent™ core:</strong> web + mobile for apply, prep, early negotiation—partner-led growth for real signal.</li>
+                  <li><strong>Platform &amp; trust:</strong> orchestration, integration hub, audit logs; <strong>SOC 2</strong> + <strong>EU AI Act</strong> milestones for high-risk hiring AI.</li>
+                  <li><strong>GTM:</strong> 2–3 lighthouse enterprises; team biased to ML/AI, backend, integrations.</li>
                 </ul>
               </div>
               <div class="fin-ask-card">
                 <h3 class="fin-ask-title">The ask</h3>
                 <p>
-                  We are raising <strong>$3.2M</strong> in <strong>Seed</strong> financing to execute <strong>Year 1</strong> of our technical and product plan: prove recruiter outcomes on <strong>Greenhouse</strong>, stand up the dual <strong>Second Brain</strong> surfaces, and fund the <strong>security and compliance</strong> baseline enterprise buyers require before they standardize on us.
+                  <strong>$3.2M Seed</strong> to execute Year 1: recruiter outcomes on <strong>Greenhouse</strong>, dual <strong>Second Brain</strong> surfaces, and the <strong>security/compliance</strong> baseline enterprises need before standardizing.
                 </p>
                 <p class="fin-ask-next">
-                  <strong>Next financing</strong> is modeled as a Series A when Greenhouse-depth traction, ARR ramp, and EU readiness justify a larger integration and field build—details in the model, not a commitment on timing or terms.
+                  <strong>Series A</strong> when Greenhouse-depth traction, ARR ramp, and EU readiness justify scale—timing illustrative, not a commitment.
                 </p>
               </div>
             </div>
           </div>
           <p class="foot reveal">
-            Cash breakeven targeted around <strong>Months 26–28</strong> on this plan. Any Series A sizing or valuation multiples in materials are <strong>illustrative comparables</strong> for discussion—not forecasts or offers.
+            Cash breakeven ~<strong>Months 26–28</strong>. Series A sizing / multiples in materials = <strong>illustrative</strong> for discussion—not forecasts.
           </p>
         </div>
         <div class="slide-notes-source" hidden>
@@ -1765,6 +2546,18 @@ A: When we can show Greenhouse-depth reference stories, an ARR trajectory that m
               </p>
             </div>
           </div>
+          <div class="close-slide-actions reveal">
+            <button
+              type="button"
+              class="btn-view-patents"
+              data-open-patents
+              aria-haspopup="dialog"
+              aria-controls="patentsOverlay"
+              aria-expanded="false"
+            >
+              IP moat &amp; research
+            </button>
+          </div>
           <p class="foot reveal">
             <strong>HireOrGetHired</strong> — <em>Where Intelligence Meets Opportunity™</em>
             <span class="close-cta-line">Enterprise pilots · design partners · capital — we’re building the <strong>defensible default</strong> for agentic hiring.</span>
@@ -1793,6 +2586,8 @@ Second—what we refuse. This is where skeptical investors relax or push harder�
 Third—what lets us scale. Admin console, audit logs, GDPR/DSAR, EU AI Act roadmap for high-risk hiring AI. Sandra—the HR Ops persona in our note—has to survive a board review. We built for her, not just for the demo.
 
 Close with the footer: brand line, then the CTA line—pilots, partners, capital—and thank them. Offer the demo link as optional homework.
+
+If investors ask about IP or research depth, use **Patents &amp; publishable research**—same interaction as the architecture overlay (×, Escape, outside click, or change slides). Walk the <strong>four patent families</strong> as value-aligned moat, then the <strong>four publication streams</strong> as credibility and hiring leverage—not a document dump; speak in full sentences like the panel copy.
 
 ————————————————————
 EXPECTED Q&amp;A
@@ -1831,6 +2626,196 @@ A: Match the room—pilot, design partnership, diligence session, or term sheet 
     <div class="body" id="notesBody"></div>
   </aside>
 
+  <div
+    class="arch-overlay"
+    id="archOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="archOverlayTitle"
+    aria-hidden="true"
+    hidden
+  >
+    <div class="arch-overlay-panel" role="document">
+      <div class="arch-overlay-header">
+        <div>
+          <h2 class="arch-overlay-title" id="archOverlayTitle">Platform architecture (AWS)</h2>
+          <p class="arch-overlay-sub">Microservices · AI/agent · application · data · integration layers</p>
+        </div>
+        <button type="button" class="arch-overlay-close" id="closeArchOverlay" aria-label="Close architecture diagram">×</button>
+      </div>
+      <div class="arch-overlay-body">
+        <p class="arch-diag-intro">
+          HireOrGetHired (HOGH) is a cloud-native, microservices-based platform on <strong>AWS</strong>, with explicit separation between client surfaces, API gateway, application services, agent orchestration, data stores, and external integrations.
+        </p>
+        <div class="arch-diag">
+          <div class="arch-layer">
+            <div class="arch-layer-label">Client layer</div>
+            <div class="arch-row">
+              <div class="arch-node">TalentAgent™<br>Web App</div>
+              <div class="arch-node">CareerAgent™<br>Web + Mobile</div>
+              <div class="arch-node">API</div>
+            </div>
+          </div>
+          <div class="arch-vline" aria-hidden="true"></div>
+
+          <div class="arch-layer arch-layer--gateway">
+            <div class="arch-layer-label">API gateway</div>
+            <div class="arch-gateway-inner">
+              <span class="arch-node arch-node-sm">AWS API Gateway + Kong</span>
+              <span class="arch-node arch-node-sm">Auth (Cognito / JWT)</span>
+              <span class="arch-node arch-node-sm">Rate limiting</span>
+              <span class="arch-node arch-node-sm">Request routing</span>
+            </div>
+          </div>
+          <div class="arch-vline" aria-hidden="true"></div>
+
+          <div class="arch-layer arch-layer--app">
+            <div class="arch-layer-label">Application services layer</div>
+            <div class="arch-row">
+              <div class="arch-node">Recruiter<br>service</div>
+              <div class="arch-node">Candidate<br>service</div>
+              <div class="arch-node">Negotiation<br>service</div>
+            </div>
+          </div>
+          <div class="arch-vline" aria-hidden="true"></div>
+
+          <div class="arch-layer arch-layer--orch">
+            <div class="arch-layer-label" style="color: rgba(255,255,255,0.92);">Agent orchestration layer</div>
+            <div class="arch-orch-master">Master orchestrator (ReAct / LangGraph)</div>
+            <div class="arch-subagents">
+              <div class="arch-node">TalentAgent™<br><span style="font-weight:600;opacity:.9">Sub-agents</span></div>
+              <div class="arch-node">CareerAgent™<br><span style="font-weight:600;opacity:.9">Sub-agents</span></div>
+              <div class="arch-node">NegotiationCoach™<br><span style="font-weight:600;opacity:.9">Sub-agents</span></div>
+            </div>
+          </div>
+          <div class="arch-vline" aria-hidden="true"></div>
+
+          <div class="arch-layer arch-layer--data">
+            <div class="arch-layer-label">Data layer</div>
+            <div class="arch-data-grid">
+              <div class="arch-node">PostgreSQL<span class="arch-node-hint">Primary</span></div>
+              <div class="arch-node">Pinecone<span class="arch-node-hint">Vector DB</span></div>
+              <div class="arch-node">Neo4j<span class="arch-node-hint">Graph DB</span></div>
+            </div>
+            <div class="arch-data-grid arch-data-grid-2">
+              <div class="arch-node">Redis<span class="arch-node-hint">Cache</span></div>
+              <div class="arch-node">S3 / data warehouse</div>
+            </div>
+            <p class="arch-kafka-note">Async events: <strong>Kafka</strong> (throughout services &amp; integrations)</p>
+          </div>
+          <div class="arch-vline" aria-hidden="true"></div>
+
+          <div class="arch-layer arch-layer--int">
+            <div class="arch-layer-label">Integration layer</div>
+            <div class="arch-int-chips">
+              <span class="arch-node arch-node-sm">LinkedIn API</span>
+              <span class="arch-node arch-node-sm">GitHub API</span>
+              <span class="arch-node arch-node-sm">Greenhouse</span>
+              <span class="arch-node arch-node-sm">Google / Outlook</span>
+              <span class="arch-node arch-node-sm">Workday HCM</span>
+              <span class="arch-node arch-node-sm">Stripe</span>
+              <span class="arch-node arch-node-sm">Zoom / Teams</span>
+              <span class="arch-node arch-node-sm">Comp databases</span>
+              <span class="arch-node arch-node-sm">…</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="arch-overlay"
+    id="patentsOverlay"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="patentsOverlayTitle"
+    aria-hidden="true"
+    hidden
+  >
+    <div class="arch-overlay-panel" role="document">
+      <div class="arch-overlay-header">
+        <div>
+          <h2 class="arch-overlay-title" id="patentsOverlayTitle">IP moat &amp; research pipeline</h2>
+          <p class="arch-overlay-sub">How we defend the wedge · what we can publish · why it matters in diligence</p>
+        </div>
+        <button type="button" class="arch-overlay-close" id="closePatentsOverlay" aria-label="Close patents and research panel">×</button>
+      </div>
+      <div class="arch-overlay-body patents-overlay-body">
+        <div class="patents-overlay-inner">
+          <p class="patents-overlay-lead">
+            We are building <strong>patent families that track where the product creates value</strong>—not ornamental IP—and a <strong>publication roadmap</strong> that signals rigor to enterprise buyers and helps us recruit the best ML and HCI talent.
+          </p>
+
+          <h3 class="patents-overlay-section-title">Patent strategy (four families)</h3>
+
+          <article class="patents-patent">
+            <h4 class="patents-patent-title">NegotiationCoach™ — dual-sided offer intelligence</h4>
+            <p class="patents-patent-text">
+              At offer time, we give the employer team and the candidate <strong>parallel, private coaching</strong> in real time. Agents do not negotiate with each other and cannot originate terms; humans remain the only parties who can move the deal. That design matches how trust and liability actually work in comp conversations.
+            </p>
+            <p class="patents-patent-defens">
+              <strong>Why it’s defensible:</strong> The architecture targets <strong>simultaneous asymmetric advisory</strong> during live employment negotiations—meaningfully different from a single-sided copilot or an ATS email assistant.
+            </p>
+          </article>
+
+          <article class="patents-patent">
+            <h4 class="patents-patent-title">Candidate Intelligence Brief™ — synthesis, not search results</h4>
+            <p class="patents-patent-text">
+              We combine heterogeneous public and structured signals into <strong>one recruiter-facing narrative</strong>: motivations, risks, and conversation guidance—not a pile of tabs and links. That is where time savings and quality gains show up in the workflow.
+            </p>
+            <p class="patents-patent-defens">
+              <strong>Why it’s defensible:</strong> Claims can cover the <strong>structured brief format</strong>, motivation mapping, and <strong>provenance-aware</strong> synthesis—not generic “LLM summarizes the internet.”
+            </p>
+          </article>
+
+          <article class="patents-patent">
+            <h4 class="patents-patent-title">Talent Intelligence Graph — compounding memory</h4>
+            <p class="patents-patent-text">
+              People, skills, roles, and organizations live in a <strong>graph that tightens with hiring outcomes</strong> over time, including trajectory-style reasoning rather than a frozen taxonomy. More enterprise usage makes the model of the labor market sharper, not just more data in a warehouse.
+            </p>
+            <p class="patents-patent-defens">
+              <strong>Why it’s defensible:</strong> Outcome-linked graph updates and <strong>GNN-style inference in this domain</strong> are a specific technical story—not “we installed Neo4j.”
+            </p>
+          </article>
+
+          <article class="patents-patent">
+            <h4 class="patents-patent-title">Fairness-aware orchestration — built into the agent stack</h4>
+            <p class="patents-patent-text">
+              Fairness constraints sit at <strong>agent decision gates</strong>: when a threshold is breached, the system can stop, escalate to a person, attach <strong>SHAP-style attribution</strong> to the suspect signal, and suggest remediation. That is how you pass a serious HR, legal, or regulator conversation.
+            </p>
+            <p class="patents-patent-defens">
+              <strong>Why it’s defensible:</strong> Fairness is part of the <strong>multi-agent control plane</strong>, not a one-off compliance report layered onto a black box.
+            </p>
+          </article>
+
+          <h3 class="patents-overlay-section-title">Research roadmap (credibility + hiring)</h3>
+          <p class="patents-overlay-lead" style="margin-bottom: 12px;">
+            We intend to publish in top ML and HCI venues (<strong>NeurIPS, ICML, CHI, EMNLP</strong>) so our methods are peer-reviewed where it counts. Each stream ties a product bet to a clear technical claim:
+          </p>
+          <ul class="patents-research-list">
+            <li>
+              <strong class="pr-topic">Human offer negotiations with dual-sided advisory AI</strong>
+              <span class="pr-desc">Working title: <em>NegotiationCoach: Real-Time Dual-Sided Advisory AI for Human Employment Offer Negotiations</em> — frames how private, real-time guidance coexists with human-only deal-making.</span>
+            </li>
+            <li>
+              <strong class="pr-topic">Multi-source evidence → recruiter-grade briefs</strong>
+              <span class="pr-desc">Working title: <em>Beyond the Resume: Multi-Source Candidate Signal Synthesis using Large Language Models for Human Recruiter Augmentation</em> — makes the synthesis problem explicit, not “better search.”</span>
+            </li>
+            <li>
+              <strong class="pr-topic">Fairness constraints across multi-agent hiring pipelines</strong>
+              <span class="pr-desc">Working title: <em>Fair by Design: Embedding Demographic Parity in Multi-Agent Recruiting Pipelines</em> — connects governance to architecture, not slide-deck ethics.</span>
+            </li>
+            <li>
+              <strong class="pr-topic">Career trajectories on heterogeneous graphs</strong>
+              <span class="pr-desc">Working title: <em>Career Trajectory Prediction with Heterogeneous Graph Neural Networks</em> — supports the graph as a learning system, not a static ontology.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
 (function () {
   'use strict';
@@ -1846,9 +2831,59 @@ A: Match the room—pilot, design partnership, diligence session, or term sheet 
   var notesBody = document.getElementById('notesBody');
   var toggleNotes = document.getElementById('toggleNotes');
   var closeNotes = document.getElementById('closeNotes');
+  var archOverlay = document.getElementById('archOverlay');
+  var closeArchOverlayBtn = document.getElementById('closeArchOverlay');
+  var openArchBtns = document.querySelectorAll('[data-open-arch]');
+  var patentsOverlay = document.getElementById('patentsOverlay');
+  var closePatentsOverlayBtn = document.getElementById('closePatentsOverlay');
+  var openPatentsBtns = document.querySelectorAll('[data-open-patents]');
   var timerEl = document.getElementById('timer');
   var timerStart = null;
   var timerId = null;
+
+  function closePatentsOverlay() {
+    if (!patentsOverlay) return;
+    patentsOverlay.classList.remove('is-open');
+    patentsOverlay.setAttribute('hidden', '');
+    patentsOverlay.setAttribute('aria-hidden', 'true');
+    for (var p = 0; p < openPatentsBtns.length; p++) {
+      openPatentsBtns[p].setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  function openPatentsOverlay() {
+    if (!patentsOverlay) return;
+    closeArchOverlay();
+    patentsOverlay.classList.add('is-open');
+    patentsOverlay.removeAttribute('hidden');
+    patentsOverlay.setAttribute('aria-hidden', 'false');
+    for (var q = 0; q < openPatentsBtns.length; q++) {
+      openPatentsBtns[q].setAttribute('aria-expanded', 'true');
+    }
+    if (closePatentsOverlayBtn) closePatentsOverlayBtn.focus();
+  }
+
+  function openArchOverlay() {
+    if (!archOverlay) return;
+    closePatentsOverlay();
+    archOverlay.classList.add('is-open');
+    archOverlay.removeAttribute('hidden');
+    archOverlay.setAttribute('aria-hidden', 'false');
+    for (var i = 0; i < openArchBtns.length; i++) {
+      openArchBtns[i].setAttribute('aria-expanded', 'true');
+    }
+    if (closeArchOverlayBtn) closeArchOverlayBtn.focus();
+  }
+
+  function closeArchOverlay() {
+    if (!archOverlay) return;
+    archOverlay.classList.remove('is-open');
+    archOverlay.setAttribute('hidden', '');
+    archOverlay.setAttribute('aria-hidden', 'true');
+    for (var j = 0; j < openArchBtns.length; j++) {
+      openArchBtns[j].setAttribute('aria-expanded', 'false');
+    }
+  }
 
   function formatTime(seconds) {
     var m = Math.floor(seconds / 60);
@@ -1894,6 +2929,8 @@ A: Match the room—pilot, design partnership, diligence session, or term sheet 
   function goTo(index) {
     if (index < 0 || index >= total) return;
     ensureTimer();
+    closeArchOverlay();
+    closePatentsOverlay();
     slides[current].classList.remove('is-active');
     current = index;
     slides[current].classList.add('is-active');
@@ -1919,7 +2956,45 @@ A: Match the room—pilot, design partnership, diligence session, or term sheet 
   prevBtn.addEventListener('click', prev);
   nextBtn.addEventListener('click', next);
 
+  if (archOverlay) {
+    archOverlay.addEventListener('click', function (e) {
+      if (e.target === archOverlay) closeArchOverlay();
+    });
+  }
+  if (closeArchOverlayBtn) {
+    closeArchOverlayBtn.addEventListener('click', closeArchOverlay);
+  }
+  for (var a = 0; a < openArchBtns.length; a++) {
+    openArchBtns[a].addEventListener('click', openArchOverlay);
+  }
+
+  if (patentsOverlay) {
+    patentsOverlay.addEventListener('click', function (e) {
+      if (e.target === patentsOverlay) closePatentsOverlay();
+    });
+  }
+  if (closePatentsOverlayBtn) {
+    closePatentsOverlayBtn.addEventListener('click', closePatentsOverlay);
+  }
+  for (var b = 0; b < openPatentsBtns.length; b++) {
+    openPatentsBtns[b].addEventListener('click', openPatentsOverlay);
+  }
+
   document.addEventListener('keydown', function (e) {
+    if (archOverlay && archOverlay.classList.contains('is-open')) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeArchOverlay();
+      }
+      return;
+    }
+    if (patentsOverlay && patentsOverlay.classList.contains('is-open')) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closePatentsOverlay();
+      }
+      return;
+    }
     if (e.target.closest && e.target.closest('textarea, input, [contenteditable]')) return;
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
       e.preventDefault();
