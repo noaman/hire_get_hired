@@ -553,7 +553,7 @@
       max-width: min(42ch, 100%);
     }
 
-    /* Slide 7 — GTM four-block summary */
+    /* Slide 8 — GTM four-block summary */
     .gtm-block-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -885,41 +885,265 @@
       .arch-overlay { display: none !important; }
     }
 
-    /* Slide 10 — patents & research overlay trigger (dark slide) */
-    .close-slide-actions {
+    /* Slide 6 — moat grid + IP rail: side-by-side (stacks below ~960px) */
+    .moat-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 272px);
+      gap: clamp(16px, 2.4vw, 26px);
+      align-items: center;
+      width: 100%;
+      max-width: 1180px;
+      margin-top: clamp(6px, 1.4vw, 12px);
+      margin-bottom: clamp(14px, 2.2vw, 22px);
+    }
+    @media (max-width: 960px) {
+      .moat-layout {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+      }
+    }
+    .moat-layout .moat-grid {
+      max-width: none;
+      margin: 0;
+    }
+
+    /* Slide 6 — IP & research: featured CTA (full-width or sidebar) */
+    .moat-patents-cta {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: clamp(10px, 1.8vw, 16px);
+      margin-bottom: clamp(22px, 3vw, 32px);
+      padding: clamp(18px, 2.8vw, 26px) clamp(20px, 3vw, 28px);
+      padding-left: clamp(22px, 3.2vw, 30px);
+      border-radius: var(--r-lg);
+      background: linear-gradient(165deg, #ffffff 0%, #fafbff 42%, #f3f0ff 100%);
+      border: 1px solid rgba(99, 102, 241, 0.22);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        0 12px 40px rgba(79, 70, 229, 0.12),
+        0 4px 14px rgba(99, 102, 241, 0.08);
+      overflow: hidden;
+    }
+    .moat-patents-cta::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: var(--grad);
+      border-radius: var(--r-lg) 0 0 var(--r-lg);
+      box-shadow: 2px 0 12px rgba(99, 102, 241, 0.35);
+    }
+    /* Right rail: compact card, vertically centered beside grid */
+    .moat-patents-cta--side {
+      margin: 0;
+      max-width: none;
+      width: 100%;
+      align-self: center;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      min-height: 0;
+      padding: clamp(16px, 2vw, 20px) clamp(14px, 1.8vw, 18px);
+      padding-top: clamp(18px, 2.2vw, 22px);
+      border-radius: clamp(12px, 1.6vw, 16px);
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.85) inset,
+        0 10px 32px rgba(79, 70, 229, 0.12),
+        0 0 0 1px rgba(99, 102, 241, 0.12);
+    }
+    .moat-patents-cta--side::before {
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: auto;
+      width: 100%;
+      height: 5px;
+      border-radius: clamp(12px, 1.6vw, 16px) clamp(12px, 1.6vw, 16px) 0 0;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+    }
+    .moat-patents-cta--side .moat-patents-cta__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
       justify-content: flex-start;
       gap: 12px;
-      margin-top: clamp(12px, 2vw, 20px);
-      margin-bottom: 4px;
+      padding-left: 0;
+    }
+    .moat-patents-cta--side .moat-patents-cta__copy {
+      flex: 0 1 auto;
+      min-width: 0;
+    }
+    .moat-patents-cta--side .moat-patents-cta__eyebrow {
+      margin-bottom: 6px;
+      padding: 3px 8px;
+      font-size: clamp(0.62rem, 0.72vw, 0.7rem);
+    }
+    .moat-patents-cta--side .moat-patents-cta__title {
+      font-size: clamp(0.95rem, 1.2vw, 1.08rem);
+      margin-bottom: 6px;
+    }
+    .moat-patents-cta--side .moat-patents-cta__desc {
+      max-width: none;
+      line-height: 1.45;
+      font-size: clamp(0.78rem, 0.95vw, 0.86rem);
+    }
+    .moat-patents-cta--side .moat-patents-cta__action {
       width: 100%;
-      max-width: 1040px;
+      justify-content: stretch;
+      margin-top: 2px;
+      padding-top: 0;
+    }
+    .moat-patents-cta--side .btn-view-patents--featured {
+      width: 100%;
+      justify-content: center;
+      padding: 11px 16px;
+      font-size: clamp(0.82rem, 1vw, 0.9rem);
+    }
+    @media (max-width: 960px) {
+      .moat-patents-cta--side {
+        min-height: 0;
+        order: 2;
+      }
+      .moat-layout .moat-grid {
+        order: 1;
+      }
+    }
+
+    .moat-patents-cta__inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: clamp(16px, 2.5vw, 24px);
+      padding-left: clamp(10px, 1.5vw, 14px);
+    }
+    .moat-patents-cta__copy {
+      flex: 1 1 min(420px, 100%);
+      min-width: min(100%, 280px);
+    }
+    .moat-patents-cta__eyebrow {
+      display: inline-block;
+      font-size: clamp(0.68rem, 0.82vw, 0.76rem);
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin: 0 0 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+    }
+    .moat-patents-cta__title {
+      font-size: clamp(1.05rem, 1.55vw, 1.28rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--txt);
+      line-height: 1.2;
+      margin: 0 0 8px;
+    }
+    .moat-patents-cta__desc {
+      margin: 0;
+      font-size: var(--present-small);
+      font-weight: 500;
+      color: var(--txt-2);
+      line-height: 1.5;
+      max-width: 52ch;
+    }
+    .moat-patents-cta__action {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+    }
+    @media (max-width: 640px) {
+      .moat-patents-cta__action {
+        width: 100%;
+        justify-content: center;
+      }
+      .moat-patents-cta__action .btn-view-patents--featured {
+        width: 100%;
+        max-width: 320px;
+        justify-content: center;
+      }
     }
     .btn-view-patents {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 10px;
       font-size: var(--present-small);
       font-weight: 700;
-      padding: 10px 18px;
-      border-radius: 10px;
+      padding: 9px 16px;
+      border-radius: 12px;
       cursor: pointer;
       font-family: inherit;
+      flex-shrink: 0;
+      transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    /* Featured primary CTA — stands out from the four moat cards */
+    .btn-view-patents--featured {
+      padding: 14px 26px;
+      font-size: clamp(0.92rem, 1.15vw, 1.02rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff !important;
+      border: none;
+      background: var(--grad);
+      box-shadow:
+        0 4px 16px rgba(99, 102, 241, 0.45),
+        0 2px 6px rgba(139, 92, 246, 0.25);
+    }
+    .btn-view-patents--featured:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 8px 28px rgba(99, 102, 241, 0.5),
+        0 4px 12px rgba(139, 92, 246, 0.35);
+      filter: brightness(1.05);
+    }
+    .btn-view-patents--featured:focus-visible {
+      outline: 3px solid rgba(99, 102, 241, 0.55);
+      outline-offset: 3px;
+    }
+    .btn-view-patents--featured .btn-view-patents__arrow {
+      font-size: 1.15em;
+      font-weight: 900;
+      line-height: 1;
+      opacity: 0.95;
+    }
+    /* Light outline variant (secondary) */
+    .btn-view-patents--light {
+      background: var(--card);
+      color: #0c4a6e;
+      border: 2px solid var(--accent);
+      box-shadow: 0 1px 3px rgba(14, 165, 233, 0.12);
+    }
+    .btn-view-patents--light:hover {
+      transform: translateY(-1px);
+      background: var(--accent-lt);
+      border-color: #0284c7;
+      color: #075985;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.22);
+    }
+    .btn-view-patents--light:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    /* Dark slide (e.g. close) if button is used there again */
+    .btn-view-patents--dark {
       background: rgba(255, 255, 255, 0.08);
       color: #e8eaff;
       border: 2px solid rgba(165, 180, 252, 0.55);
       box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-      transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
     }
-    .btn-view-patents:hover {
+    .btn-view-patents--dark:hover {
       transform: translateY(-1px);
       background: rgba(255, 255, 255, 0.12);
       border-color: rgba(199, 210, 254, 0.85);
       color: #fff;
     }
-    .btn-view-patents:focus-visible {
+    .btn-view-patents--dark:focus-visible {
       outline: 2px solid #a5b4fc;
       outline-offset: 3px;
     }
@@ -1038,7 +1262,7 @@
       gap: clamp(14px, 2.5vw, 20px);
       max-width: 1000px;
       width: 100%;
-      margin-top: 22px;
+      margin-top: 0;
     }
     @media (max-width: 720px) {
       .moat-grid { grid-template-columns: 1fr; }
@@ -1077,7 +1301,7 @@
       font-weight: 700;
     }
 
-    /* Slide 8 — horizontal execution roadmap */
+    /* Slide 7 — horizontal execution roadmap */
     .slide-content-panel.roadmap-panel {
       margin-top: clamp(16px, 2.5vw, 22px);
     }
@@ -1191,7 +1415,7 @@
     }
     .pillar span { font-size: var(--present-small); color: var(--txt-2); line-height: 1.55; }
 
-    /* Slide 5 — subtle live demo line */
+    /* Live demo CTA (slide 1 hero; optional elsewhere in panels) */
     .demo-link-subtle {
       margin-top: 14px;
       font-size: var(--present-caption);
@@ -1217,13 +1441,71 @@
       outline-offset: 2px;
       border-radius: 2px;
     }
+    /* Slide 1 — right column: orbit + demo panel */
+    .split-hero-aside {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      max-width: min(360px, 88vw);
+      margin: 0 auto;
+    }
+    .hero-demo-panel {
+      margin-top: clamp(14px, 2.5vw, 22px);
+      padding: clamp(14px, 2.2vw, 18px) clamp(16px, 2.5vw, 20px);
+      border-radius: var(--r-lg);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(165, 180, 252, 0.32);
+      box-shadow:
+        0 4px 24px rgba(15, 23, 42, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      text-align: left;
+    }
+    .hero-demo-panel__kicker {
+      font-size: clamp(0.68rem, 0.85vw, 0.76rem);
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #a5b4fc;
+      margin: 0 0 10px;
+    }
+    .hero-demo-panel__body {
+      margin: 0;
+      font-size: clamp(0.82rem, 1.05vw, 0.94rem);
+      font-weight: 500;
+      line-height: 1.55;
+      color: rgba(232, 230, 255, 0.9);
+    }
+    .hero-demo-panel__body strong {
+      color: #f3f4ff;
+      font-weight: 700;
+    }
+    .slide.theme-dark .hero-demo-panel a {
+      color: #c4b5fd;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(196, 181, 253, 0.45);
+    }
+    .slide.theme-dark .hero-demo-panel a:hover {
+      color: #e9d5ff;
+      text-decoration-color: rgba(233, 213, 255, 0.65);
+    }
+    .slide.theme-dark .hero-demo-panel a:focus-visible {
+      outline: 2px solid #a5b4fc;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
 
     /* Orbit visual (slide 1) */
     .orbit-wrap {
       position: relative;
       width: min(340px, 80vw);
       height: min(340px, 80vw);
-      margin: 0 auto 24px;
+      margin: 0 auto;
+      flex-shrink: 0;
     }
     .orbit-core {
       position: absolute;
@@ -1812,13 +2094,20 @@
             </p>
             <p class="foot reveal">Second Brain for talent · Agentic orchestration · Not an ATS replacement</p>
           </div>
-          <div class="reveal">
+          <div class="split-hero-aside reveal">
             <div class="orbit-wrap">
               <div class="orbit-ring"></div>
               <div class="orbit-node a">Recruiter<br>Second Brain</div>
               <div class="orbit-node b">Candidate<br>Second Brain</div>
               <div class="orbit-node c">Human<br>moment</div>
               <div class="orbit-core">Second<br>Brain</div>
+            </div>
+            <div class="hero-demo-panel">
+              <!-- <p class="hero-demo-panel__kicker">See it in the product</p> -->
+              <p class="hero-demo-panel__body">
+                See how the <strong>Second Brain</strong> works—
+                <a href="https://noaman.github.io/hire_get_hired/app/index.html" target="_blank" rel="noopener noreferrer">interactive demo</a>
+              </p>
             </div>
           </div>
         </div>
@@ -1830,6 +2119,8 @@ PRESENTER SCRIPT (read aloud)
 ————————————————————
 
 Good [morning / afternoon]. I’m [name], and this is HireOrGetHired—HOGH for short.
+
+**You can open with the product:** right after your name, invite them to see how the **Second Brain** works—use **open the interactive demo** on slide one, walk one recruiter path or one brief, then pick up the narrative here. Keep it tight so you still land the rest of the story.
 
 Here’s the one idea I want you to leave with: we’re giving hiring a Second Brain—but on both sides of the table.
 
@@ -2099,7 +2390,7 @@ A: It’s a filter. Vendors who can’t show human oversight and logs don’t ge
         </div>
       </section>
 
-      <!-- Slide 5 + live demo -->
+      <!-- Slide 5 — product / architecture -->
       <section
         class="slide slide-product-arch"
         data-index="4"
@@ -2137,15 +2428,11 @@ A: It’s a filter. Vendors who can’t show human oversight and logs don’t ge
               <li>LangGraph + ReAct planner · <strong>Talent Intelligence Graph™</strong> (50K+ skills, 10K+ role archetypes—design targets)</li>
               <li><strong>Audit-grade traceability:</strong> orchestration steps and human handoffs logged for reconstruction—not a black box for HR or legal · <strong>DB constraint:</strong> no offer letter without human approval record</li>
             </ul>
-            <p class="demo-link-subtle">
-              Live demo (optional, ~1 min):
-              <a href="https://noaman.github.io/hire_get_hired/app/index.html" target="_blank" rel="noopener noreferrer">view live demo</a>
-            </p>
           </div>
           <p class="foot reveal">No silent autonomy on offers.</p>
         </div>
         <div class="slide-notes-source" hidden>
-SLIDE 5 — PRODUCT / ARCHITECTURE (+ LIVE DEMO)
+SLIDE 5 — PRODUCT / ARCHITECTURE
 
 ————————————————————
 PRESENTER SCRIPT (read aloud)
@@ -2163,7 +2450,7 @@ Two trust details matter in the room. First, fairness isn’t a PDF appendix: di
 
 Third—and this matters for enterprise procurement—you can reconstruct what the system did: agent steps, sources, and handoffs leave an audit trail suitable for HR ops, security review, and regulatory questions—not “the model said so.”
 
-Then bridge to the demo: “That’s the blueprint—give me thirty to sixty seconds in the live product so you’re not only seeing boxes.” Open the hosted demo, walk one recruiter path or one brief, come back for moat and business. Keep it under about ninety seconds so you still land the rest of the story.
+If they haven’t seen the product yet, remind them the **interactive demo** is on **slide one**—you can jump back, or they can open it after the meeting.
 
 ————————————————————
 EXPECTED Q&amp;A
@@ -2191,28 +2478,60 @@ A: Hiring is relational: skills, roles, evidence, and tenure stories don’t liv
           <p class="subtitle reveal">
             Buyers can replicate a model; they can’t overnight replicate <strong>dual-sided memory</strong>, a <strong>compounding graph</strong> in the workflow stack, and <strong>trust mechanics</strong> wired into offers and interviews.
           </p>
-          <div class="moat-grid reveal">
-            <div class="moat-card">
-              <p class="moat-card-kicker">vs copilots &amp; sidebar AI</p>
-              <h3 class="moat-card-title">Finish workstreams—not sentences</h3>
-              <p class="moat-card-value"><strong>What you get:</strong> Stateful orchestration across sourcing, briefs, scheduling, and prep with approvals—not a widget that drafts emails in isolation. Outcomes change because the system remembers the requisition and the evidence trail.</p>
+
+          <div class="moat-layout">
+            <div class="moat-grid reveal">
+              <div class="moat-card">
+                <p class="moat-card-kicker">vs copilots &amp; sidebar AI</p>
+                <h3 class="moat-card-title">Finish workstreams—not sentences</h3>
+                <p class="moat-card-value"><strong>What you get:</strong> Stateful orchestration across sourcing, briefs, scheduling, and prep with approvals—not a widget that drafts emails in isolation. Outcomes change because the system remembers the requisition and the evidence trail.</p>
+              </div>
+              <div class="moat-card">
+                <p class="moat-card-kicker">vs recruiter-only “AI hiring”</p>
+                <h3 class="moat-card-title">Two Second Brains, one flywheel</h3>
+                <p class="moat-card-value"><strong>What you get:</strong> Employer activity makes the candidate Second Brain smarter; better candidate signal improves matching for the enterprise. Single-sided tools never capture that loop—so they plateau as fancy ATS add-ons.</p>
+              </div>
+              <div class="moat-card">
+                <p class="moat-card-kicker">vs interview bots &amp; black-box offers</p>
+                <h3 class="moat-card-title">Human conversations stay human</h3>
+                <p class="moat-card-value"><strong>What you get:</strong> We refuse to automate the interview itself. Offers sit behind human approval and audit logs—so you’re not selling the highest-risk failure mode in HR AI to your board or regulators.</p>
+              </div>
+              <div class="moat-card">
+                <p class="moat-card-kicker">vs static career apps</p>
+                <h3 class="moat-card-title">Agentic through apply, prep, and the offer</h3>
+                <p class="moat-card-value"><strong>What you get:</strong> Applications, role-specific prep, and <strong>NegotiationCoach™</strong>—private guidance when candidates usually leave money on the table. Tips don’t move the needle; orchestration at those moments does.</p>
+              </div>
             </div>
-            <div class="moat-card">
-              <p class="moat-card-kicker">vs recruiter-only “AI hiring”</p>
-              <h3 class="moat-card-title">Two Second Brains, one flywheel</h3>
-              <p class="moat-card-value"><strong>What you get:</strong> Employer activity makes the candidate Second Brain smarter; better candidate signal improves matching for the enterprise. Single-sided tools never capture that loop—so they plateau as fancy ATS add-ons.</p>
-            </div>
-            <div class="moat-card">
-              <p class="moat-card-kicker">vs interview bots &amp; black-box offers</p>
-              <h3 class="moat-card-title">Human conversations stay human</h3>
-              <p class="moat-card-value"><strong>What you get:</strong> We refuse to automate the interview itself. Offers sit behind human approval and audit logs—so you’re not selling the highest-risk failure mode in HR AI to your board or regulators.</p>
-            </div>
-            <div class="moat-card">
-              <p class="moat-card-kicker">vs static career apps</p>
-              <h3 class="moat-card-title">Agentic through apply, prep, and the offer</h3>
-              <p class="moat-card-value"><strong>What you get:</strong> Applications, role-specific prep, and <strong>NegotiationCoach™</strong>—private guidance when candidates usually leave money on the table. Tips don’t move the needle; orchestration at those moments does.</p>
-            </div>
+            <aside
+              class="moat-patents-cta moat-patents-cta--side reveal"
+              role="region"
+              aria-label="Intellectual property and research depth"
+            >
+              <div class="moat-patents-cta__inner">
+                <div class="moat-patents-cta__copy">
+                  <p class="moat-patents-cta__eyebrow">Deep dive · diligence-ready</p>
+                  <p class="moat-patents-cta__title">IP moat &amp; research</p>
+                  <p class="moat-patents-cta__desc">
+                    <strong>Four patent families</strong> tied to the product, plus <strong>four publication streams</strong>—full detail when investors want what’s behind this slide.
+                  </p>
+                </div>
+                <div class="moat-patents-cta__action">
+                  <button
+                    type="button"
+                    class="btn-view-patents btn-view-patents--featured"
+                    data-open-patents
+                    aria-haspopup="dialog"
+                    aria-controls="patentsOverlay"
+                    aria-expanded="false"
+                  >
+                    Open full detail
+                    <span class="btn-view-patents__arrow" aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            </aside>
           </div>
+
           <p class="foot reveal">Defensibility: Talent Intelligence Graph™ flywheel · integration + compliance depth · patent roadmap (negotiation, brief synthesis, fairness-gated orchestration)</p>
         </div>
         <div class="slide-notes-source" hidden>
@@ -2236,6 +2555,8 @@ Fourth, versus static career products: we go agentic through application, prep, 
 
 Close with the footer: graph flywheel, workflow integration, compliance posture, and a focused patent roadmap—not vanity IP, but the mechanisms that are hard to replicate.
 
+If they want depth on IP or research, point to the **deep-dive card** and **Open full detail**—same interaction as the architecture overlay (×, Escape, outside click, or change slides). Walk the <strong>four patent families</strong>, then the <strong>four publication streams</strong>—speak in full sentences like the panel copy, not a document dump.
+
 ————————————————————
 EXPECTED Q&amp;A
 ————————————————————
@@ -2244,7 +2565,7 @@ Q: What stops a big tech company or an ATS from copying you in a year?
 A: Models are fungible; our moat is dual product surfaces, workflow and trust artifacts embedded in the hire, and integrations that have to be earned customer by customer—not a single feature drop.
 
 Q: Do you have patents?
-A: We’re building toward protection on NegotiationCoach™, brief synthesis, and fairness-constrained multi-agent orchestration—aligned with what’s actually differentiated in the product.
+A: Point to the **Open full detail** control on the deep-dive card—we’re building toward protection on NegotiationCoach™, brief synthesis, graph compounding workflows, and fairness-gated orchestration—aligned with what’s differentiated in the product.
 
 Q: Isn’t the graph just Neo4j—anyone can use a graph?
 A: Anyone can install a database; not everyone gets longitudinal hiring signal across two sides of the market with governance. The value is the data and workflow flywheel through the product, not the logo on the box.
@@ -2255,88 +2576,6 @@ A: Anyone can install a database; not everyone gets longitudinal hiring signal a
       <section
         class="slide"
         data-index="6"
-      >
-        <div class="slide-inner">
-          <p class="eyebrow reveal">GTM &amp; revenue</p>
-          <h2 class="title reveal">Win Recruiting Budgets First—<span class="accent">Then Candidates, Partners, and API</span></h2>
-          <p class="subtitle reveal">
-            <strong>Recruiting and HR</strong> already own hiring KPIs and budget lines—that’s why <strong>TalentAgent™</strong> is our first sale. When real requisitions run through us, <strong>CareerAgent™</strong> and the <strong>Talent Intelligence Graph™</strong> stop being demos and become products backed by live data.
-          </p>
-          <div class="slide-content-panel reveal">
-            <div class="gtm-block-grid">
-              <div class="gtm-block">
-                <h3 class="gtm-block-title">Open the market</h3>
-                <p class="gtm-block-body">
-                  <strong>Depth, not logos:</strong> 2–3 embedded enterprise pilots (~1K–5K FTE) in NA tech &amp; financial services—integrations and outcomes we can reference. Candidates via <strong>universities &amp; professional communities</strong> so CareerAgent™ rides <strong>live hiring signal</strong>, not day-one paid consumer spend.
-                </p>
-              </div>
-              <div class="gtm-block">
-                <h3 class="gtm-block-title">Core revenue</h3>
-                <p class="gtm-block-body">
-                  <strong>TalentAgent™:</strong> per-recruiter seats (~$650–800/mo) + <strong>2.5–3%</strong> placement success fees · ACVs from ~<strong>$50K</strong> to <strong>seven figures</strong>.
-                  <strong>CareerAgent™:</strong> <strong>Free</strong> (capped) · <strong>Pro $29/mo</strong> · <strong>Premium $79/mo</strong> (full Second Brain).
-                </p>
-              </div>
-              <div class="gtm-block">
-                <h3 class="gtm-block-title">Expand the surface</h3>
-                <p class="gtm-block-body">
-                  <strong>Staffing white-label:</strong> <strong>$5K–20K/mo</strong> + <strong>8%</strong> on placements.
-                  <strong>Talent Intelligence API:</strong> usage (~$0.05–0.15/call) + <strong>$50K–200K/yr</strong> bundles—<strong>ramps after</strong> core enterprise traction.
-                </p>
-              </div>
-              <div class="gtm-block">
-                <h3 class="gtm-block-title">Year-one execution</h3>
-                <p class="gtm-block-body">
-                  <strong>14 FTE</strong>—6 ML/AI, 3 backend, plus PM, sales, compliance, UX, CEO—biased to agents, integrations, and trust.
-                  <strong>Illustrative buyer ROI:</strong> ~<strong>143%</strong> Y1, ~<strong>$258K</strong> net value vs ~<strong>$180K</strong> Business-tier spend—diligence model only.
-                </p>
-              </div>
-            </div>
-          </div>
-          <p class="foot reveal">Bottom line: enterprise seats and placement fees fund the build; white-label and API widen the surface area; consumer subscriptions scale as CareerAgent™ depth proves out.</p>
-        </div>
-        <div class="slide-notes-source" hidden>
-SLIDE 7 — GTM &amp; BUSINESS MODEL
-
-————————————————————
-PRESENTER SCRIPT (read aloud)
-————————————————————
-
-Here’s the story of this slide in one line: we don’t try to grow a consumer app in a vacuum. We sell to the people who already sign the checks for hiring software and success fees—then everything else on the slide is how we widen from there.
-
-Start with the title and subtitle. Say it plainly: recruiting and HR have the budget and the metrics; they’re the fastest path to real revenue and real usage. Once employers are running live reqs through TalentAgent™, CareerAgent™ and the graph aren’t theoretical—they’re fed by actual hiring activity.
-
-Now walk the four boxes in reading order—top left, top right, bottom left, bottom right.
-
-First box, “Open the market”: year one we’re not chasing a hundred logos. We want a small number of deep enterprise pilots where we can integrate, prove outcomes, and get references. For candidates, we lean on universities and professional communities so we’re not lighting money on fire on paid consumer acquisition before the product has signal.
-
-Second box, “Core revenue”: TalentAgent™ is seats plus a slice of placement—that’s the enterprise engine. CareerAgent™ is a simple ladder: free tier, then twenty-nine, then seventy-nine for the full consumer Second Brain. If they want every line of the pricing page, that’s fine in Q&amp;A.
-
-Third box, “Expand the surface”: staffing partners white-label us for a platform fee plus rev share; the API is how other HR stacks buy match, graph, and briefs programmatically—and we expect that to ramp once enterprise credibility is established.
-
-Fourth box, “Year-one execution”: fourteen people, heavy on ML, AI, and backend, because integrations and governed agents are the work. The ROI number is an illustrative model for diligence—not a forecast or a guarantee.
-
-Close with the footer if you want a takeaway: enterprise funds the build; partners and API widen the surface; consumer scales as the product gets deeper. Anything granular on the model lives in the data room.
-
-————————————————————
-EXPECTED Q&amp;A
-————————————————————
-
-Q: How long is your enterprise sales cycle?
-A: Think three to six months for real procurement; year one is lighthouse accounts and design partners, not a thousand logos.
-
-Q: When does consumer revenue matter?
-A: Subscriptions become material in year two and beyond; early ARR is anchored by enterprise so the graph and integrations are real before we lean on consumer scale.
-
-Q: Why not go consumer-first like a job board or coaching app?
-A: Cold-start: candidates need credible intelligence, and that intelligence is grounded in employer-side signal. Employer-first buys us truth in the product—not just downloads.
-        </div>
-      </section>
-
-      <!-- Slide 8 -->
-      <section
-        class="slide"
-        data-index="7"
       >
         <div class="slide-inner">
           <p class="eyebrow reveal">Roadmap</p>
@@ -2391,7 +2630,7 @@ A: Cold-start: candidates need credible intelligence, and that intelligence is g
           </p>
         </div>
         <div class="slide-notes-source" hidden>
-SLIDE 8 — 18-MONTH ROADMAP (TO SERIES A)
+SLIDE 7 — 18-MONTH ROADMAP (TO SERIES A)
 
 ————————————————————
 PRESENTER SCRIPT (read aloud)
@@ -2405,7 +2644,7 @@ Walk left to right. **Now (0–6):** five enterprise pilots, v1.0 of both surfac
 
 **Later (12–18):** fifty enterprises, UK and Germany, Talent Intelligence API, seventeen-point-nine million ARR, half a million active job seekers, and a fifteen-to-twenty-million-dollar Series A.
 
-Close with the footer: longer-horizon compliance and HRIS depth live in the product note—this slide is the fundraising and GTM spine.
+Close with the footer: longer-horizon compliance and HRIS depth live in the product note—**slide eight** is how we monetize and execute in market; this slide is the milestone spine.
 
 ————————————————————
 EXPECTED Q&amp;A
@@ -2419,6 +2658,88 @@ A: It’s a target window once enterprise traction and the API / EU wedge are de
 
 Q: Isn’t fifty customers aggressive?
 A: It’s a goal tied to repeatable ATS playbooks and expansion from pilots—if asked, we walk which accounts are in pipeline vs hypothesis.
+        </div>
+      </section>
+
+      <!-- Slide 8 -->
+      <section
+        class="slide"
+        data-index="7"
+      >
+        <div class="slide-inner">
+          <p class="eyebrow reveal">GTM &amp; revenue</p>
+          <h2 class="title reveal">Win Recruiting Budgets First—<span class="accent">Then Candidates, Partners, and API</span></h2>
+          <p class="subtitle reveal">
+            <strong>Recruiting and HR</strong> already own hiring KPIs and budget lines—that’s why <strong>TalentAgent™</strong> is our first sale. When real requisitions run through us, <strong>CareerAgent™</strong> and the <strong>Talent Intelligence Graph™</strong> stop being demos and become products backed by live data.
+          </p>
+          <div class="slide-content-panel reveal">
+            <div class="gtm-block-grid">
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Open the market</h3>
+                <p class="gtm-block-body">
+                  <strong>Depth, not logos:</strong> 2–3 embedded enterprise pilots (~1K–5K FTE) in NA tech &amp; financial services—integrations and outcomes we can reference. Candidates via <strong>universities &amp; professional communities</strong> so CareerAgent™ rides <strong>live hiring signal</strong>, not day-one paid consumer spend.
+                </p>
+              </div>
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Core revenue</h3>
+                <p class="gtm-block-body">
+                  <strong>TalentAgent™:</strong> per-recruiter seats (~$650–800/mo) + <strong>2.5–3%</strong> placement success fees · ACVs from ~<strong>$50K</strong> to <strong>seven figures</strong>.
+                  <strong>CareerAgent™:</strong> <strong>Free</strong> (capped) · <strong>Pro $29/mo</strong> · <strong>Premium $79/mo</strong> (full Second Brain).
+                </p>
+              </div>
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Expand the surface</h3>
+                <p class="gtm-block-body">
+                  <strong>Staffing white-label:</strong> <strong>$5K–20K/mo</strong> + <strong>8%</strong> on placements.
+                  <strong>Talent Intelligence API:</strong> usage (~$0.05–0.15/call) + <strong>$50K–200K/yr</strong> bundles—<strong>ramps after</strong> core enterprise traction.
+                </p>
+              </div>
+              <div class="gtm-block">
+                <h3 class="gtm-block-title">Year-one execution</h3>
+                <p class="gtm-block-body">
+                  <strong>14 FTE</strong>—6 ML/AI, 3 backend, plus PM, sales, compliance, UX, CEO—biased to agents, integrations, and trust.
+                  <strong>Illustrative buyer ROI:</strong> ~<strong>143%</strong> Y1, ~<strong>$258K</strong> net value vs ~<strong>$180K</strong> Business-tier spend—diligence model only.
+                </p>
+              </div>
+            </div>
+          </div>
+          <p class="foot reveal">Bottom line: enterprise seats and placement fees fund the build; white-label and API widen the surface area; consumer subscriptions scale as CareerAgent™ depth proves out.</p>
+        </div>
+        <div class="slide-notes-source" hidden>
+SLIDE 8 — GTM &amp; BUSINESS MODEL
+
+————————————————————
+PRESENTER SCRIPT (read aloud)
+————————————————————
+
+Here’s the story of this slide in one line: we don’t try to grow a consumer app in a vacuum. We sell to the people who already sign the checks for hiring software and success fees—then everything else on the slide is how we widen from there.
+
+Start with the title and subtitle. Say it plainly: recruiting and HR have the budget and the metrics; they’re the fastest path to real revenue and real usage. Once employers are running live reqs through TalentAgent™, CareerAgent™ and the graph aren’t theoretical—they’re fed by actual hiring activity.
+
+Now walk the four boxes in reading order—top left, top right, bottom left, bottom right.
+
+First box, “Open the market”: year one we’re not chasing a hundred logos. We want a small number of deep enterprise pilots where we can integrate, prove outcomes, and get references. For candidates, we lean on universities and professional communities so we’re not lighting money on fire on paid consumer acquisition before the product has signal.
+
+Second box, “Core revenue”: TalentAgent™ is seats plus a slice of placement—that’s the enterprise engine. CareerAgent™ is a simple ladder: free tier, then twenty-nine, then seventy-nine for the full consumer Second Brain. If they want every line of the pricing page, that’s fine in Q&amp;A.
+
+Third box, “Expand the surface”: staffing partners white-label us for a platform fee plus rev share; the API is how other HR stacks buy match, graph, and briefs programmatically—and we expect that to ramp once enterprise credibility is established.
+
+Fourth box, “Year-one execution”: fourteen people, heavy on ML, AI, and backend, because integrations and governed agents are the work. The ROI number is an illustrative model for diligence—not a forecast or a guarantee.
+
+Close with the footer if you want a takeaway: enterprise funds the build; partners and API widen the surface; consumer scales as the product gets deeper. Anything granular on the model lives in the data room.
+
+————————————————————
+EXPECTED Q&amp;A
+————————————————————
+
+Q: How long is your enterprise sales cycle?
+A: Think three to six months for real procurement; year one is lighthouse accounts and design partners, not a thousand logos.
+
+Q: When does consumer revenue matter?
+A: Subscriptions become material in year two and beyond; early ARR is anchored by enterprise so the graph and integrations are real before we lean on consumer scale.
+
+Q: Why not go consumer-first like a job board or coaching app?
+A: Cold-start: candidates need credible intelligence, and that intelligence is grounded in employer-side signal. Employer-first buys us truth in the product—not just downloads.
         </div>
       </section>
 
@@ -2489,7 +2810,7 @@ Slide nine answers two questions investors always ask: what does the business lo
 
 Start with the subtitle. HOGH sits above the ATS—we orchestrate intelligence, briefs, scheduling, and governed automation; we don’t ask a CHRO to rip out Workday or Greenhouse on day one. That matters for margins over time: as usage grows and infrastructure amortizes, we target software-like gross margins in the mid-seventies—not services-heavy economics forever.
 
-Point at the table row by row. ARR is anchored by enterprise first—that’s consistent with slide seven. Gross margin steps up as we scale. EBITDA stays negative while we invest, then turns positive in year three on this illustrative path. OpEx is the cost of shipping agents, integrations, and compliance seriously—not a vanity brand budget.
+Point at the table row by row. ARR is anchored by enterprise first—that lines up with **slide seven** (roadmap gates) and **slide eight** (GTM). Gross margin steps up as we scale. EBITDA stays negative while we invest, then turns positive in year three on this illustrative path. OpEx is the cost of shipping agents, integrations, and compliance seriously—not a vanity brand budget.
 
 Walk the left column, use of proceeds. This is straight from what we describe in the product architecture note: TalentAgent™ through the Intelligence Brief and real Greenhouse sync; CareerAgent™ as a real product on web and mobile with partner-led growth; the boring but load-bearing work—integration hub, audit logs, SOC two, and the EU AI Act milestones for high-risk hiring AI; and a small number of lighthouse customers with a team biased to engineering.
 
@@ -2546,18 +2867,6 @@ A: When we can show Greenhouse-depth reference stories, an ARR trajectory that m
               </p>
             </div>
           </div>
-          <div class="close-slide-actions reveal">
-            <button
-              type="button"
-              class="btn-view-patents"
-              data-open-patents
-              aria-haspopup="dialog"
-              aria-controls="patentsOverlay"
-              aria-expanded="false"
-            >
-              IP moat &amp; research
-            </button>
-          </div>
           <p class="foot reveal">
             <strong>HireOrGetHired</strong> — <em>Where Intelligence Meets Opportunity™</em>
             <span class="close-cta-line">Enterprise pilots · design partners · capital — we’re building the <strong>defensible default</strong> for agentic hiring.</span>
@@ -2586,9 +2895,7 @@ Second—what we refuse. This is where skeptical investors relax or push harder�
 
 Third—what lets us scale. Admin console, audit logs, GDPR/DSAR, EU AI Act roadmap for high-risk hiring AI. Sandra—the HR Ops persona in our note—has to survive a board review. We built for her, not just for the demo.
 
-Close with the footer: brand line, then the CTA line—pilots, partners, capital—and thank them. Offer the demo link as optional homework.
-
-If investors ask about IP or research depth, use **Patents &amp; publishable research**—same interaction as the architecture overlay (×, Escape, outside click, or change slides). Walk the <strong>four patent families</strong> as value-aligned moat, then the <strong>four publication streams</strong> as credibility and hiring leverage—not a document dump; speak in full sentences like the panel copy.
+Close with the footer: brand line, then the CTA line—pilots, partners, capital—and thank them. Point them to **slide one** for the **interactive demo** if they want to explore on their own. IP and research depth live on the **Moat** slide (**Open full detail** on the deep-dive card).
 
 ————————————————————
 EXPECTED Q&amp;A
